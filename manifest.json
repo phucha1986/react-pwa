@@ -1,6 +1,11 @@
 {
   "name": "React PWA",
   "short_name": "reactpwa",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "lang": "en",
+  "scope": "/",
   "description": "Starter kit for modern web applications",
   "theme_color": "#ffffff",
   "icons": [
