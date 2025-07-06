@@ -4,7 +4,6 @@
   "start_url": "/",
   "background_color": "#ffffff",
   "lang": "en",
-  "display": "fullscreen",
   "scope": "/",
   "description": "Starter kit for modern web applications",
   "theme_color": "#ffffff",
