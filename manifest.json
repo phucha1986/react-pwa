@@ -1,6 +1,6 @@
 {
-  "name": "React PWA",
-  "short_name": "reactpwa",
+  "name": "Kid Wise",
+  "short_name": "kidwise",
   "start_url": "/",
   "background_color": "#ffffff",
   "lang": "en",
@@ -31,5 +31,6 @@
       "type": "image/png",
       "purpose": "any"
     }
-  ]
+  ],
+  "id": "com.kidwise.app"
 }
