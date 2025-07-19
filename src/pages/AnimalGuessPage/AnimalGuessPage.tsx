@@ -1,23 +1,46 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import { Box, Container, Grid, TextField, Typography } from '@mui/material';
 
+import elephantIcon from '../AnimalGame/logos/elephant.png';
+import giraffeIcon from '../AnimalGame/logos/giraffe.png';
 import lionIcon from '../AnimalGame/logos/lion.png';
+import monkeyIcon from '../AnimalGame/logos/monkey.png';
+import parrotIcon from '../AnimalGame/logos/parrot.png';
+import turtleIcon from '../AnimalGame/logos/turtle.png';
 
-const word = 'LION';
+// Animal data map
+const animalData: Record<string, { word: string; icon: string }> = {
+  lion: { word: 'LION', icon: lionIcon },
+  elephant: { word: 'ELEPHANT', icon: elephantIcon },
+  monkey: { word: 'MONKEY', icon: monkeyIcon },
+  giraffe: { word: 'GIRAFFE', icon: giraffeIcon },
+  parrot: { word: 'PARROT', icon: parrotIcon },
+  turtle: { word: 'TURTLE', icon: turtleIcon },
+};
+
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
 
 export default function AnimalGuessPage() {
+  const query = useQuery();
+  const animalKey = query.get('animal')?.toLowerCase() || 'lion';
+
+  const animal = useMemo(() => animalData[animalKey], [animalKey]);
+
+  const word = animal?.word || '???';
   const [guess, setGuess] = useState(Array(word.length).fill(''));
   const [success, setSuccess] = useState(false);
 
   const handleInput = (value: string, index: number) => {
     const updated = [...guess];
-    updated[index] = value.toUpperCase().slice(0, 1); // one char only
+    updated[index] = value.toUpperCase().slice(0, 1);
     setGuess(updated);
 
     if (updated.join('') === word) {
       setSuccess(true);
-      // trigger animation or sound here
     }
   };
 
@@ -34,7 +57,7 @@ export default function AnimalGuessPage() {
         gap: 4,
       }}
     >
-      <Box component="img" src={lionIcon} alt="Lion" sx={{ width: 180, height: 180 }} />
+      <Box component="img" src={animal?.icon} alt={animalKey} sx={{ width: 180, height: 180 }} />
 
       <Grid container spacing={2} justifyContent="center">
         {guess.map((char, i) => (
@@ -51,6 +74,7 @@ export default function AnimalGuessPage() {
                 },
                 maxLength: 1,
               }}
+              disabled={success}
               variant="outlined"
               sx={{
                 backgroundColor: '#ffffff',
@@ -64,7 +88,7 @@ export default function AnimalGuessPage() {
 
       {success && (
         <Typography variant="h4" color="green" fontWeight="bold">
-          🎉 Great Job! It's LION!
+          🎉 Great Job! It's {word}!
         </Typography>
       )}
     </Container>
