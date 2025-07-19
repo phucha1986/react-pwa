@@ -16,9 +16,9 @@ const routes: Routes = [
     icon: HomeIcon,
   },
   {
-    component: asyncComponentLoader(() => import('@/pages/Page1')),
-    path: '/page-1',
-    title: 'Page 1',
+    component: asyncComponentLoader(() => import('@/pages/AnimalGame')),
+    path: '/AnimalGame',
+    title: 'Animal Game',
     icon: GitHubIcon,
   },
   {

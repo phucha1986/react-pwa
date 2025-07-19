@@ -1,57 +1,68 @@
-import useOrientation from '@/hooks/useOrientation';
+import { useNavigate } from 'react-router-dom';
 
-import elephantIcon from './logos/elephant.png';
-import giraffeIcon from './logos/giraffe.png';
-import lionIcon from './logos/lion.png';
-import monkeyIcon from './logos/monkey.png';
-import parrotIcon from './logos/parrot.png';
-import turtleIcon from './logos/turtle.png';
-import { Image } from './styled';
+import { Box, Container, Stack, Typography } from '@mui/material';
 
-function Welcome() {
-  const isPortrait = useOrientation();
+import letsPlayIcon from './logos/blocks.png';
+import settingsIcon from './logos/settings.png';
+import leaderboardIcon from './logos/trophy.png';
 
-  const width = isPortrait ? '48%' : '30%';
-  const height = isPortrait ? '30%' : '48%';
+const menuItems = [
+  { label: 'Let’s Play', image: letsPlayIcon, to: '/animals', bg: '#FFD93D' },
+  { label: 'Leaderboard', image: leaderboardIcon, to: '/leaderboard', bg: '#6BCB77' },
+  { label: 'Settings', image: settingsIcon, to: '/settings', bg: '#4D96FF' },
+];
 
-  const animals = [
-    { src: lionIcon, alt: 'Lion', bg: '#FFD93D' },
-    { src: elephantIcon, alt: 'Elephant', bg: '#6BCB77' },
-    { src: monkeyIcon, alt: 'Monkey', bg: '#FF6B6B' },
-    { src: giraffeIcon, alt: 'Giraffe', bg: '#4D96FF' },
-    { src: parrotIcon, alt: 'Parrot', bg: '#FFADAD' },
-    { src: turtleIcon, alt: 'Turtle', bg: '#A0E7E5' },
-  ];
+export default function Welcome() {
+  const navigate = useNavigate();
 
   return (
-    <>
-      <meta name="title" content="Welcome to Jungle!" />
-      <div
-        // flexDirection={isPortrait ? 'column' : 'row'}
-        id="main-container"
-        style={{ backgroundColor: '#FFFCEB', gap: '1rem', padding: '1rem' }}
-      >
-        {animals.map((animal) => (
-          <div
-            key={animal.alt}
-            style={{
-              backgroundColor: animal.bg,
+    <Container
+      maxWidth="sm"
+      sx={{
+        minHeight: '100vh',
+        bgcolor: '#FFFCEB',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      <Stack spacing={4} width="100%" alignItems="center">
+        {menuItems.map(({ label, image, to, bg }) => (
+          <Box
+            key={label}
+            onClick={() => navigate(to)}
+            sx={{
+              width: '100%',
+              maxWidth: 360,
+              height: 140,
+              bgcolor: bg,
               borderRadius: '2rem',
-              padding: '1rem',
-              width,
-              height,
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
               boxShadow: '0 4px 10px rgba(0,0,0,0.2)',
+              cursor: 'pointer',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'transform 0.2s',
+              '&:hover': { transform: 'scale(1.03)' },
             }}
           >
-            <Image alt={animal.alt} src={animal.src} sx={{ width: '100%', height: '100%' }} />
-          </div>
+            <Box
+              component="img"
+              src={image}
+              alt={label}
+              sx={{
+                width: 48,
+                height: 48,
+                mb: 1,
+              }}
+            />
+            <Typography variant="h6" fontWeight="bold" color="#333">
+              {label}
+            </Typography>
+          </Box>
         ))}
-      </div>
-    </>
+      </Stack>
+    </Container>
   );
 }
-
-export default Welcome;
