@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router';
+
 import { Container, Grid, Paper } from '@mui/material';
 
 import elephantIcon from './logos/elephant.png';
@@ -20,6 +22,12 @@ function Welcome() {
     { src: turtleIcon, alt: 'Turtle', bg: '#A0E7E5' },
   ];
 
+  const navigate = useNavigate();
+
+  const handleNavigate = (animalName: string) => {
+    navigate(`/AnimalGuessPage?animal=${encodeURIComponent(animalName)}`);
+  };
+
   return (
     <>
       <meta name="title" content="Welcome to Jungle!" />
@@ -33,7 +41,14 @@ function Welcome() {
       >
         <Grid container spacing={3} justifyContent="center" alignItems="center">
           {animals.map((animal) => (
-            <Grid item xs={6} sm={4} md={3} key={animal.alt}>
+            <Grid
+              item
+              xs={6}
+              sm={4}
+              md={3}
+              key={animal.alt}
+              onClick={() => handleNavigate(animal.alt)}
+            >
               <Paper
                 elevation={6}
                 sx={{
