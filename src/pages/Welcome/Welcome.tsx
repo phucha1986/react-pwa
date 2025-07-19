@@ -1,33 +1,55 @@
-import { FullSizeCentered } from '@/components/styled';
 import useOrientation from '@/hooks/useOrientation';
 
-import muiLogo from './logos/mui.svg';
-import pwaLogo from './logos/pwa.svg';
-import reactLogo from './logos/react_ed.svg';
-import recoilLogo from './logos/recoil.svg';
-import rrLogo from './logos/rr.svg';
-import tsLogo from './logos/ts.svg';
-import viteLogo from './logos/vite.svg';
+import elephantIcon from './logos/elephant.png';
+import giraffeIcon from './logos/giraffe.png';
+import lionIcon from './logos/lion.png';
+import monkeyIcon from './logos/monkey.png';
+import parrotIcon from './logos/parrot.png';
+import turtleIcon from './logos/turtle.png';
 import { Image } from './styled';
 
 function Welcome() {
   const isPortrait = useOrientation();
 
-  const width = isPortrait ? '40%' : '30%';
-  const height = isPortrait ? '30%' : '40%';
+  const width = isPortrait ? '48%' : '30%';
+  const height = isPortrait ? '30%' : '48%';
+
+  const animals = [
+    { src: lionIcon, alt: 'Lion', bg: '#FFD93D' },
+    { src: elephantIcon, alt: 'Elephant', bg: '#6BCB77' },
+    { src: monkeyIcon, alt: 'Monkey', bg: '#FF6B6B' },
+    { src: giraffeIcon, alt: 'Giraffe', bg: '#4D96FF' },
+    { src: parrotIcon, alt: 'Parrot', bg: '#FFADAD' },
+    { src: turtleIcon, alt: 'Turtle', bg: '#A0E7E5' },
+  ];
 
   return (
     <>
-      <meta name="title" content="Welcome" />
-      <FullSizeCentered flexDirection={isPortrait ? 'column' : 'row'}>
-        <Image alt="react-router" src={rrLogo} />
-        <Image alt="vite" src={viteLogo} />
-        <Image alt="typescript" src={tsLogo} />
-        <Image alt="react" src={reactLogo} sx={{ width, height }} />
-        <Image alt="mui" src={muiLogo} />
-        <Image alt="recoil" src={recoilLogo} />
-        <Image alt="pwa" src={pwaLogo} />
-      </FullSizeCentered>
+      <meta name="title" content="Welcome to Jungle!" />
+      <div
+        // flexDirection={isPortrait ? 'column' : 'row'}
+        id="main-container"
+        style={{ backgroundColor: '#FFFCEB', gap: '1rem', padding: '1rem' }}
+      >
+        {animals.map((animal) => (
+          <div
+            key={animal.alt}
+            style={{
+              backgroundColor: animal.bg,
+              borderRadius: '2rem',
+              padding: '1rem',
+              width,
+              height,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              boxShadow: '0 4px 10px rgba(0,0,0,0.2)',
+            }}
+          >
+            <Image alt={animal.alt} src={animal.src} sx={{ width: '100%', height: '100%' }} />
+          </div>
+        ))}
+      </div>
     </>
   );
 }

@@ -1,3 +1,8 @@
 /* 
   you can have your global css here if needed
 */
+#main-container {
+  display: flex;
+  flex-flow: row wrap;
+  height: 100%;
+}
