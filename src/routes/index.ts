@@ -22,9 +22,9 @@ const routes: Routes = [
     icon: GitHubIcon,
   },
   {
-    component: asyncComponentLoader(() => import('@/pages/Page2')),
-    path: '/page-2',
-    title: 'Page 2',
+    component: asyncComponentLoader(() => import('@/pages/AnimalGuessPage')),
+    path: '/AnimalGuessPage',
+    title: 'Animal Guess Page',
     icon: AddTaskIcon,
   },
   {

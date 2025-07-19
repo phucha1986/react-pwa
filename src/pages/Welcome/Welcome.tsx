@@ -7,7 +7,7 @@ import settingsIcon from './logos/settings.png';
 import leaderboardIcon from './logos/trophy.png';
 
 const menuItems = [
-  { label: 'Let’s Play', image: letsPlayIcon, to: '/animals', bg: '#FFD93D' },
+  { label: 'Let’s Play', image: letsPlayIcon, to: '/AnimalGame', bg: '#FFD93D' },
   { label: 'Leaderboard', image: leaderboardIcon, to: '/leaderboard', bg: '#6BCB77' },
   { label: 'Settings', image: settingsIcon, to: '/settings', bg: '#4D96FF' },
 ];
