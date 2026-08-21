@@ -3,14 +3,14 @@ import { createContext } from 'react';
 export type Lang = 'en' | 'vi';
 
 export interface Dict {
-  question: string;
+  question: (word: string) => string;
   greatJob: (word: string) => string;
   animals: Record<string, string>;
 }
 
 export const translations: Record<Lang, Dict> = {
   en: {
-    question: 'What name is this animal?',
+    question: (word) => `Which one is the ${word}?`,
     greatJob: (word) => `Great Job! It's ${word}!`,
     animals: {
       lion: 'Lion',
@@ -22,7 +22,7 @@ export const translations: Record<Lang, Dict> = {
     },
   },
   vi: {
-    question: 'Con vật này tên là gì?',
+    question: (word) => `Con nào là ${word}?`,
     greatJob: (word) => `Giỏi lắm! Đó là ${word}!`,
     animals: {
       lion: 'Sư tử',

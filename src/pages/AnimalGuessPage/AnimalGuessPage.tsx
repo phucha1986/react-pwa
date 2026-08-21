@@ -12,7 +12,7 @@ import monkeyIcon from '../AnimalGame/logos/monkey.png';
 import parrotIcon from '../AnimalGame/logos/parrot.png';
 import turtleIcon from '../AnimalGame/logos/turtle.png';
 import { playSuccessSound, playWrongSound, speak } from './sound';
-import { AnimalPhoto, ConfettiPiece, NameButton, Stage, StageGrid } from './styled';
+import { AnimalPhoto, ConfettiPiece, Stage, StageGrid } from './styled';
 
 // Animal data map
 const animalData: Record<string, { word: string; icon: string }> = {
@@ -24,8 +24,6 @@ const animalData: Record<string, { word: string; icon: string }> = {
   turtle: { word: 'Turtle', icon: turtleIcon },
 };
 
-const NAME_COLORS = ['#FF6B6B', '#4D96FF', '#FFAD33', '#6BCB77'];
-const NAME_AREAS = ['top', 'left', 'right', 'bottom'];
 const CONFETTI_COLORS = ['#FF6B6B', '#4D96FF', '#FFD93D', '#6BCB77', '#FFADAD', '#A0E7E5'];
 
 type Confetti = {
@@ -69,8 +67,8 @@ export default function AnimalGuessPage() {
     setWrongPick(null);
     setConfetti([]);
     answeredKeyRef.current = null;
-    speak(t.question, undefined, lang);
-  }, [animalKey, t.question, lang]);
+    speak(t.question(animal?.word ?? ''), undefined, lang);
+  }, [animalKey, animal?.word, t, lang]);
 
   // Announce the correct answer, then advance to the next animal once the
   // speech finishes (so the "Great job" line is never cut off).
@@ -91,20 +89,19 @@ export default function AnimalGuessPage() {
     return () => window.clearTimeout(fallback);
   }, [success, animalKey, animal?.word, t, lang, navigate]);
 
+  // The target animal plus 3 random other animals, shuffled into a 2x2 grid
   const options = useMemo(() => {
-    const correct = animal?.word || t.animals.lion;
-    const others = Object.keys(t.animals)
-      .map((key) => t.animals[key])
-      .filter((w) => w !== correct);
-    const shuffled = [...others].sort(() => Math.random() - 0.5).slice(0, 3);
-    const names = [correct, ...shuffled].sort(() => Math.random() - 0.5);
-    return names.map((name, i) => ({
-      name,
-      color: NAME_COLORS[i],
-      area: NAME_AREAS[i],
-      isCorrect: name === correct,
+    const keys = Object.keys(animalData);
+    const others = keys.filter((k) => k !== animalKey);
+    const shuffledOthers = [...others].sort(() => Math.random() - 0.5).slice(0, 3);
+    const picked = [animalKey, ...shuffledOthers].sort(() => Math.random() - 0.5);
+    return picked.map((key) => ({
+      key,
+      word: t.animals[key] ?? animalData[key]?.word ?? key,
+      icon: animalData[key]?.icon,
+      isCorrect: key === animalKey,
     }));
-  }, [animal, t]);
+  }, [animalKey, t]);
 
   const spawnConfetti = () => {
     const pieces: Confetti[] = Array.from({ length: 60 }, (_, i) => ({
@@ -118,7 +115,7 @@ export default function AnimalGuessPage() {
     setConfetti(pieces);
   };
 
-  const handleClick = (name: string, isCorrect: boolean) => {
+  const handleClick = (key: string, isCorrect: boolean) => {
     if (success) return;
     if (isCorrect) {
       answeredKeyRef.current = animalKey;
@@ -126,7 +123,7 @@ export default function AnimalGuessPage() {
       playSuccessSound();
       spawnConfetti();
     } else {
-      setWrongPick(name);
+      setWrongPick(key);
       playWrongSound();
       window.setTimeout(() => setWrongPick(null), 450);
     }
@@ -180,26 +177,21 @@ export default function AnimalGuessPage() {
           mb: 2,
         }}
       >
-        {success ? `🎉 ${t.greatJob(animal?.word ?? '')}` : t.question}
+        {success ? `🎉 ${t.greatJob(animal?.word ?? '')}` : t.question(animal?.word ?? '')}
       </Typography>
 
       <Stage>
         <StageGrid>
-          <AnimalPhoto $bounce={success}>
-            <img src={animal?.icon} alt={animalKey} />
-          </AnimalPhoto>
           {options.map((opt) => (
-            <NameButton
-              key={opt.name}
-              $area={opt.area}
-              $color={opt.color}
-              $wrong={wrongPick === opt.name}
+            <AnimalPhoto
+              key={opt.key}
+              $wrong={wrongPick === opt.key}
               $correct={success && opt.isCorrect}
               $disabled={success && !opt.isCorrect}
-              onClick={() => handleClick(opt.name, opt.isCorrect)}
+              onClick={() => handleClick(opt.key, opt.isCorrect)}
             >
-              {opt.name}
-            </NameButton>
+              <img src={opt.icon} alt={opt.word} />
+            </AnimalPhoto>
           ))}
         </StageGrid>
       </Stage>
