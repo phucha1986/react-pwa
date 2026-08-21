@@ -26,7 +26,8 @@ const AnimalPhoto = styled('button')<{
   $wrong?: boolean;
   $correct?: boolean;
   $disabled?: boolean;
-}>(({ $wrong, $correct, $disabled }) => ({
+  $color?: string;
+}>(({ $wrong, $correct, $disabled, $color }) => ({
   position: 'relative',
   width: '100%',
   aspectRatio: '1',
@@ -43,7 +44,7 @@ const AnimalPhoto = styled('button')<{
     position: 'absolute',
     inset: 0,
     borderRadius: '50%',
-    background: '#fff',
+    background: $color ?? '#fff',
     boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
     zIndex: 0,
   },

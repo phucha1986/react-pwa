@@ -74,6 +74,34 @@ const animalData: Record<string, { word: string; icon: string }> = {
 
 const CONFETTI_COLORS = ['#FF6B6B', '#4D96FF', '#FFD93D', '#6BCB77', '#FFADAD', '#A0E7E5'];
 
+// Pastel palette for the answer circles — the 4 options always get 4 unique colors
+const PASTEL_PALETTE = ['#FFD6E0', '#D6E9FF', '#FFF3C4', '#D9F2E3', '#E8D6FF', '#FFE5CC'];
+
+// Each animal's own dominant color (in palette terms) — its circle avoids it
+// (e.g. the blue whale never gets a blue circle, the pink flamingo never pink)
+const ANIMAL_AVOID_COLORS: Record<string, string> = {
+  lion: '#FFF3C4', // gold
+  monkey: '#FFE5CC', // brown
+  giraffe: '#FFF3C4', // yellow
+  parrot: '#D9F2E3', // green
+  turtle: '#D9F2E3', // green
+  dog: '#FFE5CC', // brown
+  horse: '#FFE5CC', // brown
+  whale: '#D6E9FF', // blue
+  tiger: '#FFE5CC', // orange
+  octopus: '#FFD6E0', // red
+  eagle: '#FFE5CC', // brown
+  crocodile: '#D9F2E3', // green
+  flamingo: '#FFD6E0', // pink
+  leopard: '#FFF3C4', // gold
+  squirrel: '#FFE5CC', // orange
+  frog: '#D9F2E3', // green
+  hummingbird: '#D9F2E3', // green
+  orangutan: '#FFE5CC', // orange
+  yak: '#FFE5CC', // brown
+  reindeer: '#FFE5CC', // brown
+};
+
 type Confetti = {
   id: number;
   left: number;
@@ -143,12 +171,20 @@ export default function AnimalGuessPage() {
     const others = keys.filter((k) => k !== animalKey);
     const shuffledOthers = [...others].sort(() => Math.random() - 0.5).slice(0, 3);
     const picked = [animalKey, ...shuffledOthers].sort(() => Math.random() - 0.5);
-    return picked.map((key) => ({
-      key,
-      word: t.animals[key] ?? animalData[key]?.word ?? key,
-      icon: animalData[key]?.icon,
-      isCorrect: key === animalKey,
-    }));
+    // Give each option a unique pastel that isn't the animal's own color
+    const used = new Set<string>();
+    return picked.map((key) => {
+      const avoid = ANIMAL_AVOID_COLORS[key];
+      const color = PASTEL_PALETTE.find((c) => !used.has(c) && c !== avoid) ?? '#fff';
+      used.add(color);
+      return {
+        key,
+        word: t.animals[key] ?? animalData[key]?.word ?? key,
+        icon: animalData[key]?.icon,
+        isCorrect: key === animalKey,
+        color,
+      };
+    });
   }, [animalKey, t]);
 
   const spawnConfetti = () => {
@@ -236,6 +272,7 @@ export default function AnimalGuessPage() {
               $wrong={wrongPick === opt.key}
               $correct={success && opt.isCorrect}
               $disabled={success && !opt.isCorrect}
+              $color={opt.color}
               onClick={() => handleClick(opt.key, opt.isCorrect)}
             >
               <img src={opt.icon} alt={opt.word} />

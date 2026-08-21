@@ -5,6 +5,7 @@ export type Lang = 'en' | 'vi';
 export interface Dict {
   question: (word: string) => string;
   greatJob: (word: string) => string;
+  animalsTitle: string;
   animals: Record<string, string>;
 }
 
@@ -12,6 +13,7 @@ export const translations: Record<Lang, Dict> = {
   en: {
     question: (word) => `Which one is the ${word}?`,
     greatJob: (word) => `Great Job! It's ${word}!`,
+    animalsTitle: 'Animals',
     animals: {
       lion: 'Lion',
       elephant: 'Elephant',
@@ -48,6 +50,7 @@ export const translations: Record<Lang, Dict> = {
   vi: {
     question: (word) => `Con nào là ${word}?`,
     greatJob: (word) => `Giỏi lắm! Đó là ${word}!`,
+    animalsTitle: 'Động vật',
     animals: {
       lion: 'Sư tử',
       elephant: 'Voi',

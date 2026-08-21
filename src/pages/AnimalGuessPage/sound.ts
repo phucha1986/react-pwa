@@ -19,11 +19,15 @@ const playTone = (
   start: number,
   duration: number,
   type: OscillatorType = 'sine',
+  endFreq?: number,
 ) => {
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
   osc.type = type;
-  osc.frequency.value = freq;
+  osc.frequency.setValueAtTime(freq, ctx.currentTime + start);
+  if (endFreq !== undefined) {
+    osc.frequency.exponentialRampToValueAtTime(endFreq, ctx.currentTime + start + duration);
+  }
   gain.gain.setValueAtTime(0.0001, ctx.currentTime + start);
   gain.gain.exponentialRampToValueAtTime(0.3, ctx.currentTime + start + 0.02);
   gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + start + duration);
@@ -43,12 +47,12 @@ export const playSuccessSound = () => {
   }
 };
 
-/** Short low "boop" for a wrong answer. */
+/** Descending "ahh oh" sigh for a wrong answer. */
 export const playWrongSound = () => {
   try {
     const ctx = getCtx();
-    playTone(ctx, 196, 0, 0.2, 'triangle');
-    playTone(ctx, 147, 0.15, 0.25, 'triangle');
+    playTone(ctx, 330, 0, 0.3, 'sine', 220);
+    playTone(ctx, 220, 0.3, 0.45, 'sine', 147);
   } catch {
     /* audio not available */
   }
