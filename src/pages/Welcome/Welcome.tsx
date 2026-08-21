@@ -33,7 +33,7 @@ export default function Welcome() {
       <Stack spacing={4} width="100%" alignItems="center">
         {menuItems.map((item) => {
           const label = 'label' in item ? item.label : t.animalsTitle;
-          const images = 'images' in item ? item.images : [item.image];
+          const images = 'images' in item ? item.images : item.image ? [item.image] : [];
           const { to, bg } = item;
           return (
             <Box
