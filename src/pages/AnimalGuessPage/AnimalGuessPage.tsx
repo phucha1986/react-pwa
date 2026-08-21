@@ -5,12 +5,36 @@ import { Container, Typography } from '@mui/material';
 
 import { useLanguage } from '@/i18n/useLanguage';
 
+import antIcon from '../AnimalGame/logos/ant.png';
+import catIcon from '../AnimalGame/logos/cat.png';
+import cowIcon from '../AnimalGame/logos/cow.png';
+import crocodileIcon from '../AnimalGame/logos/crocodile.png';
+import dogIcon from '../AnimalGame/logos/dog.png';
+import eagleIcon from '../AnimalGame/logos/eagle.png';
 import elephantIcon from '../AnimalGame/logos/elephant.png';
+import flamingoIcon from '../AnimalGame/logos/flamingo.png';
+import frogIcon from '../AnimalGame/logos/frog.png';
 import giraffeIcon from '../AnimalGame/logos/giraffe.png';
+import goatIcon from '../AnimalGame/logos/goat.png';
+import horseIcon from '../AnimalGame/logos/horse.png';
+import hummingbirdIcon from '../AnimalGame/logos/hummingbird.png';
+import leopardIcon from '../AnimalGame/logos/leopard.png';
 import lionIcon from '../AnimalGame/logos/lion.png';
 import monkeyIcon from '../AnimalGame/logos/monkey.png';
+import octopusIcon from '../AnimalGame/logos/octopus.png';
+import orangutanIcon from '../AnimalGame/logos/orangutan.png';
+import ostrichIcon from '../AnimalGame/logos/ostrich.png';
 import parrotIcon from '../AnimalGame/logos/parrot.png';
+import penguinIcon from '../AnimalGame/logos/penguin.png';
+import rabbitIcon from '../AnimalGame/logos/rabbit.png';
+import reindeerIcon from '../AnimalGame/logos/reindeer.png';
+import sealIcon from '../AnimalGame/logos/seal.png';
+import squirrelIcon from '../AnimalGame/logos/squirrel.png';
+import tigerIcon from '../AnimalGame/logos/tiger.png';
 import turtleIcon from '../AnimalGame/logos/turtle.png';
+import whaleIcon from '../AnimalGame/logos/whale.png';
+import yakIcon from '../AnimalGame/logos/yak.png';
+import zebraIcon from '../AnimalGame/logos/zebra.png';
 import { playSuccessSound, playWrongSound, speak } from './sound';
 import { AnimalPhoto, ConfettiPiece, Stage, StageGrid } from './styled';
 
@@ -22,6 +46,30 @@ const animalData: Record<string, { word: string; icon: string }> = {
   giraffe: { word: 'Giraffe', icon: giraffeIcon },
   parrot: { word: 'Parrot', icon: parrotIcon },
   turtle: { word: 'Turtle', icon: turtleIcon },
+  dog: { word: 'Dog', icon: dogIcon },
+  cat: { word: 'Cat', icon: catIcon },
+  cow: { word: 'Cow', icon: cowIcon },
+  horse: { word: 'Horse', icon: horseIcon },
+  goat: { word: 'Goat', icon: goatIcon },
+  whale: { word: 'Whale', icon: whaleIcon },
+  tiger: { word: 'Tiger', icon: tigerIcon },
+  rabbit: { word: 'Rabbit', icon: rabbitIcon },
+  octopus: { word: 'Octopus', icon: octopusIcon },
+  zebra: { word: 'Zebra', icon: zebraIcon },
+  eagle: { word: 'Eagle', icon: eagleIcon },
+  crocodile: { word: 'Crocodile', icon: crocodileIcon },
+  penguin: { word: 'Penguin', icon: penguinIcon },
+  ostrich: { word: 'Ostrich', icon: ostrichIcon },
+  seal: { word: 'Seal', icon: sealIcon },
+  flamingo: { word: 'Flamingo', icon: flamingoIcon },
+  leopard: { word: 'Leopard', icon: leopardIcon },
+  ant: { word: 'Ant', icon: antIcon },
+  squirrel: { word: 'Squirrel', icon: squirrelIcon },
+  frog: { word: 'Frog', icon: frogIcon },
+  hummingbird: { word: 'Hummingbird', icon: hummingbirdIcon },
+  orangutan: { word: 'Orangutan', icon: orangutanIcon },
+  yak: { word: 'Yak', icon: yakIcon },
+  reindeer: { word: 'Reindeer', icon: reindeerIcon },
 };
 
 const CONFETTI_COLORS = ['#FF6B6B', '#4D96FF', '#FFD93D', '#6BCB77', '#FFADAD', '#A0E7E5'];
