@@ -4,8 +4,8 @@ import { Button } from '@mui/material';
 import { useLanguage } from '@/i18n/useLanguage';
 
 /**
- * Floating button (bottom-right) that switches the app between English and
- * Vietnamese. It affects both the on-screen text and the spoken voice.
+ * Button that switches the app between English and Vietnamese. It affects
+ * both the on-screen text and the spoken voice. Rendered inside the bottom bar.
  */
 export default function LanguageToggle() {
   const { lang, setLang } = useLanguage();
@@ -18,10 +18,6 @@ export default function LanguageToggle() {
       onClick={() => setLang(next)}
       aria-label={next === 'vi' ? 'Chuyển sang tiếng Việt' : 'Switch to English'}
       sx={{
-        position: 'fixed',
-        bottom: 20,
-        right: 20,
-        zIndex: 1300,
         borderRadius: '2rem',
         px: 2.5,
         py: 1.2,
