@@ -56,7 +56,7 @@ export default function Welcome() {
               }}
             >
               <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
-                {images.map((src, i) => (
+                {images?.map((src, i) => (
                   <Box
                     key={i}
                     component="img"
