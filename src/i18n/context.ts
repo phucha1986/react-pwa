@@ -7,6 +7,12 @@ export interface Dict {
   greatJob: (word: string) => string;
   animalsTitle: string;
   animals: Record<string, string>;
+  flappyTitle: string;
+  flappyTapToStart: string;
+  flappyScore: string;
+  flappyBest: string;
+  flappyGameOver: string;
+  flappyPlayAgain: string;
 }
 
 export const translations: Record<Lang, Dict> = {
@@ -46,6 +52,12 @@ export const translations: Record<Lang, Dict> = {
       yak: 'Yak',
       reindeer: 'Reindeer',
     },
+    flappyTitle: 'Flappy Bird',
+    flappyTapToStart: 'Tap or press Space to fly',
+    flappyScore: 'Score',
+    flappyBest: 'Best',
+    flappyGameOver: 'Game Over',
+    flappyPlayAgain: 'Play Again',
   },
   vi: {
     question: (word) => `Con nào là ${word}?`,
@@ -83,6 +95,12 @@ export const translations: Record<Lang, Dict> = {
       yak: 'Trâu Tây Tạng',
       reindeer: 'Hươu sao',
     },
+    flappyTitle: 'Flappy Bird',
+    flappyTapToStart: 'Chạm hoặc nhấn Space để bay',
+    flappyScore: 'Điểm',
+    flappyBest: 'Kỷ lục',
+    flappyGameOver: 'Hết cuộc chơi',
+    flappyPlayAgain: 'Chơi lại',
   },
 };
 

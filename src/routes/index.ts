@@ -28,6 +28,12 @@ const routes: Routes = [
     icon: AddTaskIcon,
   },
   {
+    component: asyncComponentLoader(() => import('@/pages/FlappyBird')),
+    path: '/FlappyBird',
+    title: 'Flappy Bird',
+    icon: GitHubIcon,
+  },
+  {
     component: asyncComponentLoader(() => import('@/pages/Page3')),
     path: '/page-3',
     title: 'Page 3',
