@@ -13,6 +13,18 @@ export interface Dict {
   flappyBest: string;
   flappyGameOver: string;
   flappyPlayAgain: string;
+  pianoTitle: string;
+  pianoTapToStart: string;
+  pianoScore: string;
+  pianoBest: string;
+  pianoAutoPlay: string;
+  pianoHint: string;
+  pianoRotate: string;
+  pianoChooseSong: string;
+  songHappyBirthday: string;
+  songTwinkleTwinkle: string;
+  songMaryLamb: string;
+  songJingleBells: string;
 }
 
 export const translations: Record<Lang, Dict> = {
@@ -58,6 +70,18 @@ export const translations: Record<Lang, Dict> = {
     flappyBest: 'Best',
     flappyGameOver: 'Game Over',
     flappyPlayAgain: 'Play Again',
+    pianoTitle: 'Piano Game',
+    pianoTapToStart: 'Tap to Play',
+    pianoScore: 'Score',
+    pianoBest: 'Best',
+    pianoAutoPlay: 'Auto play the song',
+    pianoHint: 'Tap the key when the note lands on the glowing line!',
+    pianoRotate: 'Please rotate your device to landscape',
+    pianoChooseSong: 'Choose a song',
+    songHappyBirthday: 'Happy Birthday',
+    songTwinkleTwinkle: 'Twinkle Twinkle',
+    songMaryLamb: 'Mary Had a Little Lamb',
+    songJingleBells: 'Jingle Bells',
   },
   vi: {
     question: (word) => `Con nào là ${word}?`,
@@ -101,6 +125,18 @@ export const translations: Record<Lang, Dict> = {
     flappyBest: 'Kỷ lục',
     flappyGameOver: 'Hết cuộc chơi',
     flappyPlayAgain: 'Chơi lại',
+    pianoTitle: 'Trò chơi Piano',
+    pianoTapToStart: 'Chạm để chơi',
+    pianoScore: 'Điểm',
+    pianoBest: 'Kỷ lục',
+    pianoAutoPlay: 'Tự động chơi bài hát',
+    pianoHint: 'Chạm phím khi nốt nhạc rơi xuống đường sáng!',
+    pianoRotate: 'Vui lòng xoay máy sang chế độ ngang',
+    pianoChooseSong: 'Chọn một bài hát',
+    songHappyBirthday: 'Chúc mừng sinh nhật',
+    songTwinkleTwinkle: 'Twinkle Twinkle',
+    songMaryLamb: 'Mary có một con cừu',
+    songJingleBells: 'Jingle Bells',
   },
 };
 

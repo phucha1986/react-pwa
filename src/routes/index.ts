@@ -2,6 +2,7 @@ import AddTaskIcon from '@mui/icons-material/AddTask';
 import BugReportIcon from '@mui/icons-material/BugReport';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import HomeIcon from '@mui/icons-material/Home';
+import PianoIcon from '@mui/icons-material/Piano';
 import TerrainIcon from '@mui/icons-material/Terrain';
 
 import asyncComponentLoader from '@/utils/loader';
@@ -32,6 +33,12 @@ const routes: Routes = [
     path: '/FlappyBird',
     title: 'Flappy Bird',
     icon: GitHubIcon,
+  },
+  {
+    component: asyncComponentLoader(() => import('@/pages/PianoGame')),
+    path: '/PianoGame',
+    title: 'Piano Game',
+    icon: PianoIcon,
   },
   {
     component: asyncComponentLoader(() => import('@/pages/Page3')),

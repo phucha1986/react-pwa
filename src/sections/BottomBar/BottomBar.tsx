@@ -10,6 +10,7 @@ import LanguageToggle from '@/components/LanguageToggle';
 const PARENT_ROUTES: Record<string, string> = {
   '/AnimalGuessPage': '/AnimalGame',
   '/AnimalGame': '/',
+  '/PianoGame': '/',
   '/page-3': '/',
   '/page-4': '/',
 };
