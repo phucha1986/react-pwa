@@ -10,7 +10,7 @@ const Stage = styled('div')({
 
 const StageGrid = styled('div')({
   display: 'grid',
-  gridTemplateColumns: '1fr auto 1fr',
+  gridTemplateColumns: 'minmax(0, 1fr) auto minmax(0, 1fr)',
   gridTemplateRows: 'auto auto auto',
   gridTemplateAreas: `
     ". top ."
@@ -22,6 +22,7 @@ const StageGrid = styled('div')({
   gap: 16,
   width: '100%',
   maxWidth: 640,
+  minWidth: 0,
 });
 
 // The white circle is a background layer *behind* the image (via ::before),
@@ -29,10 +30,8 @@ const StageGrid = styled('div')({
 const AnimalPhoto = styled('div')<{ $bounce?: boolean }>(({ $bounce }) => ({
   gridArea: 'photo',
   position: 'relative',
-  width: 220,
-  height: 220,
-  maxWidth: '58vw',
-  maxHeight: '58vw',
+  width: 'min(220px, 42vw)',
+  height: 'min(220px, 42vw)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -71,6 +70,7 @@ const NameButton = styled('button')<{
   border: 'none',
   borderRadius: 999,
   padding: '14px 26px',
+  maxWidth: '100%',
   cursor: 'pointer',
   boxShadow: '0 4px 0 rgba(0, 0, 0, 0.18)',
   transition: 'transform 0.15s ease, opacity 0.3s ease',

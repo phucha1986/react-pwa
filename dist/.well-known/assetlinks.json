@@ -1,12 +1,8 @@
-[
-  {
-    "relation": ["delegate_permission/common.handle_all_urls"],
-    "target": {
-      "namespace": "android_app",
-      "package_name": "com.kidwise.app",
-      "sha256_cert_fingerprints": [
-        "YOUR_SHA256_FINGERPRINT"
-      ]
-    }
-  }
-]
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "app.vercel.react_pwa_rho_pearl.twa",
+        "sha256_cert_fingerprints": ["33:3F:CB:EE:50:C7:5A:85:49:23:9A:15:13:DB:1E:4B:8C:99:FA:00:44:4F:D1:46:8A:2E:6A:A0:E2:EC:7D:D1"]
+      }
+    }]

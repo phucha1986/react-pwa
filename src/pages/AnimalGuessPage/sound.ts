@@ -13,7 +13,13 @@ const getCtx = () => {
   return audioCtx;
 };
 
-const playTone = (ctx: AudioContext, freq: number, start: number, duration: number, type: OscillatorType = 'sine') => {
+const playTone = (
+  ctx: AudioContext,
+  freq: number,
+  start: number,
+  duration: number,
+  type: OscillatorType = 'sine',
+) => {
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
   osc.type = type;
@@ -48,40 +54,93 @@ export const playWrongSound = () => {
   }
 };
 
-const FEMALE_VOICE_HINTS =
-  /female|woman|hazel|susan|libby|sonia|maisie|emma|abi|jenny|aria|ana|mia|zira|samantha|salli|google us english/i;
-const MALE_VOICE_HINTS = /male|man|george|ryan|thomas|brian|david|james|guy|eric|christopher/i;
+/** Known female voices, tried in order for each language. */
+const PREFERRED_FEMALE_VOICES: Record<string, string[]> = {
+  en: [
+    'Microsoft Hazel',
+    'Microsoft Susan',
+    'Microsoft Aria',
+    'Microsoft Jenny',
+    'Microsoft Zira',
+    'Microsoft Samantha',
+    'Microsoft Ana',
+    'Google US English',
+  ],
+  vi: [
+    'Microsoft An',
+    'Microsoft My',
+    'Microsoft Linh',
+    'Microsoft Thu',
+    'Microsoft Trang',
+    'Microsoft Mai',
+  ],
+};
 
-/** Pick a friendly female ("lady") voice when available, preferring English. */
-const pickLadyVoice = (): SpeechSynthesisVoice | null => {
-  const voices = window.speechSynthesis.getVoices();
-  const english = voices.filter((v) => v.lang.toLowerCase().startsWith('en'));
-  const pool = english.length ? english : voices;
+const FEMALE_VOICE_HINTS =
+  /\b(female|woman|hazel|susan|libby|sonia|maisie|emma|abi|jenny|aria|ana|mia|zira|samantha|salli|amy|an|my|linh|thu|trang|mai)\b/i;
+const MALE_VOICE_HINTS =
+  /\b(male|man|george|ryan|thomas|brian|david|james|guy|eric|christopher|huy|daniel|mark|paul)\b/i;
+
+let cachedVoices: SpeechSynthesisVoice[] = [];
+
+/** Resolve once the browser has finished loading its voice list. */
+const loadVoices = (): Promise<SpeechSynthesisVoice[]> => {
+  const synth = window.speechSynthesis;
+  cachedVoices = synth.getVoices();
+  if (cachedVoices.length) return Promise.resolve(cachedVoices);
+  return new Promise((resolve) => {
+    const timeout = setTimeout(() => resolve(cachedVoices), 1500);
+    synth.addEventListener(
+      'voiceschanged',
+      () => {
+        cachedVoices = synth.getVoices();
+        clearTimeout(timeout);
+        resolve(cachedVoices);
+      },
+      { once: true },
+    );
+  });
+};
+
+/** Pick a friendly female ("lady") voice, preferring the requested language. */
+const pickLadyVoice = (lang: string): SpeechSynthesisVoice | null => {
+  const preferred = cachedVoices.filter((v) => v.lang.toLowerCase().startsWith(lang));
+  const pool = preferred.length ? preferred : cachedVoices;
+  for (const name of PREFERRED_FEMALE_VOICES[lang] ?? []) {
+    const match = pool.find((v) => v.name.toLowerCase() === name.toLowerCase());
+    if (match) return match;
+  }
   return (
-    pool.find((v) => FEMALE_VOICE_HINTS.test(v.name) && !MALE_VOICE_HINTS.test(v.name)) || null
+    pool.find((v) => FEMALE_VOICE_HINTS.test(v.name) && !MALE_VOICE_HINTS.test(v.name)) ||
+    pool[0] ||
+    null
   );
 };
 
 /**
  * Speak a phrase with a slow, friendly female voice.
+ * `lang` (e.g. 'en' or 'vi') selects the matching voice when available.
  * Calls `onEnd` when the speech finishes (or immediately if speech is unavailable).
  */
-export const speak = (text: string, onEnd?: () => void) => {
+export const speak = (text: string, onEnd?: () => void, lang = 'en') => {
   try {
     if (!('speechSynthesis' in window)) {
       onEnd?.();
       return;
     }
     window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.pitch = 1.1;
-    utterance.rate = 0.85; // slow, clear delivery
-    utterance.volume = 1;
-    const ladyVoice = pickLadyVoice();
-    if (ladyVoice) utterance.voice = ladyVoice;
-    utterance.onend = () => onEnd?.();
-    utterance.onerror = () => onEnd?.();
-    window.speechSynthesis.speak(utterance);
+    void loadVoices().then(() => {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = lang === 'vi' ? 'vi-VN' : 'en-US';
+      utterance.pitch = 1.1;
+      utterance.rate = 0.85; // slow, clear delivery
+      utterance.volume = 1;
+      const ladyVoice = pickLadyVoice(lang);
+      if (ladyVoice) utterance.voice = ladyVoice;
+      utterance.onend = () => onEnd?.();
+      utterance.onerror = () => onEnd?.();
+      window.speechSynthesis.speak(utterance);
+    });
   } catch {
     onEnd?.();
   }

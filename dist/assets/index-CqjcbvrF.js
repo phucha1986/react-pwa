@@ -1,0 +1,1 @@
+import{j as e}from"./hooks-BiQeOY3r.js";import{F as t,T as r}from"./App-DFA9EpQL.js";import"./index-Bn95-sL0.js";function s(){return e.jsxs(e.Fragment,{children:[e.jsx("meta",{name:"title",content:"Page 3"}),e.jsx(t,{children:e.jsx(r,{variant:"h3",children:"Page 3"})})]})}export{s as default};

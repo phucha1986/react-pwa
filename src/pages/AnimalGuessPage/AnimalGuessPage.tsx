@@ -3,15 +3,16 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { Container, Typography } from '@mui/material';
 
+import { useLanguage } from '@/i18n/useLanguage';
+
 import elephantIcon from '../AnimalGame/logos/elephant.png';
 import giraffeIcon from '../AnimalGame/logos/giraffe.png';
 import lionIcon from '../AnimalGame/logos/lion.png';
 import monkeyIcon from '../AnimalGame/logos/monkey.png';
 import parrotIcon from '../AnimalGame/logos/parrot.png';
 import turtleIcon from '../AnimalGame/logos/turtle.png';
-
-import { AnimalPhoto, ConfettiPiece, NameButton, Stage, StageGrid } from './styled';
 import { playSuccessSound, playWrongSound, speak } from './sound';
+import { AnimalPhoto, ConfettiPiece, NameButton, Stage, StageGrid } from './styled';
 
 // Animal data map
 const animalData: Record<string, { word: string; icon: string }> = {
@@ -27,7 +28,14 @@ const NAME_COLORS = ['#FF6B6B', '#4D96FF', '#FFAD33', '#6BCB77'];
 const NAME_AREAS = ['top', 'left', 'right', 'bottom'];
 const CONFETTI_COLORS = ['#FF6B6B', '#4D96FF', '#FFD93D', '#6BCB77', '#FFADAD', '#A0E7E5'];
 
-type Confetti = { id: number; left: number; size: number; color: string; duration: number; delay: number };
+type Confetti = {
+  id: number;
+  left: number;
+  size: number;
+  color: string;
+  duration: number;
+  delay: number;
+};
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -36,9 +44,16 @@ function useQuery() {
 export default function AnimalGuessPage() {
   const query = useQuery();
   const navigate = useNavigate();
+  const { lang, t } = useLanguage();
   const animalKey = query.get('animal')?.toLowerCase() || 'lion';
 
-  const animal = useMemo(() => animalData[animalKey], [animalKey]);
+  const animal = useMemo(
+    () => ({
+      word: t.animals[animalKey] ?? animalData[animalKey]?.word ?? animalKey,
+      icon: animalData[animalKey]?.icon,
+    }),
+    [animalKey, t],
+  );
 
   const [success, setSuccess] = useState(false);
   const [wrongPick, setWrongPick] = useState<string | null>(null);
@@ -54,8 +69,8 @@ export default function AnimalGuessPage() {
     setWrongPick(null);
     setConfetti([]);
     answeredKeyRef.current = null;
-    speak('What name is this animal?');
-  }, [animalKey]);
+    speak(t.question, undefined, lang);
+  }, [animalKey, t.question, lang]);
 
   // Announce the correct answer, then advance to the next animal once the
   // speech finishes (so the "Great job" line is never cut off).
@@ -70,16 +85,16 @@ export default function AnimalGuessPage() {
       done = true;
       navigate(`/AnimalGuessPage?animal=${nextKey}`);
     };
-    speak(`Great job! It's ${animal?.word}!`, advance);
+    speak(t.greatJob(animal?.word ?? ''), advance, lang);
     // Safety net in case the speech engine never fires onend.
     const fallback = window.setTimeout(advance, 6000);
     return () => window.clearTimeout(fallback);
-  }, [success, animalKey, animal?.word, navigate]);
+  }, [success, animalKey, animal?.word, t, lang, navigate]);
 
   const options = useMemo(() => {
-    const correct = animal?.word || 'Lion';
-    const others = Object.values(animalData)
-      .map((a) => a.word)
+    const correct = animal?.word || t.animals.lion;
+    const others = Object.keys(t.animals)
+      .map((key) => t.animals[key])
       .filter((w) => w !== correct);
     const shuffled = [...others].sort(() => Math.random() - 0.5).slice(0, 3);
     const names = [correct, ...shuffled].sort(() => Math.random() - 0.5);
@@ -89,7 +104,7 @@ export default function AnimalGuessPage() {
       area: NAME_AREAS[i],
       isCorrect: name === correct,
     }));
-  }, [animal]);
+  }, [animal, t]);
 
   const spawnConfetti = () => {
     const pieces: Confetti[] = Array.from({ length: 60 }, (_, i) => ({
@@ -121,12 +136,16 @@ export default function AnimalGuessPage() {
     <Container
       maxWidth="sm"
       sx={{
-        minHeight: '100vh',
+        minHeight: 'calc(100vh - 64px)',
+        '@supports (height: 100dvh)': {
+          minHeight: 'calc(100dvh - 64px)',
+        },
         bgcolor: '#FFFCEB',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        pt: 6,
+        pt: { xs: 3, sm: 6 },
+        overflowX: 'hidden',
       }}
     >
       <style>{`
@@ -161,7 +180,7 @@ export default function AnimalGuessPage() {
           mb: 2,
         }}
       >
-        {success ? `🎉 Great Job! It's ${animal?.word}!` : 'What name is this animal?'}
+        {success ? `🎉 ${t.greatJob(animal?.word ?? '')}` : t.question}
       </Typography>
 
       <Stage>
