@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
-import Rotate90DegreesCwIcon from '@mui/icons-material/Rotate90DegreesCw';
 import StopIcon from '@mui/icons-material/Stop';
 import { Box, Button, IconButton, Stack, Typography } from '@mui/material';
 
@@ -100,7 +99,7 @@ export default function PianoGame() {
 
   phaseRef.current = phase;
 
-  // Track orientation so we can ask kids to rotate to landscape.
+  // Track orientation so the game can auto-rotate in portrait.
   useEffect(() => {
     const onResize = () => setIsPortrait(window.innerHeight > window.innerWidth);
     window.addEventListener('resize', onResize);
@@ -263,34 +262,34 @@ export default function PianoGame() {
         right: 0,
         bottom: BOTTOM_BAR_HEIGHT,
         overflow: 'hidden',
-        display: 'flex',
-        flexDirection: 'column',
         background: 'linear-gradient(180deg, #74B9FF 0%, #A8D8FF 55%, #DFF3FF 100%)',
         touchAction: 'manipulation',
         userSelect: 'none',
         WebkitUserSelect: 'none',
       }}
     >
-      {/* Score / best (only while playing) */}
-      {phase === 'playing' && (
-        <Stack direction="row" justifyContent="space-between" sx={{ px: 2, pt: 1.5, zIndex: 5 }}>
-          <Box
-            sx={{
-              bgcolor: 'rgba(255,255,255,0.9)',
-              borderRadius: '1rem',
-              px: 2.5,
-              py: 0.75,
-              boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-            }}
-          >
-            <Typography sx={{ fontSize: 12, fontWeight: 700, color: '#666' }}>
-              {t.pianoScore}
-            </Typography>
-            <Typography variant="h5" fontWeight={800} color="#4C6EF5" lineHeight={1.1}>
-              {score}
-            </Typography>
-          </Box>
-          <Stack direction="row" alignItems="center" spacing={1}>
+      {/* In portrait, rotate the whole game 90° so it plays in landscape. */}
+      <Box
+        sx={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          ...(isPortrait
+            ? {
+                position: 'absolute',
+                left: '50%',
+                top: '50%',
+                width: `calc(100vh - ${BOTTOM_BAR_HEIGHT}px)`,
+                height: '100vw',
+                transform: 'translate(-50%, -50%) rotate(90deg)',
+              }
+            : {}),
+        }}
+      >
+        {/* Score / best (only while playing) */}
+        {phase === 'playing' && (
+          <Stack direction="row" justifyContent="space-between" sx={{ px: 2, pt: 1.5, zIndex: 5 }}>
             <Box
               sx={{
                 bgcolor: 'rgba(255,255,255,0.9)',
@@ -301,246 +300,235 @@ export default function PianoGame() {
               }}
             >
               <Typography sx={{ fontSize: 12, fontWeight: 700, color: '#666' }}>
-                {t.pianoBest}
+                {t.pianoScore}
               </Typography>
-              <Typography variant="h5" fontWeight={800} color="#F59F00" lineHeight={1.1}>
-                {best}
+              <Typography variant="h5" fontWeight={800} color="#4C6EF5" lineHeight={1.1}>
+                {score}
               </Typography>
             </Box>
-            <IconButton
-              onClick={toggleAutoPlay}
-              aria-label={t.pianoAutoPlay}
-              title={t.pianoAutoPlay}
-              sx={{
-                bgcolor: autoPlaying ? '#E8590C' : 'rgba(255,255,255,0.9)',
-                color: autoPlaying ? '#fff' : '#E8590C',
-                boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-                '&:hover': { bgcolor: autoPlaying ? '#D9480F' : '#fff' },
-              }}
-            >
-              {autoPlaying ? (
-                <StopIcon sx={{ fontSize: 30 }} />
-              ) : (
-                <PlayCircleOutlineIcon sx={{ fontSize: 34 }} />
-              )}
-            </IconButton>
+            <Stack direction="row" alignItems="center" spacing={1}>
+              <Box
+                sx={{
+                  bgcolor: 'rgba(255,255,255,0.9)',
+                  borderRadius: '1rem',
+                  px: 2.5,
+                  py: 0.75,
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                }}
+              >
+                <Typography sx={{ fontSize: 12, fontWeight: 700, color: '#666' }}>
+                  {t.pianoBest}
+                </Typography>
+                <Typography variant="h5" fontWeight={800} color="#F59F00" lineHeight={1.1}>
+                  {best}
+                </Typography>
+              </Box>
+              <IconButton
+                onClick={toggleAutoPlay}
+                aria-label={t.pianoAutoPlay}
+                title={t.pianoAutoPlay}
+                sx={{
+                  bgcolor: autoPlaying ? '#E8590C' : 'rgba(255,255,255,0.9)',
+                  color: autoPlaying ? '#fff' : '#E8590C',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                  '&:hover': { bgcolor: autoPlaying ? '#D9480F' : '#fff' },
+                }}
+              >
+                {autoPlaying ? (
+                  <StopIcon sx={{ fontSize: 30 }} />
+                ) : (
+                  <PlayCircleOutlineIcon sx={{ fontSize: 34 }} />
+                )}
+              </IconButton>
+            </Stack>
           </Stack>
-        </Stack>
-      )}
+        )}
 
-      {/* Falling bars area */}
-      <Box ref={areaRef} sx={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
-        {/* Soft hit-zone glow just above the piano */}
-        <Box
-          sx={{
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            bottom: 0,
-            height: `${ZONE_RATIO * 100}%`,
-            background: 'linear-gradient(180deg, transparent, rgba(255,255,255,0.45))',
-            pointerEvents: 'none',
-          }}
-        />
-        {barsRef.current.map((b) => (
+        {/* Falling bars area */}
+        <Box ref={areaRef} sx={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+          {/* Soft hit-zone glow just above the piano */}
           <Box
-            key={b.id}
             sx={{
               position: 'absolute',
-              top: b.y,
-              left: `calc(4px + ${b.lane} * (100% - 4px) / ${KEYS.length})`,
-              width: `calc((100% - 36px) / ${KEYS.length})`,
-              height: BAR_HEIGHT,
-              bgcolor: KEYS[b.lane].color,
-              borderRadius: 14,
-              boxShadow: `0 0 18px ${KEYS[b.lane].color}`,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              height: `${ZONE_RATIO * 100}%`,
+              background: 'linear-gradient(180deg, transparent, rgba(255,255,255,0.45))',
               pointerEvents: 'none',
             }}
           />
-        ))}
-      </Box>
-
-      {/* Piano */}
-      <Box
-        sx={{
-          height: `${PIANO_RATIO * 100}%`,
-          display: 'flex',
-          gap: 1,
-          px: 1,
-          pt: 0.5,
-          pb: 1,
-          bgcolor: 'rgba(255,255,255,0.3)',
-          borderTop: '4px solid rgba(255,255,255,0.7)',
-        }}
-      >
-        {KEYS.map((k, i) => {
-          const active = activeLane.get(i);
-          const popped = pops[i] !== undefined && now - pops[i] < 250;
-          return (
+          {barsRef.current.map((b) => (
             <Box
-              key={i}
-              onPointerDown={(e) => {
-                e.preventDefault();
-                pressKey(i);
-              }}
+              key={b.id}
               sx={{
-                flex: 1,
-                borderRadius: 0,
-                bgcolor: active ?? '#FFFFFF',
-                boxShadow: active
-                  ? `0 0 26px ${active}, 0 4px 0 rgba(0,0,0,0.18)`
-                  : '0 4px 0 rgba(0,0,0,0.18)',
-                transform: popped ? 'scale(1.07)' : 'scale(1)',
-                transition: 'transform 0.12s ease',
-                display: 'flex',
-                alignItems: 'flex-end',
-                justifyContent: 'center',
-                pb: 1,
-                cursor: 'pointer',
-                touchAction: 'manipulation',
+                position: 'absolute',
+                top: b.y,
+                left: `calc(4px + ${b.lane} * (100% - 4px) / ${KEYS.length})`,
+                width: `calc((100% - 36px) / ${KEYS.length})`,
+                height: BAR_HEIGHT,
+                bgcolor: KEYS[b.lane].color,
+                borderRadius: 14,
+                boxShadow: `0 0 18px ${KEYS[b.lane].color}`,
+                pointerEvents: 'none',
               }}
-            >
-              <Typography
-                sx={{ fontSize: 18, fontWeight: 800, color: active ? '#fff' : '#B0B0B0' }}
-              >
-                {k.note}
-              </Typography>
-            </Box>
-          );
-        })}
-      </Box>
+            />
+          ))}
+        </Box>
 
-      {/* Start overlay */}
-      {phase === 'ready' && (
+        {/* Piano */}
         <Box
           sx={{
-            position: 'absolute',
-            inset: 0,
-            zIndex: 10,
+            height: `${PIANO_RATIO * 100}%`,
             display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 2.5,
-            bgcolor: 'rgba(255,255,255,0.6)',
+            gap: 1,
+            px: 1,
+            pt: 0.5,
+            pb: 1,
+            bgcolor: 'rgba(255,255,255,0.3)',
+            borderTop: '4px solid rgba(255,255,255,0.7)',
           }}
         >
-          <Typography variant="h3" fontWeight={900} color="#4C6EF5">
-            🎹 {t.pianoTitle}
-          </Typography>
-          <Typography sx={{ fontSize: 18, fontWeight: 700, color: '#555' }}>
-            {t.pianoChooseSong}
-          </Typography>
-          <Stack direction="row" alignItems="center" spacing={0.5}>
-            <IconButton
-              onClick={() => scrollCarousel(-1)}
-              sx={{ color: '#4C6EF5', fontSize: 40, fontWeight: 900 }}
-            >
-              ‹
-            </IconButton>
-            <Box
-              ref={carouselRef}
-              sx={{
-                display: 'flex',
-                gap: 2,
-                overflowX: 'auto',
-                scrollSnapType: 'x mandatory',
-                maxWidth: '65vw',
-                px: 1,
-                scrollbarWidth: 'none',
-                '&::-webkit-scrollbar': { display: 'none' },
-              }}
-            >
-              {SONGS.map((song) => (
-                <Box
-                  key={song.id}
-                  onPointerDown={(e) => {
-                    e.preventDefault();
-                    start(song);
-                  }}
-                  sx={{
-                    scrollSnapAlign: 'center',
-                    flexShrink: 0,
-                    // Size cards so at least 4 fit in the 65vw carousel at once.
-                    width: 'calc((65vw - 48px) / 4)',
-                    height: 170,
-                    bgcolor: '#fff',
-                    borderRadius: 24,
-                    boxShadow: '0 6px 16px rgba(0,0,0,0.18)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 1,
-                    cursor: 'pointer',
-                    touchAction: 'manipulation',
-                  }}
+          {KEYS.map((k, i) => {
+            const active = activeLane.get(i);
+            const popped = pops[i] !== undefined && now - pops[i] < 250;
+            return (
+              <Box
+                key={i}
+                onPointerDown={(e) => {
+                  e.preventDefault();
+                  pressKey(i);
+                }}
+                sx={{
+                  flex: 1,
+                  borderRadius: 0,
+                  bgcolor: active ?? '#FFFFFF',
+                  boxShadow: active
+                    ? `0 0 26px ${active}, 0 4px 0 rgba(0,0,0,0.18)`
+                    : '0 4px 0 rgba(0,0,0,0.18)',
+                  transform: popped ? 'scale(1.07)' : 'scale(1)',
+                  transition: 'transform 0.12s ease',
+                  display: 'flex',
+                  alignItems: 'flex-end',
+                  justifyContent: 'center',
+                  pb: 1,
+                  cursor: 'pointer',
+                  touchAction: 'manipulation',
+                }}
+              >
+                <Typography
+                  sx={{ fontSize: 18, fontWeight: 800, color: active ? '#fff' : '#B0B0B0' }}
                 >
-                  <Typography sx={{ fontSize: 64, lineHeight: 1 }}>{song.photo}</Typography>
-                  <Typography
+                  {k.note}
+                </Typography>
+              </Box>
+            );
+          })}
+        </Box>
+
+        {/* Start overlay */}
+        {phase === 'ready' && (
+          <Box
+            sx={{
+              position: 'absolute',
+              inset: 0,
+              zIndex: 10,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 2.5,
+              bgcolor: 'rgba(255,255,255,0.6)',
+            }}
+          >
+            <Typography variant="h3" fontWeight={900} color="#4C6EF5">
+              🎹 {t.pianoTitle}
+            </Typography>
+            <Typography sx={{ fontSize: 18, fontWeight: 700, color: '#555' }}>
+              {t.pianoChooseSong}
+            </Typography>
+            <Stack direction="row" alignItems="center" spacing={0.5}>
+              <IconButton
+                onClick={() => scrollCarousel(-1)}
+                sx={{ color: '#4C6EF5', fontSize: 40, fontWeight: 900 }}
+              >
+                ‹
+              </IconButton>
+              <Box
+                ref={carouselRef}
+                sx={{
+                  display: 'flex',
+                  gap: 2,
+                  overflowX: 'auto',
+                  scrollSnapType: 'x mandatory',
+                  maxWidth: '65vw',
+                  px: 1,
+                  scrollbarWidth: 'none',
+                  '&::-webkit-scrollbar': { display: 'none' },
+                }}
+              >
+                {SONGS.map((song) => (
+                  <Box
+                    key={song.id}
+                    onPointerDown={(e) => {
+                      e.preventDefault();
+                      start(song);
+                    }}
                     sx={{
-                      fontSize: 16,
-                      fontWeight: 800,
-                      color: '#4C6EF5',
-                      px: 1,
-                      textAlign: 'center',
+                      scrollSnapAlign: 'center',
+                      flexShrink: 0,
+                      // Size cards so at least 4 fit in the 65vw carousel at once.
+                      width: 'calc((65vw - 48px) / 4)',
+                      height: 170,
+                      bgcolor: '#fff',
+                      borderRadius: 24,
+                      boxShadow: '0 6px 16px rgba(0,0,0,0.18)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: 1,
+                      cursor: 'pointer',
+                      touchAction: 'manipulation',
                     }}
                   >
-                    {t[song.nameKey]}
-                  </Typography>
-                </Box>
-              ))}
-            </Box>
-            <IconButton
-              onClick={() => scrollCarousel(1)}
-              sx={{ color: '#4C6EF5', fontSize: 40, fontWeight: 900 }}
+                    <Typography sx={{ fontSize: 64, lineHeight: 1 }}>{song.photo}</Typography>
+                    <Typography
+                      sx={{
+                        fontSize: 16,
+                        fontWeight: 800,
+                        color: '#4C6EF5',
+                        px: 1,
+                        textAlign: 'center',
+                      }}
+                    >
+                      {t[song.nameKey]}
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
+              <IconButton
+                onClick={() => scrollCarousel(1)}
+                sx={{ color: '#4C6EF5', fontSize: 40, fontWeight: 900 }}
+              >
+                ›
+              </IconButton>
+            </Stack>
+            <Typography
+              sx={{ fontSize: 14, color: '#777', textAlign: 'center', px: 3, maxWidth: 480 }}
             >
-              ›
-            </IconButton>
-          </Stack>
-          <Typography
-            sx={{ fontSize: 14, color: '#777', textAlign: 'center', px: 3, maxWidth: 480 }}
-          >
-            {t.pianoHint}
-          </Typography>
-          <Button
-            size="small"
-            onClick={() => navigate('/')}
-            sx={{ color: '#4C6EF5', fontWeight: 700 }}
-          >
-            Home
-          </Button>
-        </Box>
-      )}
-
-      {/* Ask to rotate in portrait */}
-      {isPortrait && (
-        <Box
-          sx={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 2000,
-            bgcolor: 'rgba(30,40,80,0.94)',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 2,
-            color: '#fff',
-            '@keyframes rotateHint': {
-              '0%': { transform: 'rotate(0deg)' },
-              '100%': { transform: 'rotate(90deg)' },
-            },
-          }}
-        >
-          <Rotate90DegreesCwIcon
-            sx={{ fontSize: 80, animation: 'rotateHint 1.2s ease-in-out infinite alternate' }}
-          />
-          <Typography variant="h5" fontWeight={800}>
-            {t.pianoRotate}
-          </Typography>
-        </Box>
-      )}
+              {t.pianoHint}
+            </Typography>
+            <Button
+              size="small"
+              onClick={() => navigate('/')}
+              sx={{ color: '#4C6EF5', fontWeight: 700 }}
+            >
+              Home
+            </Button>
+          </Box>
+        )}
+      </Box>
     </Box>
   );
 }

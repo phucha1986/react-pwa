@@ -303,24 +303,19 @@ export default function FlappyBird() {
   return (
     <Box
       sx={{
-        minHeight: '100vh',
+        height: '100vh',
         bgcolor: '#FFFCEB',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        py: 2,
       }}
     >
-      <Typography variant="h5" sx={{ fontWeight: 800, mb: 1, color: '#4D96FF' }}>
-        {t.flappyTitle}
-      </Typography>
-
       <Box
         onPointerDown={onPointerDown}
         sx={{
           position: 'relative',
-          width: 'min(92vw, 400px)',
+          width: `min(100vw, calc(100vh / ${H / W}))`,
           aspectRatio: `${W} / ${H}`,
           borderRadius: '1.5rem',
           overflow: 'hidden',
