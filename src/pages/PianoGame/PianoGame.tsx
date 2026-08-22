@@ -65,7 +65,8 @@ const BAR_HEIGHT = 56;
 const PIANO_RATIO = 0.42; // piano takes 42% of the play height
 const ZONE_RATIO = 0.18; // hit zone height as a fraction of the play area
 const BOTTOM_BAR_HEIGHT = 76; // keep the piano above the global bottom bar
-const NOTE_INTERVAL = 350; // ms per note — shared by auto-play and bar spawning
+const NOTE_INTERVAL = 500; // ms per note — shared by auto-play and bar spawning
+const MAX_ACTIVE_BARS = 4;
 
 type Bar = { id: number; lane: number; y: number };
 
@@ -178,7 +179,7 @@ export default function PianoGame() {
         barsRef.current = barsRef.current.filter((b) => b.y < h + BAR_HEIGHT);
 
         const spawnEvery = NOTE_INTERVAL;
-        if (now - lastSpawnRef.current > spawnEvery) {
+        if (now - lastSpawnRef.current > spawnEvery && barsRef.current.length < MAX_ACTIVE_BARS) {
           lastSpawnRef.current = now;
           const notes = songNotesRef.current;
           let lane: number;

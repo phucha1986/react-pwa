@@ -194,7 +194,7 @@ export default function ColoringGame() {
       <Box
         sx={{
           height: '100vh',
-          height: '100dvh',
+          minHeight: '100dvh',
           bgcolor: '#FFFCEB',
           display: 'flex',
           flexDirection: 'column',
