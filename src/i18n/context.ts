@@ -25,6 +25,17 @@ export interface Dict {
   songTwinkleTwinkle: string;
   songMaryLamb: string;
   songJingleBells: string;
+  coloringTitle: string;
+  coloringChoose: string;
+  coloringHint: string;
+  coloringReset: string;
+  coloringComplete: string;
+  coloringHouse: string;
+  coloringFish: string;
+  coloringFlower: string;
+  coloringCar: string;
+  coloringButterfly: string;
+  coloringBalloon: string;
 }
 
 export const translations: Record<Lang, Dict> = {
@@ -82,6 +93,17 @@ export const translations: Record<Lang, Dict> = {
     songTwinkleTwinkle: 'Twinkle Twinkle',
     songMaryLamb: 'Mary Had a Little Lamb',
     songJingleBells: 'Jingle Bells',
+    coloringTitle: 'Coloring',
+    coloringChoose: 'Pick a picture to color',
+    coloringHint: 'Pick a color, then drag over a part of the picture to paint it',
+    coloringReset: 'Start over',
+    coloringComplete: 'Great job! You finished it! 🎉',
+    coloringHouse: 'House',
+    coloringFish: 'Fish',
+    coloringFlower: 'Flower',
+    coloringCar: 'Car',
+    coloringButterfly: 'Butterfly',
+    coloringBalloon: 'Balloon',
   },
   vi: {
     question: (word) => `Con nào là ${word}?`,
@@ -137,6 +159,17 @@ export const translations: Record<Lang, Dict> = {
     songTwinkleTwinkle: 'Twinkle Twinkle',
     songMaryLamb: 'Mary có một con cừu',
     songJingleBells: 'Jingle Bells',
+    coloringTitle: 'Tô màu',
+    coloringChoose: 'Chọn một bức tranh để tô',
+    coloringHint: 'Chọn màu, rồi kéo qua một phần của bức tranh để tô',
+    coloringReset: 'Tô lại từ đầu',
+    coloringComplete: 'Giỏi lắm! Bạn đã tô xong! 🎉',
+    coloringHouse: 'Ngôi nhà',
+    coloringFish: 'Cá',
+    coloringFlower: 'Bông hoa',
+    coloringCar: 'Ô tô',
+    coloringButterfly: 'Con bướm',
+    coloringBalloon: 'Bóng bay',
   },
 };
 

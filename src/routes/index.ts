@@ -2,6 +2,7 @@ import AddTaskIcon from '@mui/icons-material/AddTask';
 import BugReportIcon from '@mui/icons-material/BugReport';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import HomeIcon from '@mui/icons-material/Home';
+import PaletteIcon from '@mui/icons-material/Palette';
 import PianoIcon from '@mui/icons-material/Piano';
 import TerrainIcon from '@mui/icons-material/Terrain';
 
@@ -39,6 +40,12 @@ const routes: Routes = [
     path: '/PianoGame',
     title: 'Piano Game',
     icon: PianoIcon,
+  },
+  {
+    component: asyncComponentLoader(() => import('@/pages/ColoringGame')),
+    path: '/ColoringGame',
+    title: 'Coloring',
+    icon: PaletteIcon,
   },
   {
     component: asyncComponentLoader(() => import('@/pages/Page3')),
