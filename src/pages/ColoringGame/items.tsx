@@ -12,7 +12,11 @@ export type ItemNameKey =
   | 'coloringFlower'
   | 'coloringCar'
   | 'coloringButterfly'
-  | 'coloringBalloon';
+  | 'coloringBalloon'
+  | 'coloringIceCream'
+  | 'coloringRocket'
+  | 'coloringTurtle'
+  | 'coloringBoat';
 
 export interface ColoringItem {
   id: string;
@@ -268,6 +272,148 @@ export const ITEMS: ColoringItem[] = [
           d: 'M142,132 C138,150 150,160 144,180 L150,180 C156,160 144,150 148,132 Z',
         },
       },
+    ],
+  },
+  {
+    id: 'iceCream',
+    nameKey: 'coloringIceCream',
+    viewBox: '0 0 200 200',
+    regions: [
+      // Cone
+      { id: 'cone', shape: 'polygon', props: { points: '66,106 134,106 100,188' } },
+      // Scoops
+      { id: 'scoopL', shape: 'circle', props: { cx: 76, cy: 64, r: 26 } },
+      { id: 'scoopR', shape: 'circle', props: { cx: 124, cy: 64, r: 26 } },
+      { id: 'scoopB', shape: 'circle', props: { cx: 100, cy: 88, r: 32 } },
+      // Cherry
+      { id: 'stem', shape: 'rect', props: { x: 98, y: 18, width: 4, height: 14, rx: 2 } },
+      { id: 'cherry', shape: 'circle', props: { cx: 100, cy: 32, r: 11 } },
+      // Sprinkles
+      {
+        id: 'sprinkle1',
+        shape: 'rect',
+        props: { x: 88, y: 78, width: 12, height: 4, rx: 2, transform: 'rotate(24 94 80)' },
+      },
+      {
+        id: 'sprinkle2',
+        shape: 'rect',
+        props: { x: 104, y: 92, width: 12, height: 4, rx: 2, transform: 'rotate(-18 110 94)' },
+      },
+      {
+        id: 'sprinkle3',
+        shape: 'rect',
+        props: { x: 68, y: 56, width: 10, height: 4, rx: 2, transform: 'rotate(-30 73 58)' },
+      },
+      {
+        id: 'sprinkle4',
+        shape: 'rect',
+        props: { x: 122, y: 56, width: 10, height: 4, rx: 2, transform: 'rotate(30 127 58)' },
+      },
+    ],
+  },
+  {
+    id: 'rocket',
+    nameKey: 'coloringRocket',
+    viewBox: '0 0 200 200',
+    regions: [
+      // Stars
+      { id: 'star1', shape: 'circle', props: { cx: 30, cy: 40, r: 5 } },
+      { id: 'star2', shape: 'circle', props: { cx: 170, cy: 60, r: 4 } },
+      { id: 'star3', shape: 'circle', props: { cx: 40, cy: 150, r: 4 } },
+      { id: 'star4', shape: 'circle', props: { cx: 165, cy: 160, r: 5 } },
+      // Flame
+      {
+        id: 'flame',
+        shape: 'path',
+        props: {
+          d: 'M84,140 C84,158 92,170 100,184 C108,170 116,158 116,140 Z',
+        },
+      },
+      // Fins
+      { id: 'finL', shape: 'polygon', props: { points: '74,108 44,152 74,140' } },
+      { id: 'finR', shape: 'polygon', props: { points: '126,108 156,152 126,140' } },
+      // Body
+      {
+        id: 'body',
+        shape: 'path',
+        props: {
+          d: 'M100,20 C118,38 126,64 126,96 L126,140 L74,140 L74,96 C74,64 82,38 100,20 Z',
+        },
+      },
+      // Window
+      { id: 'window', shape: 'circle', props: { cx: 100, cy: 84, r: 16 } },
+    ],
+  },
+  {
+    id: 'turtle',
+    nameKey: 'coloringTurtle',
+    viewBox: '0 0 200 200',
+    regions: [
+      // Water and bubbles
+      { id: 'water', shape: 'rect', props: { x: 0, y: 168, width: 200, height: 32 } },
+      { id: 'bubble1', shape: 'circle', props: { cx: 34, cy: 44, r: 7 } },
+      { id: 'bubble2', shape: 'circle', props: { cx: 52, cy: 28, r: 5 } },
+      // Tail
+      { id: 'tail', shape: 'polygon', props: { points: '50,106 32,114 50,120' } },
+      // Legs
+      { id: 'legFL', shape: 'ellipse', props: { cx: 130, cy: 140, rx: 13, ry: 11 } },
+      { id: 'legBL', shape: 'ellipse', props: { cx: 72, cy: 140, rx: 13, ry: 11 } },
+      { id: 'legFR', shape: 'ellipse', props: { cx: 116, cy: 148, rx: 10, ry: 8 } },
+      { id: 'legBR', shape: 'ellipse', props: { cx: 86, cy: 148, rx: 10, ry: 8 } },
+      // Head
+      { id: 'head', shape: 'circle', props: { cx: 162, cy: 108, r: 17 } },
+      { id: 'eye', shape: 'circle', props: { cx: 168, cy: 103, r: 3.5 } },
+      // Shell
+      { id: 'shell', shape: 'ellipse', props: { cx: 100, cy: 102, rx: 52, ry: 40 } },
+      // Shell pattern
+      {
+        id: 'shellCenter',
+        shape: 'polygon',
+        props: { points: '100,84 118,94 118,112 100,122 82,112 82,94' },
+      },
+      {
+        id: 'shellL',
+        shape: 'polygon',
+        props: { points: '64,92 82,94 82,112 64,114 56,103' },
+      },
+      {
+        id: 'shellR',
+        shape: 'polygon',
+        props: { points: '136,92 118,94 118,112 136,114 144,103' },
+      },
+    ],
+  },
+  {
+    id: 'boat',
+    nameKey: 'coloringBoat',
+    viewBox: '0 0 200 200',
+    regions: [
+      // Sky decorations
+      { id: 'sun', shape: 'circle', props: { cx: 34, cy: 36, r: 16 } },
+      {
+        id: 'cloud',
+        shape: 'path',
+        props: {
+          d: 'M120,44 C118,34 128,28 136,31 C140,20 156,20 160,30 C170,27 178,36 173,44 C177,50 169,54 162,52 L130,52 C123,52 119,49 120,44 Z',
+        },
+      },
+      // Water
+      { id: 'water', shape: 'rect', props: { x: 0, y: 150, width: 200, height: 50 } },
+      // Hull
+      {
+        id: 'hull',
+        shape: 'path',
+        props: {
+          d: 'M38,150 L162,150 L140,180 L60,180 Z',
+        },
+      },
+      // Mast
+      { id: 'mast', shape: 'rect', props: { x: 97, y: 40, width: 6, height: 110 } },
+      // Sails
+      { id: 'sailL', shape: 'polygon', props: { points: '94,48 94,140 44,140' } },
+      { id: 'sailR', shape: 'polygon', props: { points: '106,56 106,140 152,140' } },
+      // Flag
+      { id: 'flag', shape: 'polygon', props: { points: '103,40 128,48 103,56' } },
     ],
   },
 ];

@@ -36,6 +36,10 @@ export interface Dict {
   coloringCar: string;
   coloringButterfly: string;
   coloringBalloon: string;
+  coloringIceCream: string;
+  coloringRocket: string;
+  coloringTurtle: string;
+  coloringBoat: string;
 }
 
 export const translations: Record<Lang, Dict> = {
@@ -104,6 +108,10 @@ export const translations: Record<Lang, Dict> = {
     coloringCar: 'Car',
     coloringButterfly: 'Butterfly',
     coloringBalloon: 'Balloon',
+    coloringIceCream: 'Ice cream',
+    coloringRocket: 'Rocket',
+    coloringTurtle: 'Turtle',
+    coloringBoat: 'Boat',
   },
   vi: {
     question: (word) => `Con nào là ${word}?`,
@@ -170,6 +178,10 @@ export const translations: Record<Lang, Dict> = {
     coloringCar: 'Ô tô',
     coloringButterfly: 'Con bướm',
     coloringBalloon: 'Bóng bay',
+    coloringIceCream: 'Kem',
+    coloringRocket: 'Tên lửa',
+    coloringTurtle: 'Con rùa',
+    coloringBoat: 'Con thuyền',
   },
 };
 

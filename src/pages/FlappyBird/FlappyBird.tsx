@@ -5,8 +5,10 @@ import { Box, Button, Stack, Typography } from '@mui/material';
 
 import { useLanguage } from '@/i18n/useLanguage';
 
-import parrotIcon from '../AnimalGame/logos/parrot.png';
 import { playFlapSound, playHitSound, playScoreSound } from './sound';
+
+const flappyBirdSprite =
+  'https://raw.githubusercontent.com/sourabhv/FlapPyBird/master/assets/sprites/yellowbird-midflap.png';
 
 // Logical game size (canvas is scaled to fit the screen)
 const W = 400;
@@ -14,12 +16,12 @@ const H = 600;
 const GROUND_H = 80;
 const BIRD_X = 100;
 const BIRD_R = 16; // collision radius
-const GRAVITY = 1500; // px/s^2
-const FLAP_VY = -420; // px/s
+const GRAVITY = 1200; // px/s^2
+const FLAP_VY = -390; // px/s
 const PIPE_W = 64;
-const PIPE_GAP = 165;
-const PIPE_SPACING = 220; // horizontal distance between pipes
-const PIPE_SPEED = 150; // px/s
+const PIPE_GAP = 190;
+const PIPE_SPACING = 260; // horizontal distance between pipes
+const PIPE_SPEED = 120; // px/s
 
 type Phase = 'ready' | 'playing' | 'dead';
 
@@ -50,7 +52,7 @@ const readBest = (): number => {
 };
 
 const randGapY = () => {
-  const margin = 90;
+  const margin = 120;
   return margin + Math.random() * (H - GROUND_H - margin * 2);
 };
 
@@ -81,7 +83,7 @@ export default function FlappyBird() {
   // Load the bird sprite once
   useEffect(() => {
     const img = new Image();
-    img.src = parrotIcon;
+    img.src = flappyBirdSprite;
     img.onload = () => {
       birdImgRef.current = img;
     };

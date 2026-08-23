@@ -6,13 +6,15 @@ import { useLanguage } from '@/i18n/useLanguage';
 
 import elephantIcon from '../AnimalGame/logos/elephant.png';
 import lionIcon from '../AnimalGame/logos/lion.png';
-import parrotIcon from '../AnimalGame/logos/parrot.png';
 import coloringIcon from './logos/coloring.svg';
 import pianoIcon from './logos/piano.svg';
 
+const flappyBirdSprite =
+  'https://raw.githubusercontent.com/sourabhv/FlapPyBird/master/assets/sprites/yellowbird-midflap.png';
+
 const menuItems = [
   { images: [lionIcon, elephantIcon], to: '/AnimalGame', bg: '#FFD93D' },
-  { label: 'Flappy Bird', image: parrotIcon, to: '/FlappyBird', bg: '#FFADAD' },
+  { label: 'Flappy Bird', image: flappyBirdSprite, to: '/FlappyBird', bg: '#FFADAD' },
   { label: 'Piano', image: pianoIcon, to: '/PianoGame', bg: '#B197FC' },
   { label: 'Coloring', image: coloringIcon, to: '/ColoringGame', bg: '#FFA94D' },
 ];

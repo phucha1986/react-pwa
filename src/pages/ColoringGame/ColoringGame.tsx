@@ -308,7 +308,7 @@ export default function ColoringGame() {
 
       <Stack
         direction="row"
-        spacing={2}
+        spacing={3}
         flexWrap="wrap"
         justifyContent="center"
         sx={{ maxWidth: 560, mx: 'auto' }}
