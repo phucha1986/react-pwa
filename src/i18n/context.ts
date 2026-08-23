@@ -30,6 +30,11 @@ export interface Dict {
   coloringHint: string;
   coloringReset: string;
   coloringComplete: string;
+  coloringBack: string;
+  coloringProgress: (done: number, total: number) => string;
+  brushSmall: string;
+  brushMedium: string;
+  brushLarge: string;
   coloringHouse: string;
   coloringFish: string;
   coloringFlower: string;
@@ -102,6 +107,11 @@ export const translations: Record<Lang, Dict> = {
     coloringHint: 'Pick a color, then drag over a part of the picture to paint it',
     coloringReset: 'Start over',
     coloringComplete: 'Great job! You finished it! 🎉',
+    coloringBack: 'Back',
+    coloringProgress: (done: number, total: number) => `${done}/${total}`,
+    brushSmall: 'Small brush',
+    brushMedium: 'Medium brush',
+    brushLarge: 'Large brush',
     coloringHouse: 'House',
     coloringFish: 'Fish',
     coloringFlower: 'Flower',
@@ -172,6 +182,11 @@ export const translations: Record<Lang, Dict> = {
     coloringHint: 'Chọn màu, rồi kéo qua một phần của bức tranh để tô',
     coloringReset: 'Tô lại từ đầu',
     coloringComplete: 'Giỏi lắm! Bạn đã tô xong! 🎉',
+    coloringBack: 'Quay lại',
+    coloringProgress: (done: number, total: number) => `${done}/${total}`,
+    brushSmall: 'Cọ nhỏ',
+    brushMedium: 'Cọ vừa',
+    brushLarge: 'Cọ to',
     coloringHouse: 'Ngôi nhà',
     coloringFish: 'Cá',
     coloringFlower: 'Bông hoa',

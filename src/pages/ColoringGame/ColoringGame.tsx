@@ -6,23 +6,29 @@ import {
   useState,
 } from 'react';
 
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CheckIcon from '@mui/icons-material/Check';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
-import { Box, Button, Stack, Typography } from '@mui/material';
+import { Box, Button, IconButton, LinearProgress, Stack, Typography } from '@mui/material';
 
 import { useLanguage } from '@/i18n/useLanguage';
 
 import { type ColoringItem, ITEMS, type Region } from './items';
 import { EMPTY_FILL, PALETTE } from './palette';
 
-// Brush radius in SVG user units (viewBox is 0 0 200 200).
-const BRUSH_R = 10;
+// Brush sizes in SVG user units (viewBox is 0 0 200 200).
+const BRUSH_SIZES = [
+  { r: 6, labelKey: 'brushSmall' as const },
+  { r: 10, labelKey: 'brushMedium' as const },
+  { r: 16, labelKey: 'brushLarge' as const },
+];
 
 // A single dab of paint at a touch position.
 interface Dab {
   x: number;
   y: number;
   color: string;
+  r: number;
 }
 
 // Renders one region as the matching SVG element with the given paint props.
@@ -153,7 +159,7 @@ function ItemSvg({
             {/* Dabs clipped to this region so paint stays inside its boundary. */}
             <g clipPath={`url(#clip-${item.id}-${region.id})`} style={{ pointerEvents: 'none' }}>
               {(dabs[region.id] ?? []).map((dab, i) => (
-                <circle key={i} cx={dab.x} cy={dab.y} r={BRUSH_R} fill={dab.color} />
+                <circle key={i} cx={dab.x} cy={dab.y} r={dab.r} fill={dab.color} />
               ))}
             </g>
           </g>
@@ -181,6 +187,7 @@ export default function ColoringGame() {
   const { t } = useLanguage();
   const [activeItem, setActiveItem] = useState<ColoringItem | null>(null);
   const [selectedColor, setSelectedColor] = useState<string>(PALETTE[0].color);
+  const [brushIndex, setBrushIndex] = useState(1);
   const [dabs, setDabs] = useState<Record<string, Dab[]>>({});
 
   const totalRegions = activeItem?.regions.length ?? 0;
@@ -200,6 +207,7 @@ export default function ColoringGame() {
   // Dabs closer than ~3 SVG units to the previous one are skipped so a long
   // drag doesn't create thousands of circles.
   const paint = (regionId: string, x: number, y: number) => {
+    const r = BRUSH_SIZES[brushIndex].r;
     setDabs((prev) => {
       const list = prev[regionId] ?? [];
       const last = list[list.length - 1];
@@ -208,11 +216,16 @@ export default function ColoringGame() {
         const dy = last.y - y;
         if (dx * dx + dy * dy < 9) return prev;
       }
-      return { ...prev, [regionId]: [...list, { x, y, color: selectedColor }] };
+      return { ...prev, [regionId]: [...list, { x, y, color: selectedColor, r }] };
     });
   };
 
   const resetDabs = () => setDabs({});
+
+  const goBack = () => {
+    setActiveItem(null);
+    setDabs({});
+  };
 
   // ---- Coloring screen (portrait, picture as large as possible) ----
   if (activeItem) {
@@ -231,9 +244,45 @@ export default function ColoringGame() {
           overflow: 'hidden',
         }}
       >
-        <Typography variant="h6" fontWeight="bold" color="#333" sx={{ mb: 1 }}>
-          {t[activeItem.nameKey]}
-        </Typography>
+        <Box
+          sx={{
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            mb: 1,
+          }}
+        >
+          <IconButton onClick={goBack} aria-label={t.coloringBack} sx={{ color: '#333', p: 0.5 }}>
+            <ArrowBackIcon />
+          </IconButton>
+          <Typography variant="h6" fontWeight="bold" color="#333">
+            {t[activeItem.nameKey]}
+          </Typography>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 0.5,
+              color: '#333',
+              fontWeight: 'bold',
+              fontSize: '0.95rem',
+            }}
+          >
+            <LinearProgress
+              variant="determinate"
+              value={totalRegions ? (coloredCount / totalRegions) * 100 : 0}
+              sx={{
+                width: 56,
+                height: 8,
+                borderRadius: 4,
+                bgcolor: 'rgba(0,0,0,0.08)',
+                '& .MuiLinearProgress-bar': { borderRadius: 4 },
+              }}
+            />
+            <span>{t.coloringProgress(coloredCount, totalRegions)}</span>
+          </Box>
+        </Box>
 
         {/* Picture fills the remaining vertical space, as big as it can be. */}
         <Box
@@ -296,6 +345,44 @@ export default function ColoringGame() {
                 }}
               >
                 {selected && <CheckIcon fontSize="small" />}
+              </Box>
+            );
+          })}
+        </Stack>
+
+        {/* Brush size */}
+        <Stack direction="row" spacing={1} justifyContent="center" sx={{ mb: 1 }}>
+          {BRUSH_SIZES.map((brush, i) => {
+            const selected = brushIndex === i;
+            return (
+              <Box
+                key={brush.r}
+                onClick={() => setBrushIndex(i)}
+                aria-label={t[brush.labelKey]}
+                title={t[brush.labelKey]}
+                sx={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: '50%',
+                  bgcolor: selected ? '#4C6EF5' : '#fff',
+                  border: selected ? '3px solid #343A40' : '3px solid rgba(0,0,0,0.15)',
+                  transform: selected ? 'scale(1.12)' : 'scale(1)',
+                  transition:
+                    'transform 0.15s ease, border 0.15s ease, background-color 0.15s ease',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Box
+                  sx={{
+                    width: brush.r * 1.6,
+                    height: brush.r * 1.6,
+                    borderRadius: '50%',
+                    bgcolor: selected ? '#fff' : '#4C6EF5',
+                  }}
+                />
               </Box>
             );
           })}
