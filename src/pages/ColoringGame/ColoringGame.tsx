@@ -248,7 +248,11 @@ export default function ColoringGame() {
         >
           <Box
             sx={{
-              height: '100%',
+              // Largest square that fits the picture area (width or height,
+              // whichever is smaller), so the paper stays square in any
+              // orientation and the picture is centered with even padding.
+
+              width: 'min(100%, 100dvh - 220px)',
               aspectRatio: '1 / 1',
               maxWidth: '100%',
               bgcolor: '#fff',
