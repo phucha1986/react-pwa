@@ -1,4 +1,10 @@
-import { type PointerEvent as ReactPointerEvent, useMemo, useRef, useState } from 'react';
+import {
+  type PointerEvent as ReactPointerEvent,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import CheckIcon from '@mui/icons-material/Check';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
@@ -53,7 +59,25 @@ function ItemSvg({
   interactive?: boolean;
 }) {
   const svgRef = useRef<SVGSVGElement>(null);
+  const contentRef = useRef<SVGGElement>(null);
   const paintingRef = useRef(false);
+  const [viewBox, setViewBox] = useState(item.viewBox);
+
+  // Center the picture's content in the square viewBox. The drawings don't
+  // all fill the 200x200 canvas evenly, so measure the content bbox and
+  // shift the viewBox so every picture sits vertically centered.
+  useLayoutEffect(() => {
+    const content = contentRef.current;
+    if (!content) return;
+    const b = content.getBBox();
+    if (b.width === 0 || b.height === 0) return;
+    const size = Math.max(b.width, b.height);
+    const pad = size * 0.04;
+    const side = size + pad * 2;
+    const x = b.x + b.width / 2 - side / 2;
+    const y = b.y + b.height / 2 - side / 2;
+    setViewBox(`${x} ${y} ${side} ${side}`);
+  }, [item]);
 
   // Convert a pointer event to SVG user-space coordinates.
   const toSvgPoint = (clientX: number, clientY: number) => {
@@ -97,7 +121,7 @@ function ItemSvg({
   return (
     <svg
       ref={svgRef}
-      viewBox={item.viewBox}
+      viewBox={viewBox}
       width="100%"
       height="100%"
       role="img"
@@ -117,22 +141,24 @@ function ItemSvg({
         ))}
       </defs>
 
-      {/* Base + hit target + dabs, interleaved per region to preserve z-order. */}
-      {item.regions.map((region) => (
-        <g key={region.id}>
-          <g style={{ pointerEvents: 'none' }}>{renderShape(region, { fill: EMPTY_FILL })}</g>
-          {/* Invisible hit target carrying the region id for hit-testing. */}
-          <g data-region-id={region.id} style={{ pointerEvents: interactive ? 'all' : 'none' }}>
-            {renderShape(region, { fill: 'transparent', stroke: 'none' })}
+      <g ref={contentRef}>
+        {/* Base + hit target + dabs, interleaved per region to preserve z-order. */}
+        {item.regions.map((region) => (
+          <g key={region.id}>
+            <g style={{ pointerEvents: 'none' }}>{renderShape(region, { fill: EMPTY_FILL })}</g>
+            {/* Invisible hit target carrying the region id for hit-testing. */}
+            <g data-region-id={region.id} style={{ pointerEvents: interactive ? 'all' : 'none' }}>
+              {renderShape(region, { fill: 'transparent', stroke: 'none' })}
+            </g>
+            {/* Dabs clipped to this region so paint stays inside its boundary. */}
+            <g clipPath={`url(#clip-${item.id}-${region.id})`} style={{ pointerEvents: 'none' }}>
+              {(dabs[region.id] ?? []).map((dab, i) => (
+                <circle key={i} cx={dab.x} cy={dab.y} r={BRUSH_R} fill={dab.color} />
+              ))}
+            </g>
           </g>
-          {/* Dabs clipped to this region so paint stays inside its boundary. */}
-          <g clipPath={`url(#clip-${item.id}-${region.id})`} style={{ pointerEvents: 'none' }}>
-            {(dabs[region.id] ?? []).map((dab, i) => (
-              <circle key={i} cx={dab.x} cy={dab.y} r={BRUSH_R} fill={dab.color} />
-            ))}
-          </g>
-        </g>
-      ))}
+        ))}
+      </g>
 
       {/* Outline layer on top so the picture's lines stay crisp. */}
       <g style={{ pointerEvents: 'none' }}>
