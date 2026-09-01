@@ -6,6 +6,8 @@ import { useLanguage } from '@/i18n/useLanguage';
 
 import elephantIcon from '../AnimalGame/logos/elephant.png';
 import lionIcon from '../AnimalGame/logos/lion.png';
+import rabbitIcon from '../AnimalGame/logos/rabbit.png';
+import turtleIcon from '../AnimalGame/logos/turtle.png';
 import coloringIcon from './logos/coloring.svg';
 import pianoIcon from './logos/piano.svg';
 
@@ -17,6 +19,7 @@ const menuItems = [
   { label: 'Flappy Bird', image: flappyBirdSprite, to: '/FlappyBird', bg: '#FFADAD' },
   { label: 'Piano', image: pianoIcon, to: '/PianoGame', bg: '#B197FC' },
   { label: 'Coloring', image: coloringIcon, to: '/ColoringGame', bg: '#FFA94D' },
+  { images: [rabbitIcon, turtleIcon], to: '/MemoryMatch', bg: '#A0E7E5', labelKey: 'memoryTitle' },
 ];
 
 export default function Welcome() {
@@ -36,7 +39,8 @@ export default function Welcome() {
     >
       <Stack spacing={4} width="100%" alignItems="center">
         {menuItems.map((item) => {
-          const label = 'label' in item ? item.label : t.animalsTitle;
+          const label =
+            'label' in item ? item.label : 'labelKey' in item ? t[item.labelKey] : t.animalsTitle;
           const images = 'images' in item ? item.images : item.image ? [item.image] : [];
           const { to, bg } = item;
           return (

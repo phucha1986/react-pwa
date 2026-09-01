@@ -13,6 +13,12 @@ export interface Dict {
   flappyBest: string;
   flappyGameOver: string;
   flappyPlayAgain: string;
+  memoryTitle: string;
+  memoryHint: string;
+  memoryPairs: string;
+  memoryMoves: string;
+  memoryWin: string;
+  memoryPlayAgain: string;
   pianoTitle: string;
   pianoTapToStart: string;
   pianoScore: string;
@@ -90,6 +96,12 @@ export const translations: Record<Lang, Dict> = {
     flappyBest: 'Best',
     flappyGameOver: 'Game Over',
     flappyPlayAgain: 'Play Again',
+    memoryTitle: 'Animal Memory',
+    memoryHint: 'Tap two cards to find matching animal pairs!',
+    memoryPairs: 'Pairs',
+    memoryMoves: 'Moves',
+    memoryWin: 'You found them all! 🎉',
+    memoryPlayAgain: 'Play Again',
     pianoTitle: 'Piano Game',
     pianoTapToStart: 'Tap to Play',
     pianoScore: 'Score',
@@ -165,6 +177,12 @@ export const translations: Record<Lang, Dict> = {
     flappyBest: 'Kỷ lục',
     flappyGameOver: 'Hết cuộc chơi',
     flappyPlayAgain: 'Chơi lại',
+    memoryTitle: 'Trò nhớ hình',
+    memoryHint: 'Chạm hai thẻ để tìm cặp động vật giống nhau!',
+    memoryPairs: 'Cặp',
+    memoryMoves: 'Nước đi',
+    memoryWin: 'Bạn đã tìm thấy tất cả! 🎉',
+    memoryPlayAgain: 'Chơi lại',
     pianoTitle: 'Trò chơi Piano',
     pianoTapToStart: 'Chạm để chơi',
     pianoScore: 'Điểm',
