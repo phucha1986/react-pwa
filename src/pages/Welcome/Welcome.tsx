@@ -16,7 +16,12 @@ import pianoIcon from './logos/piano.svg';
 const flappyBirdSprite =
   'https://raw.githubusercontent.com/sourabhv/FlapPyBird/master/assets/sprites/yellowbird-midflap.png';
 
-const menuItems = [
+type MenuItem =
+  | { images: string[]; to: string; bg: string }
+  | { label: string; image: string; to: string; bg: string }
+  | { images: string[]; to: string; bg: string; labelKey: 'memoryTitle' | 'whackTitle' };
+
+const menuItems: MenuItem[] = [
   { images: [lionIcon, elephantIcon], to: '/AnimalGame', bg: '#FFD93D' },
   { label: 'Flappy Bird', image: flappyBirdSprite, to: '/FlappyBird', bg: '#FFADAD' },
   { label: 'Piano', image: pianoIcon, to: '/PianoGame', bg: '#B197FC' },
