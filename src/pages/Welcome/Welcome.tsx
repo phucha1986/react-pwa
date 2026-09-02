@@ -4,6 +4,8 @@ import { Box, Container, Stack, Typography } from '@mui/material';
 
 import { useLanguage } from '@/i18n/useLanguage';
 
+import catIcon from '../AnimalGame/logos/cat.png';
+import dogIcon from '../AnimalGame/logos/dog.png';
 import elephantIcon from '../AnimalGame/logos/elephant.png';
 import lionIcon from '../AnimalGame/logos/lion.png';
 import rabbitIcon from '../AnimalGame/logos/rabbit.png';
@@ -20,6 +22,7 @@ const menuItems = [
   { label: 'Piano', image: pianoIcon, to: '/PianoGame', bg: '#B197FC' },
   { label: 'Coloring', image: coloringIcon, to: '/ColoringGame', bg: '#FFA94D' },
   { images: [rabbitIcon, turtleIcon], to: '/MemoryMatch', bg: '#A0E7E5', labelKey: 'memoryTitle' },
+  { images: [catIcon, dogIcon], to: '/WhackAMole', bg: '#FFD8A8', labelKey: 'whackTitle' },
 ];
 
 export default function Welcome() {
@@ -34,10 +37,9 @@ export default function Welcome() {
         bgcolor: '#FFFCEB',
         display: 'flex',
         justifyContent: 'center',
-        alignItems: 'center',
       }}
     >
-      <Stack spacing={4} width="100%" alignItems="center">
+      <Stack spacing={4} width="100%" alignItems="center" sx={{ margin: 'auto' }}>
         {menuItems.map((item) => {
           const label =
             'label' in item ? item.label : 'labelKey' in item ? t[item.labelKey] : t.animalsTitle;
