@@ -39,6 +39,7 @@ export default function Welcome() {
       maxWidth="sm"
       sx={{
         minHeight: '100vh',
+        pb: 12,
         bgcolor: '#FFFCEB',
         display: 'flex',
         justifyContent: 'center',
