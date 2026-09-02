@@ -19,6 +19,12 @@ export interface Dict {
   memoryMoves: string;
   memoryWin: string;
   memoryPlayAgain: string;
+  whackTitle: string;
+  whackHint: string;
+  whackScore: string;
+  whackTime: string;
+  whackGameOver: string;
+  whackPlayAgain: string;
   pianoTitle: string;
   pianoTapToStart: string;
   pianoScore: string;
@@ -102,6 +108,12 @@ export const translations: Record<Lang, Dict> = {
     memoryMoves: 'Moves',
     memoryWin: 'You found them all! 🎉',
     memoryPlayAgain: 'Play Again',
+    whackTitle: 'Whack-a-Mole',
+    whackHint: 'Tap the animals as they pop out of the holes!',
+    whackScore: 'Score',
+    whackTime: 'Time',
+    whackGameOver: 'Game Over',
+    whackPlayAgain: 'Play',
     pianoTitle: 'Piano Game',
     pianoTapToStart: 'Tap to Play',
     pianoScore: 'Score',
@@ -183,6 +195,12 @@ export const translations: Record<Lang, Dict> = {
     memoryMoves: 'Nước đi',
     memoryWin: 'Bạn đã tìm thấy tất cả! 🎉',
     memoryPlayAgain: 'Chơi lại',
+    whackTitle: 'Đánh chuột',
+    whackHint: 'Chạm vào động vật khi chúng chui ra khỏi hang!',
+    whackScore: 'Điểm',
+    whackTime: 'Thời gian',
+    whackGameOver: 'Hết cuộc chơi',
+    whackPlayAgain: 'Chơi',
     pianoTitle: 'Trò chơi Piano',
     pianoTapToStart: 'Chạm để chơi',
     pianoScore: 'Điểm',

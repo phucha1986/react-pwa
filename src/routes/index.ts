@@ -1,5 +1,6 @@
 import AddTaskIcon from '@mui/icons-material/AddTask';
 import BugReportIcon from '@mui/icons-material/BugReport';
+import GavelIcon from '@mui/icons-material/Gavel';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import HomeIcon from '@mui/icons-material/Home';
 import PaletteIcon from '@mui/icons-material/Palette';
@@ -53,6 +54,12 @@ const routes: Routes = [
     path: '/ColoringGame',
     title: 'Coloring',
     icon: PaletteIcon,
+  },
+  {
+    component: asyncComponentLoader(() => import('@/pages/WhackAMole')),
+    path: '/WhackAMole',
+    title: 'Whack-a-Mole',
+    icon: GavelIcon,
   },
   {
     component: asyncComponentLoader(() => import('@/pages/Page3')),
