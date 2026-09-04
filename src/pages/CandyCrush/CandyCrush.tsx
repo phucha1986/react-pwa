@@ -260,6 +260,7 @@ export default function CandyCrush() {
       // Runs of 5+ leave a color bomb; runs of 4 leave a row/column special.
       const sortedRuns = [...runs].sort((a, b) => b.len - a.len);
       for (const run of sortedRuns) {
+        if (run.len < 4) continue;
         const pos = runCenter(run);
         if (isSpecialType(next[pos.r][pos.c])) continue;
         next[pos.r][pos.c] = run.len >= 5 ? BOMB : SPECIAL;
