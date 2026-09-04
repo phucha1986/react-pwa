@@ -1,4 +1,10 @@
-import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
+import {
+  type PointerEvent as ReactPointerEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import { Box, Button, Typography } from '@mui/material';
 
@@ -71,7 +77,10 @@ function runCenter(run: Run): Cell {
 }
 
 /** Removes matched candies, drops survivors down, and refills the top with new candies. */
-function collapse(board: number[][], matched: Set<string>): { board: number[][]; dropped: Set<string> } {
+function collapse(
+  board: number[][],
+  matched: Set<string>,
+): { board: number[][]; dropped: Set<string> } {
   const next = board.map((row) => [...row]);
   const dropped = new Set<string>();
   for (let c = 0; c < SIZE; c++) {
@@ -155,11 +164,20 @@ export default function CandyCrush() {
   const [dragTarget, setDragTarget] = useState<Cell | null>(null);
   const [popping, setPopping] = useState<Set<string>>(() => new Set());
   const [dropping, setDropping] = useState<Set<string>>(() => new Set());
-  const [swapAnim, setSwapAnim] = useState<{ cells: Record<string, { dx: string; dy: string }>; name: string } | null>(null);
+  const [swapAnim, setSwapAnim] = useState<{
+    cells: Record<string, { dx: string; dy: string }>;
+    name: string;
+  } | null>(null);
   const [score, setScore] = useState(0);
   const [movesLeft, setMovesLeft] = useState(START_MOVES);
   const busyRef = useRef(false);
-  const dragRef = useRef<{ r: number; c: number; x: number; y: number; target: Cell | null } | null>(null);
+  const dragRef = useRef<{
+    r: number;
+    c: number;
+    x: number;
+    y: number;
+    target: Cell | null;
+  } | null>(null);
   const boardAreaRef = useRef<HTMLDivElement>(null);
   const [boardSize, setBoardSize] = useState(0);
 
@@ -196,7 +214,7 @@ export default function CandyCrush() {
   0%, 100% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(255, 215, 0, 0.8)); }
   50% { transform: scale(1.18); filter: drop-shadow(0 0 10px rgba(255, 215, 0, 1)); }
 }`,
-    []
+    [],
   );
 
   const startGame = () => {
@@ -214,7 +232,7 @@ export default function CandyCrush() {
     setPhase('playing');
   };
 
-  const resolveCascades = async (start: number[], moves: number, baseScore: number) => {
+  const resolveCascades = async (start: number[][], moves: number, baseScore: number) => {
     let current = start;
     let chain = 0;
     let gained = 0;
@@ -449,7 +467,12 @@ export default function CandyCrush() {
           <Typography variant="caption" color="#999" sx={{ display: 'block', lineHeight: 1 }}>
             {t.candyScore}
           </Typography>
-          <Typography variant="subtitle1" fontWeight="bold" color="#E64980" sx={{ lineHeight: 1.2 }}>
+          <Typography
+            variant="subtitle1"
+            fontWeight="bold"
+            color="#E64980"
+            sx={{ lineHeight: 1.2 }}
+          >
             {score}
           </Typography>
         </Box>
@@ -467,7 +490,12 @@ export default function CandyCrush() {
           <Typography variant="caption" color="#999" sx={{ display: 'block', lineHeight: 1 }}>
             {t.candyMoves}
           </Typography>
-          <Typography variant="subtitle1" fontWeight="bold" color="#7048E8" sx={{ lineHeight: 1.2 }}>
+          <Typography
+            variant="subtitle1"
+            fontWeight="bold"
+            color="#7048E8"
+            sx={{ lineHeight: 1.2 }}
+          >
             {movesLeft}
           </Typography>
         </Box>
@@ -532,7 +560,13 @@ export default function CandyCrush() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontSize: boardSize ? Math.round(boardSize * 0.11) : 40,
-                    bgcolor: isDragTarget ? '#fff' : isSelected ? '#fff' : isSpecial ? '#FFD700' : CANDY_COLORS[type],
+                    bgcolor: isDragTarget
+                      ? '#fff'
+                      : isSelected
+                        ? '#fff'
+                        : isSpecial
+                          ? '#FFD700'
+                          : CANDY_COLORS[type],
                     borderRadius: 1.5,
                     cursor: 'pointer',
                     outline: isHeld || isDragTarget || isSelected ? '3px solid #E64980' : 'none',
@@ -541,7 +575,9 @@ export default function CandyCrush() {
                     zIndex: isHeld ? 2 : 1,
                     touchAction: 'none',
                     userSelect: 'none',
-                    ...(swap ? ({ '--dx': swap.dx, '--dy': swap.dy } as Record<string, string>) : {}),
+                    ...(swap
+                      ? ({ '--dx': swap.dx, '--dy': swap.dy } as Record<string, string>)
+                      : {}),
                     animation: popping.has(k)
                       ? 'candyPop 0.3s ease-in forwards'
                       : dropping.has(k)
@@ -556,7 +592,7 @@ export default function CandyCrush() {
                   {isSpecial ? SPECIAL_EMOJI : CANDIES[type]}
                 </Box>
               );
-            })
+            }),
           )}
         </Box>
       </Box>
