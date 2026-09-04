@@ -57,6 +57,13 @@ export interface Dict {
   coloringRocket: string;
   coloringTurtle: string;
   coloringBoat: string;
+  candyTitle: string;
+  candyHint: string;
+  candyScore: string;
+  candyMoves: string;
+  candyPlay: string;
+  candyGameOver: string;
+  candyPlayAgain: string;
 }
 
 export const translations: Record<Lang, Dict> = {
@@ -146,6 +153,13 @@ export const translations: Record<Lang, Dict> = {
     coloringRocket: 'Rocket',
     coloringTurtle: 'Turtle',
     coloringBoat: 'Boat',
+    candyTitle: 'Candy Crush',
+    candyHint: 'Swap two adjacent candies to match 3 or more of a kind!',
+    candyScore: 'Score',
+    candyMoves: 'Moves',
+    candyPlay: 'Play',
+    candyGameOver: 'Game Over',
+    candyPlayAgain: 'Play Again',
   },
   vi: {
     question: (word) => `Con nào là ${word}?`,
@@ -233,6 +247,13 @@ export const translations: Record<Lang, Dict> = {
     coloringRocket: 'Tên lửa',
     coloringTurtle: 'Con rùa',
     coloringBoat: 'Con thuyền',
+    candyTitle: 'Candy Crush',
+    candyHint: 'Đổi chỗ hai kẹo kề nhau để ghép 3 hoặc nhiều hơn cùng loại!',
+    candyScore: 'Điểm',
+    candyMoves: 'Nước đi',
+    candyPlay: 'Chơi',
+    candyGameOver: 'Hết cuộc chơi',
+    candyPlayAgain: 'Chơi lại',
   },
 };
 

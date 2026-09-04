@@ -28,10 +28,38 @@ function tone(freq: number, start: number, dur: number, type: OscillatorType, vo
   osc.stop(now + dur + 0.05);
 }
 
-/** Short "bonk" when a mole is whacked. */
+/** Cheerful "boing" when the rabbit is whacked. */
 export function playWhack() {
-  tone(180, 0, 0.09, 'square', 0.25);
-  tone(90, 0.02, 0.12, 'sine', 0.3);
+  const ac = getCtx();
+  const now = ac.currentTime;
+
+  // Quick soft "pop" at the start.
+  const popGain = ac.createGain();
+  popGain.gain.setValueAtTime(0.0001, now);
+  popGain.gain.exponentialRampToValueAtTime(0.2, now + 0.008);
+  popGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.07);
+  popGain.connect(ac.destination);
+  const pop = ac.createOscillator();
+  pop.type = 'sine';
+  pop.frequency.setValueAtTime(520, now);
+  pop.connect(popGain);
+  pop.start(now);
+  pop.stop(now + 0.1);
+
+  // Rising "boing" sweep.
+  const gain = ac.createGain();
+  gain.gain.setValueAtTime(0.0001, now + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.28, now + 0.05);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.32);
+  gain.connect(ac.destination);
+  const osc = ac.createOscillator();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(280, now + 0.02);
+  osc.frequency.exponentialRampToValueAtTime(880, now + 0.16);
+  osc.frequency.exponentialRampToValueAtTime(520, now + 0.3);
+  osc.connect(gain);
+  osc.start(now + 0.02);
+  osc.stop(now + 0.35);
 }
 
 /** Descending tones when time runs out. */

@@ -4,9 +4,6 @@ import { Box, Button, Container, Stack, Typography } from '@mui/material';
 
 import { useLanguage } from '@/i18n/useLanguage';
 
-import catIcon from '../AnimalGame/logos/cat.png';
-import dogIcon from '../AnimalGame/logos/dog.png';
-import frogIcon from '../AnimalGame/logos/frog.png';
 import rabbitIcon from '../AnimalGame/logos/rabbit.png';
 import { playGameOver, playWhack, playWin } from './sound';
 
@@ -14,7 +11,7 @@ const GAME_SECONDS = 30;
 const SPAWN_MS = 650;
 const HOLES = 9;
 
-const MOLES = [catIcon, dogIcon, frogIcon, rabbitIcon];
+const MOLES = [rabbitIcon];
 
 type Phase = 'idle' | 'playing' | 'over';
 
@@ -83,7 +80,7 @@ export default function WhackAMole() {
     whackTimer.current = window.setTimeout(() => {
       setMole(null);
       setWhacked(false);
-    }, 180);
+    }, 500);
   };
 
   const gridStyle = useMemo(
@@ -98,6 +95,18 @@ export default function WhackAMole() {
     [],
   );
 
+  const whackKeyframes = useMemo(
+    () => `
+@keyframes rabbitWhack {
+  0%   { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; }
+  25%  { transform: translateY(-38%) scale(1.15, 0.9) rotate(-14deg); opacity: 1; }
+  50%  { transform: translateY(0) scale(0.9, 1.1) rotate(10deg); opacity: 1; }
+  70%  { transform: translateY(-18%) scale(1.05) rotate(-6deg); opacity: 1; }
+  100% { transform: translateY(30%) scale(0.7) rotate(0deg); opacity: 0; }
+}`,
+    [],
+  );
+
   return (
     <Container
       maxWidth="md"
@@ -109,6 +118,7 @@ export default function WhackAMole() {
         flexDirection: 'column',
       }}
     >
+      <style>{whackKeyframes}</style>
       <Stack spacing={1} alignItems="center" sx={{ mb: 2 }}>
         <Typography variant="h4" sx={{ fontWeight: 800, color: '#FF922B' }}>
           {t.whackTitle}
@@ -189,12 +199,9 @@ export default function WhackAMole() {
                   src={mole.src}
                   alt=""
                   sx={{
-                    width: '70%',
-                    transform: whacked
-                      ? 'translateY(15%) scale(0.85) rotate(-8deg)'
-                      : 'translateY(0%)',
-                    opacity: whacked ? 0.8 : 1,
-                    transition: 'transform 0.18s ease-out, opacity 0.18s',
+                    width: '95%',
+                    transform: 'translateY(0%)',
+                    animation: whacked ? 'rabbitWhack 0.5s ease-out forwards' : 'none',
                     userSelect: 'none',
                     pointerEvents: 'none',
                   }}

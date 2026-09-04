@@ -10,6 +10,7 @@ import elephantIcon from '../AnimalGame/logos/elephant.png';
 import lionIcon from '../AnimalGame/logos/lion.png';
 import rabbitIcon from '../AnimalGame/logos/rabbit.png';
 import turtleIcon from '../AnimalGame/logos/turtle.png';
+import candyIcon from './logos/candy.svg';
 import coloringIcon from './logos/coloring.svg';
 import pianoIcon from './logos/piano.svg';
 
@@ -28,6 +29,7 @@ const menuItems: MenuItem[] = [
   { label: 'Coloring', image: coloringIcon, to: '/ColoringGame', bg: '#FFA94D' },
   { images: [rabbitIcon, turtleIcon], to: '/MemoryMatch', bg: '#A0E7E5', labelKey: 'memoryTitle' },
   { images: [catIcon, dogIcon], to: '/WhackAMole', bg: '#FFD8A8', labelKey: 'whackTitle' },
+  { label: 'Candy Crush', image: candyIcon, to: '/CandyCrush', bg: '#FFC2D4' },
 ];
 
 export default function Welcome() {

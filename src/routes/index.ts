@@ -1,5 +1,6 @@
 import AddTaskIcon from '@mui/icons-material/AddTask';
 import BugReportIcon from '@mui/icons-material/BugReport';
+import CookieIcon from '@mui/icons-material/Cookie';
 import GavelIcon from '@mui/icons-material/Gavel';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import HomeIcon from '@mui/icons-material/Home';
@@ -60,6 +61,12 @@ const routes: Routes = [
     path: '/WhackAMole',
     title: 'Whack-a-Mole',
     icon: GavelIcon,
+  },
+  {
+    component: asyncComponentLoader(() => import('@/pages/CandyCrush')),
+    path: '/CandyCrush',
+    title: 'Candy Crush',
+    icon: CookieIcon,
   },
   {
     component: asyncComponentLoader(() => import('@/pages/Page3')),

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- left wrapper -->
+  <path d="M28 50 L8 36 L14 50 L8 64 Z" fill="#FF6B9D"/>
+  <!-- right wrapper -->
+  <path d="M72 50 L92 36 L86 50 L92 64 Z" fill="#FF6B9D"/>
+  <!-- candy body -->
+  <circle cx="50" cy="50" r="26" fill="#FF8FB1"/>
+  <!-- stripes -->
+  <path d="M38 28 A26 26 0 0 1 50 24 L50 76 A26 26 0 0 1 38 72 Z" fill="#FFFFFF" opacity="0.55"/>
+  <path d="M62 28 A26 26 0 0 0 50 24 L50 76 A26 26 0 0 0 62 72 Z" fill="#FFFFFF" opacity="0.55"/>
+  <!-- shine -->
+  <ellipse cx="41" cy="39" rx="6" ry="4" fill="#FFFFFF" opacity="0.8" transform="rotate(-30 41 39)"/>
+</svg>
