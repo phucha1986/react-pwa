@@ -20,12 +20,18 @@ const START_MOVES = 25;
 /** Board value for a special candy: detonates its whole row and column when swapped. */
 const SPECIAL = 6;
 const SPECIAL_EMOJI = '💣';
+/** Board value for a color bomb: clears all candies of the type it is swapped with. */
+const BOMB = 7;
+const BOMB_EMOJI = '🌈';
 
 type Phase = 'idle' | 'playing' | 'over';
 type Cell = { r: number; c: number };
 type Run = { r: number; c: number; len: number; horizontal: boolean };
 
 const cellKey = (r: number, c: number) => `${r},${c}`;
+
+/** True for special candy types (row/column special or color bomb). */
+const isSpecialType = (v: number) => v === SPECIAL || v === BOMB;
 
 function randomType(): number {
   return Math.floor(Math.random() * CANDIES.length);
@@ -37,7 +43,7 @@ function findRuns(board: number[][]): Run[] {
   for (let r = 0; r < SIZE; r++) {
     let run = 1;
     for (let c = 1; c <= SIZE; c++) {
-      if (c < SIZE && board[r][c] !== SPECIAL && board[r][c] === board[r][c - 1]) {
+      if (c < SIZE && !isSpecialType(board[r][c]) && board[r][c] === board[r][c - 1]) {
         run += 1;
       } else {
         if (run >= 3) runs.push({ r, c: c - run, len: run, horizontal: true });
@@ -48,7 +54,7 @@ function findRuns(board: number[][]): Run[] {
   for (let c = 0; c < SIZE; c++) {
     let run = 1;
     for (let r = 1; r <= SIZE; r++) {
-      if (r < SIZE && board[r][c] !== SPECIAL && board[r][c] === board[r - 1][c]) {
+      if (r < SIZE && !isSpecialType(board[r][c]) && board[r][c] === board[r - 1][c]) {
         run += 1;
       } else {
         if (run >= 3) runs.push({ r: r - run, c, len: run, horizontal: false });
@@ -107,14 +113,14 @@ function hasValidMove(board: number[][]): boolean {
   let hasNormal = false;
   for (let r = 0; r < SIZE; r++) {
     for (let c = 0; c < SIZE; c++) {
-      if (board[r][c] === SPECIAL) hasSpecial = true;
+      if (isSpecialType(board[r][c])) hasSpecial = true;
       else hasNormal = true;
     }
   }
   if (hasSpecial && hasNormal) return true;
   for (let r = 0; r < SIZE; r++) {
     for (let c = 0; c < SIZE; c++) {
-      if (board[r][c] === SPECIAL) continue;
+      if (isSpecialType(board[r][c])) continue;
       for (const [dr, dc] of [
         [0, 1],
         [1, 0],
@@ -122,7 +128,7 @@ function hasValidMove(board: number[][]): boolean {
         const r2 = r + dr;
         const c2 = c + dc;
         if (r2 >= SIZE || c2 >= SIZE) continue;
-        if (board[r2][c2] === SPECIAL) continue;
+        if (isSpecialType(board[r2][c2])) continue;
         const copy = board.map((row) => [...row]);
         [copy[r][c], copy[r2][c2]] = [copy[r2][c2], copy[r][c]];
         if (findMatches(copy).size > 0) return true;
@@ -251,12 +257,12 @@ export default function CandyCrush() {
       setPopping(matched);
       await sleep(320);
       const { board: next, dropped } = collapse(current, matched);
-      // Runs of 4+ leave a special candy at the center of the run.
-      for (const run of runs) {
-        if (run.len >= 4) {
-          const pos = runCenter(run);
-          next[pos.r][pos.c] = SPECIAL;
-        }
+      // Runs of 5+ leave a color bomb; runs of 4 leave a row/column special.
+      const sortedRuns = [...runs].sort((a, b) => b.len - a.len);
+      for (const run of sortedRuns) {
+        const pos = runCenter(run);
+        if (isSpecialType(next[pos.r][pos.c])) continue;
+        next[pos.r][pos.c] = run.len >= 5 ? BOMB : SPECIAL;
       }
       setPopping(new Set());
       setDropping(dropped);
@@ -285,6 +291,7 @@ export default function CandyCrush() {
     const aType = original[a.r][a.c];
     const bType = original[b.r][b.c];
     const specialSwap = aType === SPECIAL || bType === SPECIAL;
+    const bombSwap = aType === BOMB || bType === BOMB;
     const swapped = board.map((row) => [...row]);
     [swapped[a.r][a.c], swapped[b.r][b.c]] = [swapped[b.r][b.c], swapped[a.r][a.c]];
     playSwap();
@@ -301,6 +308,43 @@ export default function CandyCrush() {
     setSwapAnim({ cells: swapCells, name: 'candySwap' });
     setBoard(swapped);
     await sleep(220);
+    if (bombSwap) {
+      // The color bomb detonates: it clears all candies of the type it was swapped with.
+      setSwapAnim(null);
+      const bombPos = aType === BOMB ? b : a;
+      const otherPos = aType === BOMB ? a : b;
+      const targetType = swapped[otherPos.r][otherPos.c];
+      if (isSpecialType(targetType)) {
+        // A bomb can only be swapped with a normal candy; swap back.
+        setSwapAnim({ cells: swapCells, name: 'candySwapBack' });
+        setBoard(original);
+        await sleep(220);
+        setSwapAnim(null);
+        busyRef.current = false;
+        return;
+      }
+      const moves = movesLeft - 1;
+      setMovesLeft(moves);
+      const boom = new Set<string>();
+      for (let r = 0; r < SIZE; r++) {
+        for (let c = 0; c < SIZE; c++) {
+          if (swapped[r][c] === targetType) boom.add(cellKey(r, c));
+        }
+      }
+      boom.add(cellKey(bombPos.r, bombPos.c));
+      playBoom();
+      setPopping(boom);
+      await sleep(320);
+      const { board: next, dropped } = collapse(swapped, boom);
+      setPopping(new Set());
+      setDropping(dropped);
+      setBoard(next);
+      await sleep(320);
+      setDropping(new Set());
+      await resolveCascades(next, moves, score + boom.size * 10);
+      busyRef.current = false;
+      return;
+    }
     if (specialSwap) {
       // The special candy detonates: it clears its whole row and column.
       setSwapAnim(null);
@@ -351,8 +395,8 @@ export default function CandyCrush() {
       setSelected(null);
       return;
     }
-    const selSpecial = board[selected.r][selected.c] === SPECIAL;
-    const clickSpecial = board[r][c] === SPECIAL;
+    const selSpecial = isSpecialType(board[selected.r][selected.c]);
+    const clickSpecial = isSpecialType(board[r][c]);
     if (selSpecial !== clickSpecial) {
       // A special candy can be swapped with any normal candy on the board.
       void attemptSwap(selected, { r, c });
@@ -545,6 +589,7 @@ export default function CandyCrush() {
               const isHeld = held?.r === r && held?.c === c;
               const isDragTarget = dragTarget?.r === r && dragTarget?.c === c;
               const isSpecial = type === SPECIAL;
+              const isBomb = type === BOMB;
               const swap = swapAnim?.cells[k];
               return (
                 <Box
@@ -566,7 +611,9 @@ export default function CandyCrush() {
                         ? '#fff'
                         : isSpecial
                           ? '#FFD700'
-                          : CANDY_COLORS[type],
+                          : isBomb
+                            ? '#B983FF'
+                            : CANDY_COLORS[type],
                     borderRadius: 1.5,
                     cursor: 'pointer',
                     outline: isHeld || isDragTarget || isSelected ? '3px solid #E64980' : 'none',
@@ -584,12 +631,12 @@ export default function CandyCrush() {
                         ? 'candyDrop 0.3s ease-out'
                         : swap
                           ? `${swapAnim.name} 0.22s ease-in-out`
-                          : isSpecial
+                          : isSpecial || isBomb
                             ? 'candySpecial 1.2s ease-in-out infinite'
                             : 'none',
                   }}
                 >
-                  {isSpecial ? SPECIAL_EMOJI : CANDIES[type]}
+                  {isSpecial ? SPECIAL_EMOJI : isBomb ? BOMB_EMOJI : CANDIES[type]}
                 </Box>
               );
             }),
