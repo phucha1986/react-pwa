@@ -7,7 +7,7 @@ import { Box, Button, IconButton, Stack, Typography } from '@mui/material';
 
 import { useLanguage } from '@/i18n/useLanguage';
 
-import { playNote } from './sound';
+import { getAudioContext, playNote, playPadChord as playPad } from './sound';
 
 const KEYS = [
   { note: 'C', freq: 261.63, color: '#FF6B6B' },
@@ -24,48 +24,166 @@ const KEYS = [
 const KEYBOARD_MAP: Record<string, number> = { a: 0, s: 1, d: 2, f: 3, g: 4, h: 5, j: 6, k: 7 };
 
 // Songs the kid can pick from the carousel. Lanes map to KEYS (C D E F G A B C).
+// Each melody step carries a duration in 1/16-note units, giving the music
+// real rhythm (dotted eighths, half notes, whole notes) instead of a flat
+// metronome. `lane: -1` is a rest (a breath between phrases).
+type Step = { lane: number; len: number };
 type Song = {
   id: string;
   photo: string;
   nameKey: 'songHappyBirthday' | 'songTwinkleTwinkle' | 'songMaryLamb' | 'songJingleBells';
-  notes: number[];
+  tempo: number; // beats per minute
+  key: 'C' | 'G' | 'F'; // root for the harmony accompaniment
+  steps: Step[];
 };
+
+const s = (lane: number, len = 4): Step => ({ lane, len });
 
 const SONGS: Song[] = [
   {
     id: 'happy-birthday',
     photo: '🎂',
     nameKey: 'songHappyBirthday',
-    notes: [0, 0, 1, 0, 3, 2, 0, 0, 1, 0, 4, 3, 0, 0, 7, 5, 3, 2, 4, 4, 3, 1, 3, 2],
+    tempo: 100,
+    key: 'F',
+    steps: [
+      s(0, 3),
+      s(0, 1),
+      s(1),
+      s(0),
+      s(3),
+      s(2, 6),
+      s(0, 3),
+      s(0, 1),
+      s(1),
+      s(0),
+      s(4),
+      s(3, 6),
+      s(0, 3),
+      s(0, 1),
+      s(7),
+      s(5),
+      s(3),
+      s(2),
+      s(4, 3),
+      s(4, 1),
+      s(3),
+      s(1),
+      s(3),
+      s(2, 8),
+    ],
   },
   {
     id: 'twinkle-twinkle',
     photo: '⭐',
     nameKey: 'songTwinkleTwinkle',
-    notes: [
-      0, 0, 4, 4, 5, 5, 4, 3, 3, 2, 2, 1, 1, 0, 4, 4, 3, 3, 2, 2, 1, 0, 0, 4, 4, 5, 5, 4, 3, 3, 2,
-      2, 1, 1, 0,
+    tempo: 112,
+    key: 'C',
+    steps: [
+      s(0, 8),
+      s(0, 8),
+      s(4, 8),
+      s(4, 8),
+      s(5, 8),
+      s(5, 8),
+      s(4, 16),
+      s(3, 8),
+      s(3, 8),
+      s(2, 8),
+      s(2, 8),
+      s(1, 8),
+      s(1, 8),
+      s(0, 16),
+      s(4, 8),
+      s(4, 8),
+      s(3, 8),
+      s(3, 8),
+      s(2, 8),
+      s(2, 8),
+      s(1, 16),
+      s(1, 8),
+      s(1, 8),
+      s(0, 16),
     ],
   },
   {
     id: 'mary-lamb',
     photo: '🐑',
     nameKey: 'songMaryLamb',
-    notes: [4, 3, 2, 3, 4, 4, 4, 3, 3, 3, 4, 5, 5, 4, 3, 2, 1, 2, 3, 3],
+    tempo: 104,
+    key: 'G',
+    steps: [
+      s(4),
+      s(3),
+      s(2),
+      s(3),
+      s(4),
+      s(4),
+      s(4, 8),
+      s(3),
+      s(3),
+      s(3, 8),
+      s(4),
+      s(5),
+      s(5, 8),
+      s(4),
+      s(3),
+      s(2),
+      s(3),
+      s(4),
+      s(4, 4),
+      s(4, 4),
+      s(3),
+      s(3, 8),
+      s(2, 8),
+    ],
   },
   {
     id: 'jingle-bells',
     photo: '🔔',
     nameKey: 'songJingleBells',
-    notes: [0, 0, 0, 2, 2, 0, 0, 4, 4, 4, 3, 3, 2, 2, 1, 1, 0],
+    tempo: 120,
+    key: 'C',
+    steps: [
+      s(0),
+      s(0),
+      s(0, 8),
+      s(2),
+      s(2),
+      s(0, 8),
+      s(4),
+      s(4),
+      s(4, 8),
+      s(3),
+      s(3),
+      s(3, 12),
+      s(2, 4),
+      s(2, 4),
+      s(2, 4),
+      s(1),
+      s(1, 4),
+      s(2),
+      s(4),
+      s(3),
+      s(2),
+      s(0, 8),
+      s(0, 8),
+    ],
   },
 ];
+
+// Diatonic triad chords (as lanes) for the auto-play accompaniment, in each
+// song's key. Only the I chord is used for now (a steady, safe foundation).
+const CHORDS: Record<'C' | 'G' | 'F', Record<string, number[]>> = {
+  C: { I: [0, 4, 7], IV: [3, 6, 7], V: [5, 7, 0], vi: [5, 0, 3] },
+  G: { I: [4, 7, 0], IV: [7, 0, 3], V: [5, 7, 4], vi: [0, 3, 5] },
+  F: { I: [3, 6, 0], IV: [6, 0, 3], V: [0, 3, 6], vi: [5, 0, 4] },
+};
 
 const BAR_HEIGHT = 56;
 const PIANO_RATIO = 0.42; // piano takes 42% of the play height
 const ZONE_RATIO = 0.18; // hit zone height as a fraction of the play area
 const BOTTOM_BAR_HEIGHT = 76; // keep the piano above the global bottom bar
-const NOTE_INTERVAL = 500; // ms per note — shared by auto-play and bar spawning
 const MAX_ACTIVE_BARS = 4;
 
 type Bar = { id: number; lane: number; y: number };
@@ -92,8 +210,9 @@ export default function PianoGame() {
   const rafRef = useRef(0);
   const lastTimeRef = useRef(0);
   const areaRef = useRef<HTMLDivElement>(null);
-  const songNotesRef = useRef<number[] | null>(null);
+  const songRef = useRef<Song | null>(null);
   const songIndexRef = useRef(0);
+  const padRef = useRef<{ gains: GainNode[]; oscs: AudioScheduledSourceNode[] } | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   const autoPlayTimerRef = useRef<number | null>(null);
   const autoPlayIndexRef = useRef(0);
@@ -111,41 +230,71 @@ export default function PianoGame() {
     };
   }, []);
 
+  // Fades out (and eventually disconnects) the current pad chord.
+  const stopPad = useCallback(() => {
+    const pad = padRef.current;
+    if (!pad) return;
+    padRef.current = null;
+    const now = getAudioContext().currentTime;
+    for (const g of pad.gains) g.gain.setTargetAtTime(0.0001, now, 0.12);
+    window.setTimeout(() => pad.oscs.forEach((n) => n.disconnect()), 700);
+  }, []);
+
+  // Plays a soft, sustained chord (an octave low) through the shared
+  // master/reverb bus. Used as the auto-play accompaniment so the song
+  // sounds fuller than melody-only.
+  const playPadChord = useCallback((lanes: number[], dur = 1.8) => {
+    const freqs = lanes.map((l) => KEYS[l].freq / 2);
+    padRef.current = playPad(freqs, dur, 0, 0.6);
+  }, []);
+
   const stopAutoPlay = useCallback(() => {
     if (autoPlayTimerRef.current !== null) {
       window.clearTimeout(autoPlayTimerRef.current);
       autoPlayTimerRef.current = null;
     }
     setAutoPlaying(false);
-  }, []);
+    stopPad();
+  }, [stopPad]);
 
-  // Play the chosen song hands-free (loops until stopped) so kids can just listen.
+  // Play the chosen song hands-free (loops until stopped) so kids can just
+  // listen. Steps are walked with their real durations (in 1/16-note units),
+  // so the melody has proper rhythm instead of a flat metronome.
   const startAutoPlay = useCallback(() => {
     if (autoPlayTimerRef.current !== null) return;
-    const notes = songNotesRef.current ?? SONGS[0].notes;
+    const song = songRef.current ?? SONGS[0];
     autoPlayIndexRef.current = 0;
     setAutoPlaying(true);
+
+    // Soft pad chord underneath the melody.
+    playPadChord(CHORDS[song.key].I);
+
     const step = () => {
-      const lane = notes[autoPlayIndexRef.current % notes.length];
+      const idx = autoPlayIndexRef.current % song.steps.length;
+      const cur = song.steps[idx];
+      const ms = (song.tempo / 60 / 4) * cur.len * 1000; // 16th-note ms
+      if (cur.lane >= 0) {
+        playNote(KEYS[cur.lane].freq, 0, 0.85);
+        setPops((p) => ({ ...p, [cur.lane]: performance.now() }));
+      }
       autoPlayIndexRef.current += 1;
-      playNote(KEYS[lane].freq);
-      setPops((p) => ({ ...p, [lane]: performance.now() }));
-      autoPlayTimerRef.current = window.setTimeout(step, NOTE_INTERVAL);
+      autoPlayTimerRef.current = window.setTimeout(step, ms);
     };
     step();
-  }, []);
+  }, [playPadChord]);
 
   const toggleAutoPlay = useCallback(() => {
     if (autoPlayTimerRef.current !== null) stopAutoPlay();
     else startAutoPlay();
   }, [startAutoPlay, stopAutoPlay]);
 
-  // Stop auto-play when the page unmounts.
+  // Stop auto-play (and its pad) when the page unmounts.
   useEffect(
     () => () => {
       if (autoPlayTimerRef.current !== null) window.clearTimeout(autoPlayTimerRef.current);
+      stopPad();
     },
-    [],
+    [stopPad],
   );
 
   const start = useCallback(
@@ -154,9 +303,7 @@ export default function PianoGame() {
       barsRef.current = [];
       scoreRef.current = 0;
       setScore(0);
-      songNotesRef.current = song.notes;
-      songIndexRef.current = 0;
-      lastSpawnRef.current = performance.now();
+      songRef.current = song;
       lastTimeRef.current = performance.now();
       setPhase('playing');
     },
@@ -178,21 +325,27 @@ export default function PianoGame() {
         for (const bar of barsRef.current) bar.y += speed * dt;
         barsRef.current = barsRef.current.filter((b) => b.y < h + BAR_HEIGHT);
 
-        const spawnEvery = NOTE_INTERVAL;
+        // Spawn the next melody step as a bar. Each step carries its own
+        // duration (in 1/16-note units), so the falling bars follow the song's
+        // real rhythm. A rest (lane -1) just waits without spawning.
+        const song = songRef.current;
+        const spawnEvery = song
+          ? (song.tempo / 60 / 4) * song.steps[songIndexRef.current % song.steps.length].len * 1000
+          : 500;
         if (now - lastSpawnRef.current > spawnEvery && barsRef.current.length < MAX_ACTIVE_BARS) {
           lastSpawnRef.current = now;
-          const notes = songNotesRef.current;
           let lane: number;
-          if (notes && notes.length > 0) {
-            // Follow the chosen song's melody (loops when it ends).
-            lane = notes[songIndexRef.current % notes.length];
+          if (song) {
+            lane = song.steps[songIndexRef.current % song.steps.length].lane;
             songIndexRef.current += 1;
           } else {
             lane = Math.floor(Math.random() * KEYS.length);
             if (lane === lastLaneRef.current) lane = (lane + 1) % KEYS.length;
           }
-          lastLaneRef.current = lane;
-          barsRef.current.push({ id: nextId++, lane, y: -BAR_HEIGHT });
+          if (lane >= 0) {
+            lastLaneRef.current = lane;
+            barsRef.current.push({ id: nextId++, lane, y: -BAR_HEIGHT });
+          }
         }
       }
       setTick((v) => v + 1);
