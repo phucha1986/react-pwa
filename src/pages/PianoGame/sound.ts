@@ -1,191 +1,121 @@
 // Audio engine for the piano game.
-// Builds a warm, piano-like tone from a harmonic stack with per-partial decay,
-// a soft hammer-strike transient, and a generated reverb tail. Everything is
-// routed through a gentle compressor so overlapping notes never clip.
+// Creates more realistic piano-like sounds using multiple oscillators and filters
 
-type Ctor = typeof AudioContext;
-
-let ctx: AudioContext | null = null;
-let master: GainNode | null = null;
-let dry: GainNode | null = null;
-let wet: GainNode | null = null;
-
-/** Returns the shared AudioContext, creating (and resuming) it if needed. */
-export function getAudioContext(): AudioContext {
-  if (!ctx) {
-    const AC: Ctor =
-      window.AudioContext || (window as unknown as { webkitAudioContext: Ctor }).webkitAudioContext;
-    ctx = new AC();
+// Audio context (created on first use, so it's safe to import anywhere).
+let audioContext: AudioContext | null = null;
+export const getAudioContext = () => {
+  if (!audioContext) {
+    // Create a new audio context on user interaction (required by browsers).
+    const onUserGesture = () => {
+      audioContext = new window.AudioContext();
+      window.removeEventListener('click', onUserGesture);
+      window.removeEventListener('touchend', onUserGesture);
+    };
+    window.addEventListener('click', onUserGesture);
+    window.addEventListener('touchend', onUserGesture);
   }
-  if (ctx.state === 'suspended') void ctx.resume();
-  return ctx;
-}
+  return audioContext;
+};
 
-/** One-time master chain: dry/wet buses -> compressor (soft limiter) -> out. */
-function ensureMaster(ac: AudioContext) {
-  if (master) return;
+// Play a single note with a more realistic piano-like sound
+export const playNote = (freq: number, delay = 0, vol = 1): void => {
+  const ctx = getAudioContext();
+  if (!ctx) return;
 
-  const comp = ac.createDynamicsCompressor();
-  comp.threshold.value = -18;
-  comp.knee.value = 20;
-  comp.ratio.value = 12;
-  comp.attack.value = 0.004;
-  comp.release.value = 0.25;
+  // Create multiple oscillators to simulate a more complex piano sound
+  const osc1 = ctx.createOscillator();
+  const osc2 = ctx.createOscillator();
+  const osc3 = ctx.createOscillator();
 
-  master = ac.createGain();
-  master.gain.value = 0.85;
+  const gain = ctx.createGain();
+  const filter = ctx.createBiquadFilter();
 
-  dry = ac.createGain();
-  dry.gain.value = 0.85;
+  // Set up oscillators with different waveforms and frequencies for a richer sound
+  osc1.type = 'sine';
+  osc2.type = 'sawtooth';
+  osc3.type = 'triangle';
 
-  wet = ac.createGain();
-  wet.gain.value = 0.3;
+  // Create slight detuning to make it more natural
+  const baseFreq = freq;
+  osc1.frequency.value = baseFreq * 0.5; // Octave below
+  osc2.frequency.value = baseFreq; // Base frequency
+  osc3.frequency.value = baseFreq * 1.5; // Octave above
 
-  const reverb = ac.createConvolver();
-  reverb.buffer = makeImpulseResponse(ac, 2.4, 2.8);
+  // Add slight detuning to make it sound more natural
+  osc1.detune.value = -12; // -12 cents (slightly flat)
+  osc2.detune.value = 0;
+  osc3.detune.value = 12; // +12 cents (slightly sharp)
 
-  dry.connect(comp);
-  wet.connect(reverb);
-  reverb.connect(comp);
-  comp.connect(master);
-  master.connect(ac.destination);
-}
+  // Set up filter to simulate piano sound characteristics
+  filter.type = 'lowpass';
+  filter.frequency.value = 5000;
+  filter.Q.value = 1;
 
-/** Synthesizes a decaying-noise impulse response for a soft, warm reverb. */
-function makeImpulseResponse(ac: AudioContext, seconds: number, decay: number): AudioBuffer {
-  const rate = ac.sampleRate;
-  const len = Math.max(1, Math.floor(rate * seconds));
-  const buf = ac.createBuffer(2, len, rate);
-  for (let ch = 0; ch < 2; ch++) {
-    const data = buf.getChannelData(ch);
-    for (let i = 0; i < len; i++) {
-      const t = i / len;
-      data[i] = (Math.random() * 2 - 1) * Math.pow(1 - t, decay);
-    }
-  }
-  return buf;
-}
+  // Set up gain envelope for a more natural piano attack and decay
+  gain.gain.value = 0;
+  gain.gain.setValueAtTime(0, ctx.currentTime + delay);
+  gain.gain.linearRampToValueAtTime(vol * 0.3, ctx.currentTime + delay + 0.01); // Fast attack
+  gain.gain.linearRampToValueAtTime(vol * 0.2, ctx.currentTime + delay + 0.1); // Sustain
+  gain.gain.linearRampToValueAtTime(0, ctx.currentTime + delay + 0.5); // Release
 
-/**
- * Plays a short piano-like tone for the given frequency.
- * `when` schedules the note against the audio clock (0 = now);
- * `velocity` scales the loudness (0..1).
- */
-export function playNote(freq: number, when = 0, velocity = 0.9) {
-  const ac = getAudioContext();
-  ensureMaster(ac);
-  const t0 = ac.currentTime + when;
-  if (!dry || !wet) return;
+  // Connect the oscillators to the filter and then to the output
+  osc1.connect(filter);
+  osc2.connect(filter);
+  osc3.connect(filter);
+  filter.connect(gain);
+  gain.connect(ctx.destination);
 
-  const peak = 0.4 * velocity;
+  // Start and stop the oscillators
+  osc1.start(ctx.currentTime + delay);
+  osc2.start(ctx.currentTime + delay);
+  osc3.start(ctx.currentTime + delay);
 
-  // Per-note envelope: fast piano attack, gentle sustain, exponential tail.
-  const env = ac.createGain();
-  env.gain.setValueAtTime(0.0001, t0);
-  env.gain.exponentialRampToValueAtTime(peak, t0 + 0.008);
-  env.gain.exponentialRampToValueAtTime(peak * 0.42, t0 + 0.22);
-  env.gain.exponentialRampToValueAtTime(0.0001, t0 + 1.9);
+  osc1.stop(ctx.currentTime + delay + 0.5);
+  osc2.stop(ctx.currentTime + delay + 0.5);
+  osc3.stop(ctx.currentTime + delay + 0.5);
+};
 
-  // Gentle lowpass so the harmonics stay warm instead of harsh.
-  const lp = ac.createBiquadFilter();
-  lp.type = 'lowpass';
-  lp.frequency.value = Math.min(10000, freq * 9);
-  lp.Q.value = 0.35;
-
-  env.connect(lp);
-  lp.connect(dry);
-  lp.connect(wet);
-
-  // Hammer strike: a tiny filtered-noise burst for the initial "thock".
-  const nLen = Math.max(1, Math.floor(ac.sampleRate * 0.035));
-  const nBuf = ac.createBuffer(1, nLen, ac.sampleRate);
-  const nData = nBuf.getChannelData(0);
-  for (let i = 0; i < nLen; i++) nData[i] = (Math.random() * 2 - 1) * (1 - i / nLen);
-  const noise = ac.createBufferSource();
-  noise.buffer = nBuf;
-  const nf = ac.createBiquadFilter();
-  nf.type = 'bandpass';
-  nf.frequency.value = Math.min(9000, freq * 3.5);
-  nf.Q.value = 0.8;
-  const ng = ac.createGain();
-  ng.gain.setValueAtTime(0.5 * velocity, t0);
-  ng.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.045);
-  noise.connect(nf);
-  nf.connect(ng);
-  ng.connect(env);
-
-  // Harmonic stack — the heart of the piano timbre.
-  // Amplitudes roll off like a real piano, and a few partials are slightly
-  // detuned, which spreads them out for a richer, less synthetic sound.
-  const partials: Array<[number, number, number]> = [
-    [1, 1, 0],
-    [2, 0.45, -3],
-    [3, 0.24, 2],
-    [4, 0.14, -2],
-    [5, 0.09, 1],
-    [6, 0.06, -1],
-    [7, 0.04, 2],
-    [9, 0.025, -2],
-  ];
-
-  const stopAt = t0 + 2.1;
-  for (const [mult, amp, cents] of partials) {
-    const f = freq * mult;
-    if (f > 10000) break;
-    const osc = ac.createOscillator();
-    osc.type = 'sine';
-    osc.frequency.value = f;
-    osc.detune.value = cents;
-    const g = ac.createGain();
-    g.gain.value = amp;
-    osc.connect(g);
-    g.connect(env);
-    osc.start(t0);
-    osc.stop(stopAt);
-  }
-  noise.start(t0);
-  noise.stop(t0 + 0.05);
-}
-
-/**
- * Plays a soft, sustained chord (a pad) routed through the same master/reverb
- * bus as the notes, so it shares the piano's warmth. `when` schedules the chord
- * against the audio clock (0 = now); `duration` is how long it sustains (s);
- * `velocity` scales loudness (0..1).
- *
- * Returns the created gain nodes + oscillators so the caller can fade them out
- * and disconnect them later (e.g. when auto-play stops).
- */
-export function playPadChord(
+// Play a chord (multiple notes at once) with piano-like characteristics
+export const playPad = (
   freqs: number[],
-  duration = 1.8,
-  when = 0,
-  velocity = 0.6,
-): { gains: GainNode[]; oscs: AudioScheduledSourceNode[] } {
-  const ac = getAudioContext();
-  ensureMaster(ac);
-  const t0 = ac.currentTime + when;
+  dur = 1.8,
+  delay = 0,
+  vol = 1,
+): { gains: GainNode[]; oscs: AudioScheduledSourceNode[] } => {
+  const ctx = getAudioContext();
+  if (!ctx) return { gains: [], oscs: [] };
 
   const gains: GainNode[] = [];
   const oscs: AudioScheduledSourceNode[] = [];
-  const peak = 0.05 * velocity;
 
+  // Create a more complex chord sound with multiple oscillators
   for (const freq of freqs) {
-    const osc = ac.createOscillator();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    // Use different waveforms for the chord to make it more rich and piano-like
     osc.type = 'sine';
+
+    // Add slight detuning to make it sound more natural
     osc.frequency.value = freq;
-    const g = ac.createGain();
-    g.gain.setValueAtTime(0.0001, t0);
-    g.gain.exponentialRampToValueAtTime(peak, t0 + 0.18); // gentle attack
-    g.gain.setValueAtTime(peak, t0 + duration * 0.6); // sustain
-    g.gain.exponentialRampToValueAtTime(0.0001, t0 + duration); // release
-    osc.connect(g);
-    if (dry) g.connect(dry);
-    if (wet) g.connect(wet);
-    osc.start(t0);
-    osc.stop(t0 + duration + 0.05);
-    gains.push(g);
+    gain.gain.value = 0;
+
+    // Create a smooth attack and release for chord
+    const now = ctx.currentTime + delay;
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(vol * 0.1, now + 0.1); // Fast attack
+    gain.gain.linearRampToValueAtTime(vol * 0.05, now + dur - 0.2); // Sustain
+    gain.gain.linearRampToValueAtTime(0, now + dur); // Release
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + dur);
+
+    gains.push(gain);
     oscs.push(osc);
   }
+
   return { gains, oscs };
-}
+};

@@ -7,21 +7,130 @@ import { Box, Button, IconButton, Stack, Typography } from '@mui/material';
 
 import { useLanguage } from '@/i18n/useLanguage';
 
-import { getAudioContext, playNote, playPadChord as playPad } from './sound';
+import { getAudioContext, playNote, playPad } from './sound';
 
 const KEYS = [
-  { note: 'C', freq: 261.63, color: '#FF6B6B' },
-  { note: 'D', freq: 293.66, color: '#FFA94D' },
-  { note: 'E', freq: 329.63, color: '#FFD43B' },
-  { note: 'F', freq: 349.23, color: '#69DB7C' },
-  { note: 'G', freq: 392.0, color: '#4DABF7' },
-  { note: 'A', freq: 440.0, color: '#9775FA' },
-  { note: 'B', freq: 493.88, color: '#F783AC' },
-  { note: 'C', freq: 523.25, color: '#38D9A9' },
+  // First octave (C to B)
+  { note: 'C1', freq: 16.35, color: '#FFFFFF' },
+  { note: 'C#1', freq: 17.32, color: '#222222' },
+  { note: 'D1', freq: 18.35, color: '#FFFFFF' },
+  { note: 'D#1', freq: 19.45, color: '#222222' },
+  { note: 'E1', freq: 20.6, color: '#FFFFFF' },
+  { note: 'F1', freq: 21.83, color: '#FFFFFF' },
+  { note: 'F#1', freq: 23.12, color: '#222222' },
+  { note: 'G1', freq: 24.5, color: '#FFFFFF' },
+  { note: 'G#1', freq: 25.96, color: '#222222' },
+  { note: 'A1', freq: 27.5, color: '#FFFFFF' },
+  { note: 'A#1', freq: 29.14, color: '#222222' },
+  { note: 'B1', freq: 30.87, color: '#FFFFFF' },
+
+  // Second octave (C to B)
+  { note: 'C2', freq: 32.7, color: '#FFFFFF' },
+  { note: 'C#2', freq: 34.65, color: '#222222' },
+  { note: 'D2', freq: 36.71, color: '#FFFFFF' },
+  { note: 'D#2', freq: 38.89, color: '#222222' },
+  { note: 'E2', freq: 41.2, color: '#FFFFFF' },
+  { note: 'F2', freq: 43.65, color: '#FFFFFF' },
+  { note: 'F#2', freq: 46.25, color: '#222222' },
+  { note: 'G2', freq: 49.0, color: '#FFFFFF' },
+  { note: 'G#2', freq: 51.91, color: '#222222' },
+  { note: 'A2', freq: 55.0, color: '#FFFFFF' },
+  { note: 'A#2', freq: 58.27, color: '#222222' },
+  { note: 'B2', freq: 61.74, color: '#FFFFFF' },
+
+  // Third octave (C to B)
+  { note: 'C3', freq: 65.41, color: '#FFFFFF' },
+  { note: 'C#3', freq: 69.3, color: '#222222' },
+  { note: 'D3', freq: 73.42, color: '#FFFFFF' },
+  { note: 'D#3', freq: 77.78, color: '#222222' },
+  { note: 'E3', freq: 82.41, color: '#FFFFFF' },
+  { note: 'F3', freq: 87.31, color: '#FFFFFF' },
+  { note: 'F#3', freq: 92.5, color: '#222222' },
+  { note: 'G3', freq: 98.0, color: '#FFFFFF' },
+  { note: 'G#3', freq: 103.83, color: '#222222' },
+  { note: 'A3', freq: 110.0, color: '#FFFFFF' },
+  { note: 'A#3', freq: 116.54, color: '#222222' },
+  { note: 'B3', freq: 123.47, color: '#FFFFFF' },
+
+  // Fourth octave (C to B)
+  { note: 'C4', freq: 130.81, color: '#FFFFFF' },
+  { note: 'C#4', freq: 138.59, color: '#222222' },
+  { note: 'D4', freq: 146.83, color: '#FFFFFF' },
+  { note: 'D#4', freq: 155.56, color: '#222222' },
+  { note: 'E4', freq: 164.81, color: '#FFFFFF' },
+  { note: 'F4', freq: 174.61, color: '#FFFFFF' },
+  { note: 'F#4', freq: 185.0, color: '#222222' },
+  { note: 'G4', freq: 196.0, color: '#FFFFFF' },
+  { note: 'G#4', freq: 207.65, color: '#222222' },
+  { note: 'A4', freq: 220.0, color: '#FFFFFF' },
+  { note: 'A#4', freq: 233.08, color: '#222222' },
+  { note: 'B4', freq: 246.94, color: '#FFFFFF' },
+
+  // Fifth octave (C to B)
+  { note: 'C5', freq: 261.63, color: '#FFFFFF' },
+  { note: 'C#5', freq: 277.18, color: '#222222' },
+  { note: 'D5', freq: 293.66, color: '#FFFFFF' },
+  { note: 'D#5', freq: 311.13, color: '#222222' },
+  { note: 'E5', freq: 329.63, color: '#FFFFFF' },
+  { note: 'F5', freq: 349.23, color: '#FFFFFF' },
+  { note: 'F#5', freq: 369.99, color: '#222222' },
+  { note: 'G5', freq: 392.0, color: '#FFFFFF' },
+  { note: 'G#5', freq: 415.3, color: '#222222' },
+  { note: 'A5', freq: 440.0, color: '#FFFFFF' },
+  { note: 'A#5', freq: 466.16, color: '#222222' },
+  { note: 'B5', freq: 493.88, color: '#FFFFFF' },
 ];
 
 // Desktop keyboard support (a s d f g h j k) for testing.
-const KEYBOARD_MAP: Record<string, number> = { a: 0, s: 1, d: 2, f: 3, g: 4, h: 5, j: 6, k: 7 };
+const KEYBOARD_MAP: Record<string, number> = {
+  a: 0,
+  w: 1,
+  s: 2,
+  e: 3,
+  d: 4,
+  f: 5,
+  t: 6,
+  g: 7,
+  y: 8,
+  h: 9,
+  u: 10,
+  j: 11,
+  k: 12,
+  l: 13,
+  o: 14,
+  p: 15,
+  '[': 16,
+  ']': 17,
+  '\\': 18,
+  z: 19,
+  x: 20,
+  c: 21,
+  v: 22,
+  b: 23,
+  n: 24,
+  m: 25,
+  ',': 26,
+  '.': 27,
+  '/': 28,
+  ';': 29,
+  "'": 30,
+  q: 31,
+  r: 32,
+  i: 33,
+  o: 34,
+  u: 35,
+  p: 36,
+  '0': 37,
+  '1': 38,
+  '2': 39,
+  '3': 40,
+  '4': 41,
+  '5': 42,
+  '6': 43,
+  '7': 44,
+  '8': 45,
+  '9': 46,
+};
 
 // Songs the kid can pick from the carousel. Lanes map to KEYS (C D E F G A B C).
 // Each melody step carries a duration in 1/16-note units, giving the music
@@ -181,7 +290,7 @@ const CHORDS: Record<'C' | 'G' | 'F', Record<string, number[]>> = {
 };
 
 const BAR_HEIGHT = 56;
-const PIANO_RATIO = 0.42; // piano takes 42% of the play height
+const PIANO_RATIO = 0.35; // piano takes 35% of the play height for more keys
 const ZONE_RATIO = 0.18; // hit zone height as a fraction of the play area
 const BOTTOM_BAR_HEIGHT = 76; // keep the piano above the global bottom bar
 const MAX_ACTIVE_BARS = 4;
@@ -535,17 +644,21 @@ export default function PianoGame() {
           sx={{
             height: `${PIANO_RATIO * 100}%`,
             display: 'flex',
-            gap: 1,
+            gap: 0,
             px: 1,
             pt: 0.5,
             pb: 1,
             bgcolor: 'rgba(255,255,255,0.3)',
             borderTop: '4px solid rgba(255,255,255,0.7)',
+            position: 'relative',
           }}
         >
           {KEYS.map((k, i) => {
             const active = activeLane.get(i);
             const popped = pops[i] !== undefined && now - pops[i] < 250;
+            // Determine if this is a black key (has # in note name)
+            const isBlackKey = k.note.includes('#');
+
             return (
               <Box
                 key={i}
@@ -554,13 +667,17 @@ export default function PianoGame() {
                   pressKey(i);
                 }}
                 sx={{
+                  position: 'relative',
                   flex: 1,
                   borderRadius: 0,
-                  bgcolor: active ?? '#FFFFFF',
-                  boxShadow: active
-                    ? `0 0 26px ${active}, 0 4px 0 rgba(0,0,0,0.18)`
-                    : '0 4px 0 rgba(0,0,0,0.18)',
-                  transform: popped ? 'scale(1.07)' : 'scale(1)',
+                  bgcolor: isBlackKey ? k.color : '#FFFFFF',
+                  boxShadow:
+                    active && !isBlackKey
+                      ? `0 0 26px ${active}, 0 4px 0 rgba(0,0,0,0.18)`
+                      : isBlackKey
+                        ? '0 4px 0 rgba(0,0,0,0.3)'
+                        : '0 4px 0 rgba(0,0,0,0.18)',
+                  transform: popped && !isBlackKey ? 'scale(1.07)' : 'scale(1)',
                   transition: 'transform 0.12s ease',
                   display: 'flex',
                   alignItems: 'flex-end',
@@ -568,10 +685,25 @@ export default function PianoGame() {
                   pb: 1,
                   cursor: 'pointer',
                   touchAction: 'manipulation',
+                  zIndex: isBlackKey ? 1 : 0, // Black keys should be above white keys
+                  ...(isBlackKey
+                    ? {
+                        height: '60%',
+                        width: '70%',
+                        marginLeft: '-15%',
+                        marginRight: '-15%',
+                        top: '20%',
+                      }
+                    : {}),
                 }}
               >
                 <Typography
-                  sx={{ fontSize: 18, fontWeight: 800, color: active ? '#fff' : '#B0B0B0' }}
+                  sx={{
+                    fontSize: 14,
+                    fontWeight: 800,
+                    color: isBlackKey ? '#fff' : active ? '#fff' : '#B0B0B0',
+                    textShadow: isBlackKey ? '0 0 4px rgba(0,0,0,0.5)' : 'none',
+                  }}
                 >
                   {k.note}
                 </Typography>
