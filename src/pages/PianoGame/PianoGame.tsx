@@ -93,12 +93,9 @@ const KEYBOARD_MAP: Record<string, number> = {
   g: 7,
   y: 8,
   h: 9,
-  u: 10,
   j: 11,
   k: 12,
   l: 13,
-  o: 14,
-  p: 15,
   '[': 16,
   ']': 17,
   '\\': 18,
@@ -344,7 +341,9 @@ export default function PianoGame() {
     const pad = padRef.current;
     if (!pad) return;
     padRef.current = null;
-    const now = getAudioContext().currentTime;
+    const ctx = getAudioContext();
+    if (!ctx) return;
+    const now = ctx.currentTime;
     for (const g of pad.gains) g.gain.setTargetAtTime(0.0001, now, 0.12);
     window.setTimeout(() => pad.oscs.forEach((n) => n.disconnect()), 700);
   }, []);
