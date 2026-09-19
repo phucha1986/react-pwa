@@ -80,7 +80,7 @@ const KEYS = [
   { note: 'A#5', freq: 466.16, color: '#222222' },
   { note: 'B5', freq: 493.88, color: '#FFFFFF' },
 
-  // Sixth octave (C to B) - Adding one more octave for a real piano feel
+  // Sixth octave (C to B)
   { note: 'C6', freq: 523.25, color: '#FFFFFF' },
   { note: 'C#6', freq: 554.37, color: '#222222' },
   { note: 'D6', freq: 587.33, color: '#FFFFFF' },
@@ -93,6 +93,34 @@ const KEYS = [
   { note: 'A6', freq: 880.0, color: '#FFFFFF' },
   { note: 'A#6', freq: 932.33, color: '#222222' },
   { note: 'B6', freq: 987.77, color: '#FFFFFF' },
+
+  // Seventh octave (C to B) - Adding one more octave for a real piano feel
+  { note: 'C7', freq: 1046.5, color: '#FFFFFF' },
+  { note: 'C#7', freq: 1108.7, color: '#222222' },
+  { note: 'D7', freq: 1174.7, color: '#FFFFFF' },
+  { note: 'D#7', freq: 1244.5, color: '#222222' },
+  { note: 'E7', freq: 1318.5, color: '#FFFFFF' },
+  { note: 'F7', freq: 1396.9, color: '#FFFFFF' },
+  { note: 'F#7', freq: 1480.0, color: '#222222' },
+  { note: 'G7', freq: 1568.0, color: '#FFFFFF' },
+  { note: 'G#7', freq: 1661.2, color: '#222222' },
+  { note: 'A7', freq: 1760.0, color: '#FFFFFF' },
+  { note: 'A#7', freq: 1864.7, color: '#222222' },
+  { note: 'B7', freq: 1975.5, color: '#FFFFFF' },
+
+  // Eighth octave (C to B) - Adding one more octave for a real piano feel
+  { note: 'C8', freq: 2093.0, color: '#FFFFFF' },
+  { note: 'C#8', freq: 2217.5, color: '#222222' },
+  { note: 'D8', freq: 2349.3, color: '#FFFFFF' },
+  { note: 'D#8', freq: 2489.0, color: '#222222' },
+  { note: 'E8', freq: 2637.0, color: '#FFFFFF' },
+  { note: 'F8', freq: 2793.8, color: '#FFFFFF' },
+  { note: 'F#8', freq: 2960.0, color: '#222222' },
+  { note: 'G8', freq: 3136.0, color: '#FFFFFF' },
+  { note: 'G#8', freq: 3322.4, color: '#222222' },
+  { note: 'A8', freq: 3520.0, color: '#FFFFFF' },
+  { note: 'A#8', freq: 3729.3, color: '#222222' },
+  { note: 'B8', freq: 3951.1, color: '#FFFFFF' },
 ];
 
 // Desktop keyboard support (a s d f g h j k) for testing.
@@ -506,12 +534,17 @@ export default function PianoGame() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.repeat) return;
+      // Handle starting the game with 'C' key when in ready state
+      if (phase === 'ready' && e.key.toLowerCase() === 'c') {
+        start(SONGS[0]);
+        return;
+      }
       const lane = KEYBOARD_MAP[e.key.toLowerCase()];
       if (lane !== undefined) pressKey(lane);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [pressKey]);
+  }, [pressKey, phase, start]);
 
   // Scroll the song carousel one item left/right.
   const scrollCarousel = (dir: -1 | 1) => {

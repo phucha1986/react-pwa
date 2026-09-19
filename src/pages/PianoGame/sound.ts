@@ -54,7 +54,7 @@ export const playNote = (freq: number, delay = 0, vol = 1): void => {
   // Set up vibrato oscillator
   vibratoOsc.type = 'sine';
   vibratoOsc.frequency.value = 5; // 5 Hz vibrato
-  vibratoGain.gain.value = 0.5; // Small amount of vibrato
+  vibratoGain.gain.value = 0.3; // Small amount of vibrato
 
   // Connect vibrato to frequency of main oscillators
   vibratoOsc.connect(vibratoGain);
@@ -64,12 +64,12 @@ export const playNote = (freq: number, delay = 0, vol = 1): void => {
 
   // Set up filter to simulate piano sound characteristics (more realistic lowpass)
   filter.type = 'lowpass';
-  filter.frequency.value = 3000; // Lower cutoff for more piano-like sound
+  filter.frequency.value = 2500; // Lower cutoff for more piano-like sound
   filter.Q.value = 1;
 
   // Additional high-pass filter to remove very low frequencies
   filter2.type = 'highpass';
-  filter2.frequency.value = 50;
+  filter2.frequency.value = 80;
   filter2.Q.value = 1;
 
   // Set up gain envelope for a more natural piano attack and decay
@@ -79,7 +79,7 @@ export const playNote = (freq: number, delay = 0, vol = 1): void => {
   gain.gain.linearRampToValueAtTime(vol * 0.2, ctx.currentTime + delay + 0.05); // Sustain
   gain.gain.linearRampToValueAtTime(0, ctx.currentTime + delay + 0.3); // Release
 
-  // Connect the oscillators to the filter and then to the output
+  // Connect the oscillators to the filters and then to the output
   osc1.connect(filter);
   osc2.connect(filter);
   osc3.connect(filter);
