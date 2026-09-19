@@ -7,7 +7,7 @@ import { Box, Button, IconButton, Stack, Typography } from '@mui/material';
 
 import { useLanguage } from '@/i18n/useLanguage';
 
-import { getAudioContext, playNote, playPad } from './sound';
+import { getAudioContext, playNote, playPad, playPianoNote } from './sound';
 
 const KEYS = [
   // First octave (C to B)
@@ -79,6 +79,20 @@ const KEYS = [
   { note: 'A5', freq: 440.0, color: '#FFFFFF' },
   { note: 'A#5', freq: 466.16, color: '#222222' },
   { note: 'B5', freq: 493.88, color: '#FFFFFF' },
+
+  // Sixth octave (C to B) - Adding one more octave for a real piano feel
+  { note: 'C6', freq: 523.25, color: '#FFFFFF' },
+  { note: 'C#6', freq: 554.37, color: '#222222' },
+  { note: 'D6', freq: 587.33, color: '#FFFFFF' },
+  { note: 'D#6', freq: 622.25, color: '#222222' },
+  { note: 'E6', freq: 659.25, color: '#FFFFFF' },
+  { note: 'F6', freq: 698.46, color: '#FFFFFF' },
+  { note: 'F#6', freq: 739.99, color: '#222222' },
+  { note: 'G6', freq: 783.99, color: '#FFFFFF' },
+  { note: 'G#6', freq: 830.61, color: '#222222' },
+  { note: 'A6', freq: 880.0, color: '#FFFFFF' },
+  { note: 'A#6', freq: 932.33, color: '#222222' },
+  { note: 'B6', freq: 987.77, color: '#FFFFFF' },
 ];
 
 // Desktop keyboard support (a s d f g h j k) for testing.
@@ -466,7 +480,7 @@ export default function PianoGame() {
   const pressKey = useCallback((lane: number) => {
     if (phaseRef.current !== 'playing') return;
     // Always play the note so kids can freestyle too.
-    playNote(KEYS[lane].freq);
+    playPianoNote(KEYS[lane].freq);
     const area = areaRef.current;
     if (!area) return;
     const h = area.clientHeight;
