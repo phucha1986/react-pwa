@@ -1,6 +1,6 @@
 export const playPianoNote = (frequency: number, volume: number = 0.8) => {
   // Create audio context if it doesn't exist
-  const audioContext = new (window.AudioContext || (window as unknown as typeof window).webkitAudioContext)();
+  const audioContext = new (window.AudioContext || (window as unknown as typeof window).AudioContext)();
   
   // Create oscillator and gain node
   const oscillator = audioContext.createOscillator();
@@ -27,7 +27,7 @@ export const playPianoNote = (frequency: number, volume: number = 0.8) => {
 // Enhanced sound with better piano-like qualities
 export const playPianoNoteEnhanced = (frequency: number, volume: number = 0.8) => {
   // Create audio context if it doesn't exist
-  const audioContext = new (window.AudioContext || (window as unknown as typeof window).webkitAudioContext)();
+  const audioContext = new (window.AudioContext || (window as unknown as typeof window).AudioContext)();
   
   // Create multiple oscillators for richer sound
   const oscillator1 = audioContext.createOscillator();

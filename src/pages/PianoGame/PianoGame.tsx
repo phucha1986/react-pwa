@@ -41,12 +41,11 @@ const PianoGame = () => {
   
   const sustainNotesRef = useRef<Record<number, number>>({});
   const audioContextRef = useRef<AudioContext | null>(null);
-  const activeOscillatorsRef = useRef<Record<number, OscillatorNode>>({});
 
   // Initialize audio context on first interaction
   const initAudioContext = useCallback(() => {
     if (!audioContextRef.current) {
-      audioContextRef.current = new (window.AudioContext || (window as unknown as typeof window).webkitAudioContext)();
+      audioContextRef.current = new (window.AudioContext || (window as unknown as typeof window).AudioContext)();
     }
   }, []);
 
