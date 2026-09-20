@@ -1,4 +1,5 @@
-const SONGS = {
+// Song data structure for different melodies
+export const SONGS = {
   twinkleTwinkle: [
     { note: 'C', time: 0 },
     { note: 'C', time: 500 },
