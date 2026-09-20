@@ -215,212 +215,212 @@ const PianoGame = () => {
           </Typography>
         </Box>
         
-        {/* Piano keys area */}
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Box sx={{ display: 'flex', position: 'relative', height: '70%', width: '90%' }}>
-            {/* White keys */}
-            {WHITE_KEYS.map((key, index) => (
-              <Box
-                key={index}
-                className="piano-key"
-                sx={{
-                  width: whiteKeyWidth,
-                  height: '100%',
-                  backgroundColor: activeKeys[index] ? '#a0d2eb' : '#fff',
-                  border: '1px solid #ccc',
-                  borderRadius: '0 0 8px 8px',
-                  position: 'relative',
-                  zIndex: 1,
-                  display: 'flex',
-                  alignItems: 'flex-end',
-                  justifyContent: 'center',
-                  pb: 2,
-                  transition: 'background-color 0.1s ease',
-                  cursor: 'pointer',
-                  boxShadow: activeKeys[index] ? '0 0 15px rgba(76, 110, 245, 0.7)' : '0 4px 0 rgba(0,0,0,0.18)',
-                  animation: activeKeys[index] ? 'bounce 0.2s ease' : 'none',
-                }}
-                onMouseDown={() => pressKey(index, false)}
-                onMouseUp={() => releaseKey(index)}
-                onMouseLeave={() => releaseKey(index)}
-                onTouchStart={(e) => {
-                  e.preventDefault();
-                  pressKey(index, false);
-                }}
-                onTouchEnd={() => releaseKey(index)}
-              >
-                <Typography
-                  sx={{
-                    color: activeKeys[index] ? '#4C6EF5' : '#333',
-                    fontWeight: 'bold',
-                    fontSize: 16,
-                    textShadow: '0 0 4px rgba(0,0,0,0.5)',
-                  }}
-                >
-                  {key.note}
-                </Typography>
-              </Box>
-            ))}
-            
-            {/* Black keys */}
-            {BLACK_KEYS.map((key, index) => {
-              // Position black keys between white keys
-              const positionOffset = (index * 2 + 1) * (whiteKeyWidth / 2) - blackKeyWidth / 2;
-              
-              return (
-                <Box
-                  key={index}
-                  className="piano-key"
-                  sx={{
-                    width: blackKeyWidth,
-                    height: blackKeyHeight,
-                    backgroundColor: activeKeys[index + 10] ? '#333' : '#000', // +10 to account for white keys
-                    border: '1px solid #333',
-                    borderRadius: '0 0 6px 6px',
-                    position: 'absolute',
-                    left: `${positionOffset}px`,
-                    zIndex: 2,
-                    display: 'flex',
-                    alignItems: 'flex-end',
-                    justifyContent: 'center',
-                    pb: 2,
-                    transition: 'background-color 0.1s ease',
-                    cursor: 'pointer',
-                    boxShadow: activeKeys[index + 10] ? '0 0 15px rgba(0,0,0,0.5)' : '0 4px 0 rgba(0,0,0,0.3)',
-                    animation: activeKeys[index + 10] ? 'bounce 0.2s ease' : 'none',
-                  }}
-                  onMouseDown={() => pressKey(index + 10, true)}
-                  onMouseUp={() => releaseKey(index + 10)}
-                  onMouseLeave={() => releaseKey(index + 10)}
-                  onTouchStart={(e) => {
-                    e.preventDefault();
-                    pressKey(index + 10, true);
-                  }}
-                  onTouchEnd={() => releaseKey(index + 10)}
-                >
-                  <Typography
-                    sx={{
-                      color: activeKeys[index + 10] ? '#fff' : '#ddd',
-                      fontWeight: 'bold',
-                      fontSize: 12,
-                      textShadow: '0 0 4px rgba(0,0,0,0.5)',
-                    }}
-                  >
-                    {key.note}
-                  </Typography>
-                </Box>
-              );
-            })}
-          </Box>
-        </div>
+         {/* Piano keys area */}
+         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+           <Box sx={{ display: 'flex', position: 'relative', height: '70%', width: '90%' }}>
+             {/* White keys */}
+             {WHITE_KEYS.map((key, index) => (
+               <Box
+                 key={index}
+                 className="piano-key"
+                 sx={{
+                   width: whiteKeyWidth,
+                   height: '100%',
+                   backgroundColor: activeKeys[index] ? '#a0d2eb' : '#fff',
+                   border: '1px solid #ccc',
+                   borderRadius: '0 0 8px 8px',
+                   position: 'relative',
+                   zIndex: 1,
+                   display: 'flex',
+                   alignItems: 'flex-end',
+                   justifyContent: 'center',
+                   pb: 2,
+                   transition: 'background-color 0.1s ease',
+                   cursor: 'pointer',
+                   boxShadow: activeKeys[index] ? '0 0 15px rgba(76, 110, 245, 0.7)' : '0 4px 0 rgba(0,0,0,0.18)',
+                   animation: activeKeys[index] ? 'bounce 0.2s ease' : 'none',
+                 }}
+                 onMouseDown={() => pressKey(index, false)}
+                 onMouseUp={() => releaseKey(index)}
+                 onMouseLeave={() => releaseKey(index)}
+                 onTouchStart={(e) => {
+                   e.preventDefault();
+                   pressKey(index, false);
+                 }}
+                 onTouchEnd={() => releaseKey(index)}
+               >
+                 <Typography
+                   sx={{
+                     color: activeKeys[index] ? '#4C6EF5' : '#333',
+                     fontWeight: 'bold',
+                     fontSize: 16,
+                     textShadow: '0 0 4px rgba(0,0,0,0.5)',
+                   }}
+                 >
+                   {key.note}
+                 </Typography>
+               </Box>
+             ))}
+             
+             {/* Black keys */}
+             {BLACK_KEYS.map((key, index) => {
+               // Position black keys between white keys
+               const positionOffset = (index * 2 + 1) * (whiteKeyWidth / 2) - blackKeyWidth / 2;
+               
+               return (
+                 <Box
+                   key={index}
+                   className="piano-key"
+                   sx={{
+                     width: blackKeyWidth,
+                     height: blackKeyHeight,
+                     backgroundColor: activeKeys[index + 10] ? '#333' : '#000', // +10 to account for white keys
+                     border: '1px solid #333',
+                     borderRadius: '0 0 6px 6px',
+                     position: 'absolute',
+                     left: `${positionOffset}px`,
+                     zIndex: 2,
+                     display: 'flex',
+                     alignItems: 'flex-end',
+                     justifyContent: 'center',
+                     pb: 2,
+                     transition: 'background-color 0.1s ease',
+                     cursor: 'pointer',
+                     boxShadow: activeKeys[index + 10] ? '0 0 15px rgba(0,0,0,0.5)' : '0 4px 0 rgba(0,0,0,0.3)',
+                     animation: activeKeys[index + 10] ? 'bounce 0.2s ease' : 'none',
+                   }}
+                   onMouseDown={() => pressKey(index + 10, true)}
+                   onMouseUp={() => releaseKey(index + 10)}
+                   onMouseLeave={() => releaseKey(index + 10)}
+                   onTouchStart={(e) => {
+                     e.preventDefault();
+                     pressKey(index + 10, true);
+                   }}
+                   onTouchEnd={() => releaseKey(index + 10)}
+                 >
+                   <Typography
+                     sx={{
+                       color: activeKeys[index + 10] ? '#fff' : '#ddd',
+                       fontWeight: 'bold',
+                       fontSize: 12,
+                       textShadow: '0 0 4px rgba(0,0,0,0.5)',
+                     }}
+                   >
+                     {key.note}
+                   </Typography>
+                 </Box>
+               );
+             })}
+           </Box>
+         </div>
         
-        {/* Controls and hint */}
-        <Box
-          sx={{
-            height: 'auto',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            px: 2,
-            py: 1,
-            bgcolor: 'rgba(255,255,255,0.9)',
-            borderTop: '2px solid rgba(255,255,255,0.7)',
-          }}
-        >
-          <Box sx={{ display: 'flex', gap: 2, mb: 1 }}>
-            {/* Octave controls */}
-            <IconButton
-              onClick={() => changeOctave('down')}
-              disabled={octave <= -2}
-              className="piano-control"
-              sx={{
-                backgroundColor: '#4C6EF5',
-                color: '#fff',
-                '&:hover': { backgroundColor: '#3a57c0' },
-                width: 50,
-                height: 50,
-                borderRadius: '50%',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-              }}
-            >
-              <Typography fontSize={24} fontWeight={900}>-</Typography>
-            </IconButton>
-            
-            <Typography
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                backgroundColor: '#4C6EF5',
-                color: '#fff',
-                borderRadius: '25px',
-                px: 2,
-                py: 1,
-                fontWeight: 'bold',
-                fontSize: 16,
-              }}
-            >
-              Octave {octave > 0 ? `+${octave}` : octave}
-            </Typography>
-            
-            <IconButton
-              onClick={() => changeOctave('up')}
-              disabled={octave >= 2}
-              className="piano-control"
-              sx={{
-                backgroundColor: '#4C6EF5',
-                color: '#fff',
-                '&:hover': { backgroundColor: '#3a57c0' },
-                width: 50,
-                height: 50,
-                borderRadius: '50%',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-              }}
-            >
-              <Typography fontSize={24} fontWeight={900}>+</Typography>
-            </IconButton>
-          </Box>
-          
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
-            <Typography sx={{ fontSize: 18, color: '#4C6EF5' }}>🔊</Typography>
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.01"
-              value={volume}
-              onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
-              style={{ 
-                width: '120px',
-                height: 15,
-                WebkitAppearance: 'none',
-                backgroundColor: 'rgba(200,200,200,0.5)',
-                borderRadius: '10px',
-                outline: 'none',
-              }}
-            />
-            <Typography sx={{ fontSize: 16, color: '#4C6EF5' }}>{Math.round(volume * 100)}%</Typography>
-          </Box>
-          
-          {/* Sustain pedal */}
-          <IconButton
-            onClick={() => setSustainPedal(!sustainPedal)}
-            className="piano-control"
-            sx={{
-              backgroundColor: sustainPedal ? '#ff6b6b' : '#4C6EF5',
-              color: '#fff',
-              '&:hover': { backgroundColor: sustainPedal ? '#e05a5a' : '#3a57c0' },
-              width: 60,
-              height: 60,
-              borderRadius: '50%',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-            }}
-          >
-            <Typography fontSize={30} fontWeight={900}>
-              {sustainPedal ? '😊' : '😌'}
-            </Typography>
-          </IconButton>
-        </Box>
+         {/* Controls and hint */}
+         <Box
+           sx={{
+             height: 'auto',
+             display: 'flex',
+             flexDirection: 'column',
+             alignItems: 'center',
+             justifyContent: 'center',
+             px: 2,
+             py: 1,
+             bgcolor: 'rgba(255,255,255,0.9)',
+             borderTop: '2px solid rgba(255,255,255,0.7)',
+           }}
+         >
+           <Box sx={{ display: 'flex', gap: 2, mb: 1 }}>
+             {/* Octave controls */}
+             <IconButton
+               onClick={() => changeOctave('down')}
+               disabled={octave <= -2}
+               className="piano-control"
+               sx={{
+                 backgroundColor: '#4C6EF5',
+                 color: '#fff',
+                 '&:hover': { backgroundColor: '#3a57c0' },
+                 width: 50,
+                 height: 50,
+                 borderRadius: '50%',
+                 boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+               }}
+             >
+               <Typography fontSize={24} fontWeight={900}>-</Typography>
+             </IconButton>
+             
+             <Typography
+               sx={{
+                 display: 'flex',
+                 alignItems: 'center',
+                 backgroundColor: '#4C6EF5',
+                 color: '#fff',
+                 borderRadius: '25px',
+                 px: 2,
+                 py: 1,
+                 fontWeight: 'bold',
+                 fontSize: 16,
+               }}
+             >
+               Octave {octave > 0 ? `+${octave}` : octave}
+             </Typography>
+             
+             <IconButton
+               onClick={() => changeOctave('up')}
+               disabled={octave >= 2}
+               className="piano-control"
+               sx={{
+                 backgroundColor: '#4C6EF5',
+                 color: '#fff',
+                 '&:hover': { backgroundColor: '#3a57c0' },
+                 width: 50,
+                 height: 50,
+                 borderRadius: '50%',
+                 boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+               }}
+             >
+               <Typography fontSize={24} fontWeight={900}>+</Typography>
+             </IconButton>
+           </Box>
+           
+           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
+             <Typography sx={{ fontSize: 18, color: '#4C6EF5' }}>🔊</Typography>
+             <input
+               type="range"
+               min="0"
+               max="1"
+               step="0.01"
+               value={volume}
+               onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
+               style={{ 
+                 width: '120px',
+                 height: 15,
+                 WebkitAppearance: 'none',
+                 backgroundColor: 'rgba(200,200,200,0.5)',
+                 borderRadius: '10px',
+                 outline: 'none',
+               }}
+             />
+             <Typography sx={{ fontSize: 16, color: '#4C6EF5' }}>{Math.round(volume * 100)}%</Typography>
+           </Box>
+           
+           {/* Sustain pedal */}
+           <IconButton
+             onClick={() => setSustainPedal(!sustainPedal)}
+             className="piano-control"
+             sx={{
+               backgroundColor: sustainPedal ? '#ff6b6b' : '#4C6EF5',
+               color: '#fff',
+               '&:hover': { backgroundColor: sustainPedal ? '#e05a5a' : '#3a57c0' },
+               width: 60,
+               height: 60,
+               borderRadius: '50%',
+               boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+             }}
+           >
+             <Typography fontSize={30} fontWeight={900}>
+               {sustainPedal ? '😊' : '😌'}
+             </Typography>
+           </IconButton>
+         </Box>
         
         {/* Bottom hint */}
         <Box
@@ -442,6 +442,86 @@ const PianoGame = () => {
       </Box>
     </Box>
   );
+};
+
+// Song data structure for different melodies
+const SONGS = {
+  twinkleTwinkle: [
+    { note: 'C', time: 0 },
+    { note: 'C', time: 500 },
+    { note: 'G', time: 1000 },
+    { note: 'G', time: 1500 },
+    { note: 'A', time: 2000 },
+    { note: 'A', time: 2500 },
+    { note: 'G', time: 3000 },
+    { note: 'F', time: 3500 },
+    { note: 'F', time: 4000 },
+    { note: 'E', time: 4500 },
+    { note: 'E', time: 5000 },
+    { note: 'D', time: 5500 },
+    { note: 'D', time: 6000 },
+    { note: 'C', time: 6500 },
+  ],
+  happyBirthday: [
+    { note: 'C', time: 0 },
+    { note: 'C', time: 500 },
+    { note: 'D', time: 1000 },
+    { note: 'C', time: 1500 },
+    { note: 'F', time: 2000 },
+    { note: 'E', time: 2500 },
+    { note: 'C', time: 3000 },
+    { note: 'C', time: 3500 },
+    { note: 'D', time: 4000 },
+    { note: 'C', time: 4500 },
+    { note: 'A', time: 5000 },
+    { note: 'G', time: 5500 },
+  ],
+  maryHadALittleLamb: [
+    { note: 'E', time: 0 },
+    { note: 'D', time: 500 },
+    { note: 'C', time: 1000 },
+    { note: 'D', time: 1500 },
+    { note: 'E', time: 2000 },
+    { note: 'E', time: 2500 },
+    { note: 'E', time: 3000 },
+    { note: 'D', time: 3500 },
+    { note: 'D', time: 4000 },
+    { note: 'D', time: 4500 },
+    { note: 'E', time: 5000 },
+    { note: 'G', time: 5500 },
+    { note: 'G', time: 6000 },
+    { note: 'G', time: 6500 },
+  ],
+  jingleBells: [
+    { note: 'E', time: 0 },
+    { note: 'E', time: 300 },
+    { note: 'E', time: 600 },
+    { note: 'E', time: 900 },
+    { note: 'E', time: 1200 },
+    { note: 'E', time: 1500 },
+    { note: 'E', time: 1800 },
+    { note: 'G', time: 2100 },
+    { note: 'C', time: 2400 },
+    { note: 'D', time: 2700 },
+    { note: 'E', time: 3000 },
+    { note: 'F', time: 3300 },
+    { note: 'F', time: 3600 },
+    { note: 'F', time: 3900 },
+    { note: 'F', time: 4200 },
+    { note: 'F', time: 4500 },
+    { note: 'F', time: 4800 },
+    { note: 'G', time: 5100 },
+    { note: 'G', time: 5400 },
+    { note: 'G', time: 5700 },
+    { note: 'G', time: 6000 },
+    { note: 'G', time: 6300 },
+    { note: 'G', time: 6600 },
+    { note: 'A', time: 6900 },
+    { note: 'B', time: 7200 },
+    { note: 'C', time: 7500 },
+    { note: 'D', time: 7800 },
+    { note: 'E', time: 8100 },
+  ],
 };
 
 export default PianoGame;
