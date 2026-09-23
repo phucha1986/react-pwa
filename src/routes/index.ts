@@ -45,6 +45,18 @@ const routes: Routes = [
     icon: PianoIcon,
   },
   {
+    component: asyncComponentLoader(() => import('@/pages/KidsPianoGame')),
+    path: '/KidsPianoGame',
+    title: 'Kids Piano Game',
+    icon: PianoIcon,
+  },
+  {
+    component: asyncComponentLoader(() => import('@/pages/KidsPianoGame/AutoPlayGame')),
+    path: '/AutoPlayGame',
+    title: 'Auto Play Game',
+    icon: PianoIcon,
+  },
+  {
     component: asyncComponentLoader(() => import('@/pages/MemoryMatch')),
     path: '/MemoryMatch',
     title: 'Memory Match',
