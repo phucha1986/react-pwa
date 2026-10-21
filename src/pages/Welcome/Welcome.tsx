@@ -12,7 +12,9 @@ import rabbitIcon from '../AnimalGame/logos/rabbit.png';
 import turtleIcon from '../AnimalGame/logos/turtle.png';
 import candyIcon from './logos/candy.svg';
 import coloringIcon from './logos/coloring.svg';
+import fruitIcon from './logos/fruit.svg';
 import pianoIcon from './logos/piano.svg';
+import pondIcon from './logos/pond.svg';
 
 const flappyBirdSprite =
   'https://raw.githubusercontent.com/sourabhv/FlapPyBird/master/assets/sprites/yellowbird-midflap.png';
@@ -20,10 +22,16 @@ const flappyBirdSprite =
 type MenuItem =
   | { images: string[]; to: string; bg: string }
   | { label: string; image: string; to: string; bg: string }
-  | { images: string[]; to: string; bg: string; labelKey: 'memoryTitle' | 'whackTitle' };
+  | {
+      images: string[];
+      to: string;
+      bg: string;
+      labelKey: 'memoryTitle' | 'whackTitle' | 'fruitTitle' | 'pondTitle';
+    };
 
 const menuItems: MenuItem[] = [
   { images: [lionIcon, elephantIcon], to: '/AnimalGame', bg: '#FFD93D' },
+  { images: [fruitIcon], to: '/FruitGame', bg: '#A0E7E5', labelKey: 'fruitTitle' },
   { label: 'Flappy Bird', image: flappyBirdSprite, to: '/FlappyBird', bg: '#FFADAD' },
   { label: 'Piano', image: pianoIcon, to: '/PianoGame', bg: '#B197FC' },
   { label: 'Kids Piano Game', image: pianoIcon, to: '/KidsPianoGame', bg: '#B197FC' },
@@ -31,6 +39,7 @@ const menuItems: MenuItem[] = [
   { images: [rabbitIcon, turtleIcon], to: '/MemoryMatch', bg: '#A0E7E5', labelKey: 'memoryTitle' },
   { images: [catIcon, dogIcon], to: '/WhackAMole', bg: '#FFD8A8', labelKey: 'whackTitle' },
   { label: 'Candy Crush', image: candyIcon, to: '/CandyCrush', bg: '#FFC2D4' },
+  { images: [pondIcon], to: '/PondScene', bg: '#5ec8de', labelKey: 'pondTitle' },
 ];
 
 export default function Welcome() {

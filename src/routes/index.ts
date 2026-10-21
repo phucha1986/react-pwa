@@ -27,6 +27,18 @@ const routes: Routes = [
     icon: GitHubIcon,
   },
   {
+    component: asyncComponentLoader(() => import('@/pages/FruitGame')),
+    path: '/FruitGame',
+    title: 'Fruit Game',
+    icon: GitHubIcon,
+  },
+  {
+    component: asyncComponentLoader(() => import('@/pages/FruitGuessPage')),
+    path: '/FruitGuessPage',
+    title: 'Fruit Guess Page',
+    icon: AddTaskIcon,
+  },
+  {
     component: asyncComponentLoader(() => import('@/pages/AnimalGuessPage')),
     path: '/AnimalGuessPage',
     title: 'Animal Guess Page',
@@ -79,6 +91,12 @@ const routes: Routes = [
     path: '/CandyCrush',
     title: 'Candy Crush',
     icon: CookieIcon,
+  },
+  {
+    component: asyncComponentLoader(() => import('@/pages/PondScene')),
+    path: '/PondScene',
+    title: 'Pond Scene',
+    icon: TerrainIcon,
   },
   {
     component: asyncComponentLoader(() => import('@/pages/Page3')),

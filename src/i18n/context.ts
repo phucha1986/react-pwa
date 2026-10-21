@@ -7,6 +7,8 @@ export interface Dict {
   greatJob: (word: string) => string;
   animalsTitle: string;
   animals: Record<string, string>;
+  fruitTitle: string;
+  fruits: Record<string, string>;
   flappyTitle: string;
   flappyTapToStart: string;
   flappyScore: string;
@@ -64,6 +66,8 @@ export interface Dict {
   candyPlay: string;
   candyGameOver: string;
   candyPlayAgain: string;
+  pondTitle: string;
+  pondHint: string;
 }
 
 export const translations: Record<Lang, Dict> = {
@@ -71,6 +75,27 @@ export const translations: Record<Lang, Dict> = {
     question: (word) => `Which one is the ${word}?`,
     greatJob: (word) => `Great Job! It's ${word}!`,
     animalsTitle: 'Animals',
+    fruitTitle: 'Fruits',
+    fruits: {
+      apple: 'Apple',
+      banana: 'Banana',
+      cherry: 'Cherry',
+      grape: 'Grape',
+      lemon: 'Lemon',
+      mango: 'Mango',
+      orange: 'Orange',
+      peach: 'Peach',
+      pear: 'Pear',
+      pineapple: 'Pineapple',
+      strawberry: 'Strawberry',
+      watermelon: 'Watermelon',
+      kiwi: 'Kiwi',
+      coconut: 'Coconut',
+      blueberry: 'Blueberry',
+      melon: 'Melon',
+      avocado: 'Avocado',
+      olive: 'Olive',
+    },
     animals: {
       lion: 'Lion',
       elephant: 'Elephant',
@@ -121,18 +146,18 @@ export const translations: Record<Lang, Dict> = {
     whackTime: 'Time',
     whackGameOver: 'Game Over',
     whackPlayAgain: 'Play',
-  pianoTitle: 'Piano Game',
-  pianoTapToStart: 'Tap to Play',
-  pianoScore: 'Score',
-  pianoBest: 'Best',
-  pianoAutoPlay: 'Auto play the song',
-  pianoHint: 'Tap the key when the note lands on the glowing line!',
-  pianoRotate: 'Please rotate your device to landscape',
-  pianoChooseSong: 'Choose a song',
-  songHappyBirthday: 'Happy Birthday',
-  songTwinkleTwinkle: 'Twinkle Twinkle',
-  songMaryLamb: 'Mary Had a Little Lamb',
-  songJingleBells: 'Jingle Bells',
+    pianoTitle: 'Piano Game',
+    pianoTapToStart: 'Tap to Play',
+    pianoScore: 'Score',
+    pianoBest: 'Best',
+    pianoAutoPlay: 'Auto play the song',
+    pianoHint: 'Tap the key when the note lands on the glowing line!',
+    pianoRotate: 'Please rotate your device to landscape',
+    pianoChooseSong: 'Choose a song',
+    songHappyBirthday: 'Happy Birthday',
+    songTwinkleTwinkle: 'Twinkle Twinkle',
+    songMaryLamb: 'Mary Had a Little Lamb',
+    songJingleBells: 'Jingle Bells',
     coloringTitle: 'Coloring',
     coloringChoose: 'Pick a picture to color',
     coloringHint: 'Pick a color, then drag over a part of the picture to paint it',
@@ -160,11 +185,34 @@ export const translations: Record<Lang, Dict> = {
     candyPlay: 'Play',
     candyGameOver: 'Game Over',
     candyPlayAgain: 'Play Again',
+    pondTitle: 'The Pond',
+    pondHint: 'A calm pond scene — drag to look around. A fishing game is coming soon!',
   },
   vi: {
     question: (word) => `Con nào là ${word}?`,
     greatJob: (word) => `Giỏi lắm! Đó là ${word}!`,
     animalsTitle: 'Động vật',
+    fruitTitle: 'Trái cây',
+    fruits: {
+      apple: 'Táo',
+      banana: 'Chuối',
+      cherry: 'Sơ ri',
+      grape: 'Nho',
+      lemon: 'Chanh',
+      mango: 'Xoài',
+      orange: 'Cam',
+      peach: 'Đào',
+      pear: 'Lê',
+      pineapple: 'Dứa',
+      strawberry: 'Dâu tây',
+      watermelon: 'Dưa hấu',
+      kiwi: 'Kiwi',
+      coconut: 'Dừa',
+      blueberry: 'Việt quất',
+      melon: 'Bí xanh',
+      avocado: 'Bơ',
+      olive: 'Ô liu',
+    },
     animals: {
       lion: 'Sư tử',
       elephant: 'Voi',
@@ -254,6 +302,8 @@ export const translations: Record<Lang, Dict> = {
     candyPlay: 'Chơi',
     candyGameOver: 'Hết cuộc chơi',
     candyPlayAgain: 'Chơi lại',
+    pondTitle: 'Ao nước',
+    pondHint: 'Một cảnh ao nước yên bình — hãy kéo để quan sát xung quanh. Trò câu cá sắp ra mắt!',
   },
 };
 

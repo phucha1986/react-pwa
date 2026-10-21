@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 100" width="120" height="100">
+  <!-- water -->
+  <ellipse cx="60" cy="64" rx="50" ry="24" fill="#3aa5c4"/>
+  <ellipse cx="60" cy="62" rx="50" ry="22" fill="#5ec8de"/>
+  <path d="M14 58 Q30 52 46 58 T78 58 T106 58" stroke="#ffffff" stroke-width="3" fill="none" opacity="0.55"/>
+  <path d="M22 70 Q40 64 58 70 T98 70" stroke="#ffffff" stroke-width="3" fill="none" opacity="0.4"/>
+  <!-- lily pad -->
+  <path d="M82 54 A16 12 0 1 1 96 66 L82 60 Z" fill="#4cbf63"/>
+  <path d="M82 54 A16 12 0 1 1 96 66" fill="none" stroke="#3fae5a" stroke-width="2"/>
+  <!-- fish body -->
+  <path d="M30 60 C44 48 66 48 80 60 C66 72 44 72 30 60 Z" fill="#ffb703"/>
+  <!-- fish tail -->
+  <path d="M80 60 L102 46 L96 60 L102 74 Z" fill="#fb8500"/>
+  <!-- fish eye -->
+  <circle cx="42" cy="58" r="4" fill="#ffffff"/>
+  <circle cx="43" cy="58" r="2" fill="#222"/>
+  <!-- fish shine -->
+  <path d="M40 54 C52 49 66 49 74 54" stroke="#ffffff" stroke-width="3" fill="none" opacity="0.5"/>
+  <!-- bubbles -->
+  <circle cx="24" cy="46" r="4" fill="#ffffff" opacity="0.7"/>
+  <circle cx="18" cy="38" r="2.5" fill="#ffffff" opacity="0.6"/>
+</svg>
