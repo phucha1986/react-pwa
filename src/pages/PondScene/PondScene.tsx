@@ -138,7 +138,7 @@ function createWater() {
 }
 
 // A leaf/pac-man shape lily pad with a little thickness.
-function createLilyPad(radius: number, color: number): THREE.Mesh {
+function createLilyPad(radius: number, color: THREE.ColorRepresentation): THREE.Mesh {
   const notch = 0.5; // half-angle (rad) of the cut
   const shape = new THREE.Shape();
   shape.moveTo(0, 0);
