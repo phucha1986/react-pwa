@@ -1,0 +1,15 @@
+# Normalize line endings so Prettier's check is stable across platforms.
+# Git stores LF; without this, core.autocrlf=true rewrites the working copy to
+# CRLF on Windows checkouts and `prettier --check` fails on every file.
+* text=auto eol=lf
+
+# Binary assets — never touch line endings.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.glb binary
+*.woff binary
+*.woff2 binary
