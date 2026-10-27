@@ -10,9 +10,13 @@ lerna-debug.log*
 node_modules
 .nodejs
 dev-dist
+dist
 dist-ssr
 *.local
 .env
+
+# Archify build output (regenerated from architecture/*.json at Vite start/build)
+/public/architecture/
 
 # Editor directories and files
 .vscode/*
