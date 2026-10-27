@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+
 import { Box } from '@mui/material';
 
 interface Note {
@@ -57,11 +58,11 @@ const FallingNotes = ({ songNotes, tempo, onNoteMissed }: FallingNotesProps) => 
 
       const elapsed = timestamp - startTimeRef.current;
 
-      setNotes(prevNotes => {
+      setNotes((prevNotes) => {
         // Create a new array to avoid mutation
         const updatedNotes: Note[] = [];
-        
-        prevNotes.forEach(note => {
+
+        prevNotes.forEach((note) => {
           if (note.status !== 'pending') {
             updatedNotes.push(note);
             return;
@@ -76,10 +77,7 @@ const FallingNotes = ({ songNotes, tempo, onNoteMissed }: FallingNotesProps) => 
           }
 
           // Calculate vertical position based on note speed and time
-          const notePosition = Math.min(
-            hitLinePosition,
-            (timeSinceNoteCreated / 1000) * noteSpeed
-          );
+          const notePosition = Math.min(hitLinePosition, (timeSinceNoteCreated / 1000) * noteSpeed);
 
           // Check if note has passed the hit line
           const distanceToHitLine = hitLinePosition - notePosition;
@@ -96,7 +94,7 @@ const FallingNotes = ({ songNotes, tempo, onNoteMissed }: FallingNotesProps) => 
           }
         });
 
-        return updatedNotes.filter(note => note.status !== 'missed');
+        return updatedNotes.filter((note) => note.status !== 'missed');
       });
 
       animationFrameRef.current = requestAnimationFrame(animate);

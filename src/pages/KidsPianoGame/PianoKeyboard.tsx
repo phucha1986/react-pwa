@@ -6,8 +6,8 @@ const WHITE_KEYS = [
   { note: 'D', freq: 293.66 }, // D4
   { note: 'E', freq: 329.63 }, // E4
   { note: 'F', freq: 349.23 }, // F4
-  { note: 'G', freq: 392.00 }, // G4
-  { note: 'A', freq: 440.00 }, // A4
+  { note: 'G', freq: 392.0 }, // G4
+  { note: 'A', freq: 440.0 }, // A4
   { note: 'B', freq: 493.88 }, // B4
   { note: 'C', freq: 523.25 }, // C5
   { note: 'D', freq: 587.33 }, // D5
@@ -18,7 +18,7 @@ const BLACK_KEYS = [
   { note: 'C#', freq: 277.18 }, // C#4
   { note: 'D#', freq: 311.13 }, // D#4
   { note: 'F#', freq: 369.99 }, // F#4
-  { note: 'G#', freq: 415.30 }, // G#4
+  { note: 'G#', freq: 415.3 }, // G#4
   { note: 'A#', freq: 466.16 }, // A#4
   { note: 'C#', freq: 554.37 }, // C#5
   { note: 'D#', freq: 622.25 }, // D#5
@@ -31,12 +31,7 @@ interface PianoKeyboardProps {
   isPlaying: boolean;
 }
 
-const PianoKeyboard = ({ 
-  onKeyPress, 
-  onKeyRelease, 
-  activeKeys,
-  isPlaying
-}: PianoKeyboardProps) => {
+const PianoKeyboard = ({ onKeyPress, onKeyRelease, activeKeys, isPlaying }: PianoKeyboardProps) => {
   // Handle key press event
   const handleKeyDown = (note: string) => {
     if (!isPlaying) return;
@@ -50,16 +45,16 @@ const PianoKeyboard = ({
   };
 
   return (
-    <Box 
-      sx={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
         alignItems: 'flex-end',
         height: '20%',
         p: 2,
         backgroundColor: '#4C6EF5',
         borderTopLeftRadius: '8px',
-        borderTopRightRadius: '8px'
+        borderTopRightRadius: '8px',
       }}
     >
       {/* White keys */}
@@ -96,7 +91,7 @@ const PianoKeyboard = ({
             {key.note}
           </Button>
         ))}
-        
+
         {/* Black keys positioned above white keys */}
         {BLACK_KEYS.map((key, index) => (
           <Button
@@ -111,7 +106,7 @@ const PianoKeyboard = ({
             onTouchEnd={() => handleKeyUp(key.note)}
             sx={{
               position: 'absolute',
-              left: `${(index * 50 + 35)}px`, // Adjust positioning
+              left: `${index * 50 + 35}px`, // Adjust positioning
               width: '30px',
               height: '90px',
               backgroundColor: activeKeys[key.note] ? '#1a4d8c' : '#333',

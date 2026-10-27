@@ -1,16 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import {
-  Button,
-  Container,
-  Grid,
-  Paper,
-  Stack,
-  Typography,
-} from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CheckIcon from '@mui/icons-material/Check';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import { Button, Container, Grid, Paper, Stack, Typography } from '@mui/material';
 
 import { useLanguage } from '@/i18n/useLanguage';
 
@@ -34,14 +27,16 @@ function shuffle<T>(arr: T[]): T[] {
 }
 
 function useConfetti() {
-  const [confetti, setConfetti] = useState<{
-    id: number;
-    left: number;
-    size: number;
-    color: string;
-    duration: number;
-    delay: number;
-  }[]>([]);
+  const [confetti, setConfetti] = useState<
+    {
+      id: number;
+      left: number;
+      size: number;
+      color: string;
+      duration: number;
+      delay: number;
+    }[]
+  >([]);
   const spawn = () => {
     setConfetti(
       Array.from({ length: 60 }, (_, i) => ({
@@ -189,7 +184,12 @@ export default function HouseholdGame() {
                 startIcon={<PlayArrowIcon />}
                 variant="outlined"
                 onClick={() => startQuiz(householdItems[0].key)}
-                sx={{ borderRadius: 3, textTransform: 'none', color: '#2F7FAE', borderColor: '#2F7FAE' }}
+                sx={{
+                  borderRadius: 3,
+                  textTransform: 'none',
+                  color: '#2F7FAE',
+                  borderColor: '#2F7FAE',
+                }}
               >
                 {t.householdPlay}
               </Button>
@@ -214,7 +214,12 @@ export default function HouseholdGame() {
                       transition: 'transform 0.2s',
                       '&:hover': { transform: 'scale(1.05)' },
                       userSelect: 'none',
-                      '& img': { width: 'clamp(64px, 16vw, 110px)', height: 'auto', display: 'block', objectFit: 'contain' },
+                      '& img': {
+                        width: 'clamp(64px, 16vw, 110px)',
+                        height: 'auto',
+                        display: 'block',
+                        objectFit: 'contain',
+                      },
                     }}
                     onClick={() => startQuiz(item.key)}
                   >

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+
 import { Box } from '@mui/material';
 
 interface Note {
@@ -16,18 +17,14 @@ interface FallingNotesProps {
   tempo: number;
 }
 
-const FallingNotes = ({ 
-  songNotes, 
-  isPlaying,
-  tempo
-}: FallingNotesProps) => {
+const FallingNotes = ({ songNotes, isPlaying, tempo }: FallingNotesProps) => {
   const [notes, setNotes] = useState<Note[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const animationFrameRef = useRef<number>(0);
-  
+
   // Calculate note speed based on tempo (faster for higher tempo)
   const noteSpeed = 150 + (tempo - 120) * 2;
-  
+
   // Initialize notes when song data changes
   useEffect(() => {
     if (songNotes.length > 0 && isPlaying) {
@@ -49,18 +46,18 @@ const FallingNotes = ({
     if (!isPlaying || notes.length === 0) return;
 
     const animate = () => {
-      setNotes(prevNotes => {
-        return prevNotes.map(note => {
+      setNotes((prevNotes) => {
+        return prevNotes.map((note) => {
           if (note.status !== 'pending') return note;
-          
+
           // Update position based on speed and time
           const containerHeight = containerRef.current?.clientHeight || 400;
           const newTime = note.time + noteSpeed / 60; // Assuming 60fps
-          
+
           if (newTime > containerHeight) {
             return { ...note, status: 'missed' };
           }
-          
+
           return { ...note, time: newTime };
         });
       });
@@ -79,7 +76,7 @@ const FallingNotes = ({
   const renderNote = (note: Note) => {
     let backgroundColor = '#FFFFFF';
     let borderColor = '#888888';
-    
+
     // Apply status-based styling
     switch (note.status) {
       case 'hit':
@@ -93,7 +90,7 @@ const FallingNotes = ({
       default:
         break;
     }
-    
+
     return (
       <Box
         key={note.id}
@@ -141,7 +138,7 @@ const FallingNotes = ({
           zIndex: 5,
         }}
       />
-      
+
       {/* Render all falling notes */}
       {notes.map(renderNote)}
     </Box>

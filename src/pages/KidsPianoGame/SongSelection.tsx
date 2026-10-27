@@ -1,5 +1,5 @@
-import { Box, Typography, Button } from '@mui/material';
 import { MusicNote } from '@mui/icons-material';
+import { Box, Button, Typography } from '@mui/material';
 
 // Define the songs for the kids piano game
 const SONGS = [
@@ -7,26 +7,26 @@ const SONGS = [
     id: 1,
     name: 'Twinkle Twinkle Little Star',
     notes: ['C', 'C', 'G', 'G', 'A', 'A', 'G'],
-    tempo: 120
+    tempo: 120,
   },
   {
     id: 2,
     name: 'Happy Birthday',
     notes: ['C', 'C', 'D', 'C', 'F', 'E'],
-    tempo: 120
+    tempo: 120,
   },
   {
     id: 3,
-    name: 'If You\'re Happy and You Know It',
+    name: "If You're Happy and You Know It",
     notes: ['E', 'D', 'C', 'D', 'E', 'E', 'E', 'D', 'D', 'D', 'E', 'G', 'G'],
-    tempo: 120
+    tempo: 120,
   },
   {
     id: 4,
     name: 'Mary Had a Little Lamb',
     notes: ['E', 'D', 'C', 'D', 'E', 'E', 'E', 'D', 'D', 'D', 'E', 'G', 'G'],
-    tempo: 120
-  }
+    tempo: 120,
+  },
 ];
 
 interface SongSelectionProps {
@@ -34,10 +34,10 @@ interface SongSelectionProps {
 }
 
 const SongSelection = ({ onSelectSong }: SongSelectionProps) => (
-  <Box 
-    sx={{ 
-      display: 'flex', 
-      flexDirection: 'column', 
+  <Box
+    sx={{
+      display: 'flex',
+      flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
       height: '100%',
@@ -45,33 +45,33 @@ const SongSelection = ({ onSelectSong }: SongSelectionProps) => (
       backgroundColor: '#f0f8ff',
     }}
   >
-    <Typography 
-      variant="h4" 
-      sx={{ 
-        mb: 3, 
-        color: '#4C6EF5', 
+    <Typography
+      variant="h4"
+      sx={{
+        mb: 3,
+        color: '#4C6EF5',
         fontWeight: 'bold',
-        textAlign: 'center'
+        textAlign: 'center',
       }}
     >
       🎹 Kids Piano Game 🎹
     </Typography>
-    
+
     <Box sx={{ mb: 3 }}>
       <MusicNote sx={{ fontSize: 60, color: '#FFD700' }} />
     </Box>
-    
-    <Typography 
-      variant="h6" 
-      sx={{ 
-        mb: 4, 
+
+    <Typography
+      variant="h6"
+      sx={{
+        mb: 4,
         textAlign: 'center',
-        color: '#333'
+        color: '#333',
       }}
     >
       Choose a song to play!
     </Typography>
-    
+
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '100%', maxWidth: 400 }}>
       {SONGS.map((song) => (
         <Button
@@ -96,13 +96,13 @@ const SongSelection = ({ onSelectSong }: SongSelectionProps) => (
         </Button>
       ))}
     </Box>
-    
-    <Typography 
-      variant="body2" 
-      sx={{ 
-        mt: 4, 
+
+    <Typography
+      variant="body2"
+      sx={{
+        mt: 4,
         color: '#666',
-        textAlign: 'center'
+        textAlign: 'center',
       }}
     >
       Play with your fingers or use the piano keys!

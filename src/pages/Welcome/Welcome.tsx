@@ -63,12 +63,7 @@ export default function Welcome() {
         {menuItems.map((item) => {
           const label =
             'label' in item ? item.label : 'labelKey' in item ? t[item.labelKey] : t.animalsTitle;
-          const images =
-            'images' in item
-              ? item.images
-              : 'image' in item
-                ? [item.image]
-                : [];
+          const images = 'images' in item ? item.images : 'image' in item ? [item.image] : [];
           const { to, bg } = item;
           return (
             <Box

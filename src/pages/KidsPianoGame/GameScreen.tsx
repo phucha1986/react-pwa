@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react';
-import { Box, Typography, IconButton, Slider } from '@mui/material';
-import { PlayArrow, Pause, Start } from '@mui/icons-material';
+import { useEffect, useState } from 'react';
+
+import { Pause, PlayArrow, Start } from '@mui/icons-material';
+import { Box, IconButton, Slider, Typography } from '@mui/material';
+
 import FallingNotes from './FallingNotes';
 import PianoKeyboard from './PianoKeyboard';
 import { playPianoNote } from './sound';
@@ -11,8 +13,8 @@ const WHITE_KEYS = [
   { note: 'D', freq: 293.66 }, // D4
   { note: 'E', freq: 329.63 }, // E4
   { note: 'F', freq: 349.23 }, // F4
-  { note: 'G', freq: 392.00 }, // G4
-  { note: 'A', freq: 440.00 }, // A4
+  { note: 'G', freq: 392.0 }, // G4
+  { note: 'A', freq: 440.0 }, // A4
   { note: 'B', freq: 493.88 }, // B4
   { note: 'C', freq: 523.25 }, // C5
   { note: 'D', freq: 587.33 }, // D5
@@ -23,7 +25,7 @@ const BLACK_KEYS = [
   { note: 'C#', freq: 277.18 }, // C#4
   { note: 'D#', freq: 311.13 }, // D#4
   { note: 'F#', freq: 369.99 }, // F#4
-  { note: 'G#', freq: 415.30 }, // G#4
+  { note: 'G#', freq: 415.3 }, // G#4
   { note: 'A#', freq: 466.16 }, // A#4
   { note: 'C#', freq: 554.37 }, // C#5
   { note: 'D#', freq: 622.25 }, // D#5
@@ -52,34 +54,34 @@ const GameScreen = ({ song, onEndGame }: GameScreenProps) => {
   // Handle key press for piano
   const handleKeyPress = (note: string) => {
     if (!isPlaying || !song) return;
-    
-    setActiveKeys(prev => ({ ...prev, [note]: true }));
-    
+
+    setActiveKeys((prev) => ({ ...prev, [note]: true }));
+
     // Find the frequency of the pressed note
-    const whiteKey = WHITE_KEYS.find(key => key.note === note);
-    const blackKey = BLACK_KEYS.find(key => key.note === note);
+    const whiteKey = WHITE_KEYS.find((key) => key.note === note);
+    const blackKey = BLACK_KEYS.find((key) => key.note === note);
     const frequency = whiteKey ? whiteKey.freq : blackKey ? blackKey.freq : 261.63; // Default to C4 if not found
-    
+
     playPianoNote(frequency); // Play the actual note sound
-    
+
     // Simple scoring for demonstration
-    setScore(prev => prev + (combo > 0 ? 10 * combo : 10));
-    setCombo(prev => prev + 1);
+    setScore((prev) => prev + (combo > 0 ? 10 * combo : 10));
+    setCombo((prev) => prev + 1);
   };
 
   // Handle key release for piano
   const handleKeyRelease = (note: string) => {
-    setActiveKeys(prev => ({ ...prev, [note]: false }));
+    setActiveKeys((prev) => ({ ...prev, [note]: false }));
   };
 
   // Create song notes with timing information
   const createSongNotesWithTiming = () => {
     if (!song || !song.notes) return [];
-    
+
     // Generate note objects with timing
     return song.notes.map((note: string, index: number) => ({
       note,
-      time: index * 500 // Simple timing - each note appears every half second
+      time: index * 500, // Simple timing - each note appears every half second
     }));
   };
 
@@ -91,64 +93,60 @@ const GameScreen = ({ song, onEndGame }: GameScreenProps) => {
   }
 
   return (
-    <Box 
-      sx={{ 
-        display: 'flex', 
-        flexDirection: 'column', 
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
         height: '100%',
         backgroundColor: '#f0f8ff',
       }}
     >
       {/* Game header */}
-      <Box 
-        sx={{ 
-          p: 2, 
-          display: 'flex', 
-          justifyContent: 'space-between', 
+      <Box
+        sx={{
+          p: 2,
+          display: 'flex',
+          justifyContent: 'space-between',
           alignItems: 'center',
           backgroundColor: '#4C6EF5',
           color: 'white',
-          borderBottom: '2px solid #3a86ff'
+          borderBottom: '2px solid #3a86ff',
         }}
       >
         <Typography variant="h6" fontWeight="bold">
           {song.name || 'Loading...'}
         </Typography>
         <Box sx={{ display: 'flex', gap: 2 }}>
-          <Box 
-            sx={{ 
-              backgroundColor: '#FFD700', 
-              color: '#333', 
-              px: 2, 
-              py: 1, 
+          <Box
+            sx={{
+              backgroundColor: '#FFD700',
+              color: '#333',
+              px: 2,
+              py: 1,
               borderRadius: '8px',
-              fontWeight: 'bold'
+              fontWeight: 'bold',
             }}
           >
             Score: {score}
           </Box>
-          <Box 
-            sx={{ 
-              backgroundColor: '#FFD700', 
-              color: '#333', 
-              px: 2, 
-              py: 1, 
+          <Box
+            sx={{
+              backgroundColor: '#FFD700',
+              color: '#333',
+              px: 2,
+              py: 1,
               borderRadius: '8px',
-              fontWeight: 'bold'
+              fontWeight: 'bold',
             }}
           >
             Combo: {combo}x
           </Box>
         </Box>
       </Box>
-      
+
       {/* Falling notes area */}
-      <FallingNotes 
-        songNotes={songNotesWithTiming}
-        isPlaying={isPlaying}
-        tempo={tempo}
-      />
-      
+      <FallingNotes songNotes={songNotesWithTiming} isPlaying={isPlaying} tempo={tempo} />
+
       {/* Piano keyboard */}
       <PianoKeyboard
         onKeyPress={handleKeyPress}
@@ -156,23 +154,23 @@ const GameScreen = ({ song, onEndGame }: GameScreenProps) => {
         activeKeys={activeKeys}
         isPlaying={isPlaying}
       />
-      
+
       {/* Controls */}
-      <Box 
-        sx={{ 
-          display: 'flex', 
-          justifyContent: 'center', 
-          alignItems: 'center', 
-          gap: 2, 
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: 2,
           p: 2,
           backgroundColor: '#4C6EF5',
           borderBottomLeftRadius: '8px',
-          borderBottomRightRadius: '8px'
+          borderBottomRightRadius: '8px',
         }}
       >
-        <IconButton 
+        <IconButton
           onClick={() => setIsPlaying(!isPlaying)}
-          sx={{ 
+          sx={{
             backgroundColor: isPlaying ? '#FF5252' : '#4CAF50',
             color: 'white',
             width: 50,
@@ -181,10 +179,10 @@ const GameScreen = ({ song, onEndGame }: GameScreenProps) => {
         >
           {isPlaying ? <Pause /> : <PlayArrow />}
         </IconButton>
-        
-        <IconButton 
+
+        <IconButton
           onClick={onEndGame}
-          sx={{ 
+          sx={{
             backgroundColor: '#FFD700',
             color: '#333',
             width: 50,
@@ -193,7 +191,7 @@ const GameScreen = ({ song, onEndGame }: GameScreenProps) => {
         >
           <Start />
         </IconButton>
-        
+
         <Slider
           value={tempo}
           onChange={(_, newValue) => setTempo(newValue as number)}
