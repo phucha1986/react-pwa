@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "react-pwa — architecture",
+    "subtitle": "React 19 + Vite 6 + MUI 6 starter kit with 10+ mini-games and a 3D Three.js pond.",
+    "note": "Every node runs in the browser. Layout follows src/: App.tsx, routes/, i18n/, theme/, error-handling/, pages/, utils/.",
+    "quality_profile": "standard",
+    "output": "architecture.html",
+    "views": [
+      {
+        "id": "boot-path",
+        "label": "Boot path",
+        "focus": ["client", "vite", "shell", "router", "pages"],
+        "note": "Browser → Vite → App shell → Router → lazy game pages."
+      },
+      {
+        "id": "pwa-offline",
+        "label": "PWA / offline",
+        "focus": ["sw", "vite", "assets"],
+        "note": "Workbox cache-first: JS / CSS / HTML and media survive offline."
+      },
+      {
+        "id": "cross-cutting",
+        "label": "Cross-cutting",
+        "focus": ["shell", "i18n", "theme", "errorBoundary"],
+        "note": "Error boundary wraps the app; i18n + theme providers sit above."
+      }
+    ],
+    "legend": { "mode": "auto" }
+  },
+  "components": [
+    { "id": "client", "type": "external", "label": "Browser", "sublabel": "Chrome / Safari / mobile", "pos": [40, 240], "size": [150, 60] },
+    { "id": "vite", "type": "backend", "label": "Vite dev server", "sublabel": "dev / preview", "pos": [260, 240], "size": [150, 60], "tag": "esbuild + Rollup" },
+    { "id": "shell", "type": "frontend", "label": "App shell", "sublabel": "App.tsx + Sidebar", "pos": [480, 240], "size": [150, 60] },
+    { "id": "router", "type": "frontend", "label": "React Router", "sublabel": "react-router-dom v7", "pos": [700, 240], "size": [150, 60] },
+    { "id": "pages", "type": "frontend", "label": "Game pages", "sublabel": "10+ lazy routes", "pos": [920, 240], "size": [150, 60], "tag": "MUI + canvas" },
+
+    { "id": "sw", "type": "security", "label": "Service Worker", "sublabel": "workbox (vite-plugin-pwa)", "pos": [260, 60], "size": [150, 60], "tag": "cache-first" },
+    { "id": "i18n", "type": "backend", "label": "i18n context", "sublabel": "en / vi (i18n/)", "pos": [480, 60], "size": [150, 60] },
+    { "id": "theme", "type": "backend", "label": "Theme provider", "sublabel": "MUI theme + atoms", "pos": [700, 60], "size": [150, 60] },
+    { "id": "sound", "type": "messagebus", "label": "Sound + hotkeys", "sublabel": "Web Audio + hotkeys", "pos": [920, 60], "size": [150, 60] },
+
+    { "id": "assets", "type": "cloud", "label": "Static assets", "sublabel": "public/ + hashed bundles", "pos": [260, 420], "size": [150, 60], "tag": "js / css / glb" },
+    { "id": "errorBoundary", "type": "security", "label": "Error boundary", "sublabel": "react-error-boundary", "pos": [480, 420], "size": [150, 60], "tag": "withErrorHandler" },
+    { "id": "threePond", "type": "frontend", "label": "Pond scene", "sublabel": "Three.js r186 (webgl)", "pos": [700, 420], "size": [150, 60], "tag": "GLB assets" },
+    { "id": "state", "type": "database", "label": "State atoms", "sublabel": "jotai (config / theme)", "pos": [920, 420], "size": [150, 60] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "Browser runtime (no server)", "wraps": ["client", "sw", "i18n", "theme", "sound", "vite", "shell", "router", "pages", "assets", "errorBoundary", "threePond", "state"] },
+    { "kind": "security-group", "label": "PWA surface (offline)", "wraps": ["sw", "assets"] }
+  ],
+  "connections": [
+    { "id": "c1", "from": "client", "to": "vite", "label": "HTTP", "variant": "emphasis" },
+    { "id": "c2", "from": "vite", "to": "shell", "label": "serves app" },
+    { "id": "c3", "from": "shell", "to": "router" },
+    { "id": "c4", "from": "router", "to": "pages", "label": "lazy routes", "variant": "emphasis" },
+
+    { "id": "c5", "from": "vite", "to": "sw", "label": "injects", "variant": "dashed", "fromSide": "top", "toSide": "bottom", "labelDy": -30 },
+    { "id": "c6", "from": "vite", "to": "assets", "label": "static", "variant": "dashed", "fromSide": "bottom", "toSide": "top", "labelDy": 30 },
+
+    { "id": "c7", "from": "shell", "to": "i18n", "variant": "dashed", "fromSide": "top", "toSide": "bottom", "labelDy": -30 },
+    { "id": "c8", "from": "shell", "to": "errorBoundary", "label": "wraps", "variant": "security", "fromSide": "bottom", "toSide": "top", "labelDy": 30 },
+
+    { "id": "c9", "from": "router", "to": "theme", "variant": "dashed", "fromSide": "top", "toSide": "bottom", "labelDy": -30 },
+    { "id": "c10", "from": "router", "to": "threePond", "label": "lazy", "variant": "dashed", "fromSide": "bottom", "toSide": "top", "labelDy": 30 },
+
+    { "id": "c11", "from": "pages", "to": "sound", "variant": "dashed", "fromSide": "top", "toSide": "bottom", "labelDy": -30 },
+    { "id": "c12", "from": "pages", "to": "state", "label": "jotai", "variant": "dashed", "fromSide": "bottom", "toSide": "top", "labelDy": 30 }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Stack",
+      "items": [
+        "React 19 + TypeScript 5.7 + Vite 6",
+        "MUI 6 + @toolpad/core + Emotion",
+        "react-router-dom v7 (BrowserRouter)",
+        "Three.js r186 (Pond scene)",
+        "jotai 2 for atomic app state"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "PWA",
+      "items": [
+        "vite-plugin-pwa (workbox, autoUpdate)",
+        "manifest.json in public/",
+        "Cache-first JS / CSS / HTML and media",
+        "Dev SW disabled, prod SW on"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Cross-cutting",
+      "items": [
+        "react-error-boundary wraps the app",
+        "i18n: en + vi (LanguageToggle)",
+        "MUI themes: light / dark + custom",
+        "react-hotkeys-hook for global keys"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Pages (10+ routes)",
+      "items": [
+        "Animal · Fruit · Flappy Bird · Candy Crush",
+        "Piano · Kids Piano · Memory · Whack-a-Mole",
+        "Coloring (canvas) · Pond (Three.js 3D)",
+        "Welcome menu + NotFound"
+      ]
+    }
+  ]
+}

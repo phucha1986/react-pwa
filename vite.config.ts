@@ -4,10 +4,12 @@ import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
 import manifest from './manifest.json';
+import archifyPlugin from './scripts/vite-plugin-archify.mjs';
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
+    archifyPlugin(),
     react(),
     VitePWA({
       manifest,

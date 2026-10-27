@@ -105,6 +105,12 @@ const routes: Routes = [
     icon: TerrainIcon,
   },
   {
+    component: asyncComponentLoader(() => import('@/pages/Architecture')),
+    path: '/Architecture',
+    title: 'Architecture',
+    icon: TerrainIcon,
+  },
+  {
     component: asyncComponentLoader(() => import('@/pages/Page3')),
     path: '/page-3',
     title: 'Page 3',

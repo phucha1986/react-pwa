@@ -4,6 +4,7 @@ import { Box, Paper, Typography } from '@mui/material';
 
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 import { useLanguage } from '@/i18n/useLanguage';
 
@@ -18,6 +19,58 @@ import { useLanguage } from '@/i18n/useLanguage';
 
 // The pond's surface radius. Most scenery is placed relative to this.
 const POND_RADIUS = 6;
+
+// ---------------------------------------------------------------------------
+// Real 3D asset slots (option B — imported GLB models)
+//
+// Each slot loads a GLB file from `/models/pond/<url>` at runtime. If the file
+// is missing the slot is silently skipped and the procedural fallbacks remain,
+// so the scene never breaks. Replace any file with your own realistic model
+// (keep the same filename) and it will be auto-centered, auto-scaled to
+// `targetHeight`, and any animation clips it carries will be played.
+// See `public/models/pond/README.md` for the asset list and licensing.
+// ---------------------------------------------------------------------------
+interface PondAsset {
+  url: string;
+  position: THREE.Vector3;
+  rotationY: number;
+  targetHeight: number;
+  playAnimations: boolean;
+}
+
+// Face an object toward the pond centre.
+const faceCenter = (p: THREE.Vector3) => Math.atan2(-p.x, -p.z);
+
+const POND_ASSETS: PondAsset[] = [
+  {
+    url: 'models/pond/Flamingo.glb',
+    position: new THREE.Vector3(POND_RADIUS + 1.1, 0, 2.6),
+    rotationY: faceCenter(new THREE.Vector3(POND_RADIUS + 1.1, 0, 2.6)),
+    targetHeight: 2.5,
+    playAnimations: true,
+  },
+  {
+    url: 'models/pond/Stork.glb',
+    position: new THREE.Vector3(-POND_RADIUS - 1.3, 0, -1.1),
+    rotationY: faceCenter(new THREE.Vector3(-POND_RADIUS - 1.3, 0, -1.1)),
+    targetHeight: 2.2,
+    playAnimations: true,
+  },
+  {
+    url: 'models/pond/Parrot.glb',
+    position: new THREE.Vector3(POND_RADIUS + 0.7, 0, -2.2),
+    rotationY: faceCenter(new THREE.Vector3(POND_RADIUS + 0.7, 0, -2.2)),
+    targetHeight: 1.0,
+    playAnimations: true,
+  },
+  {
+    url: 'models/pond/Horse.glb',
+    position: new THREE.Vector3(1.5, 0, -POND_RADIUS - 3.2),
+    rotationY: faceCenter(new THREE.Vector3(1.5, 0, -POND_RADIUS - 3.2)),
+    targetHeight: 3.4,
+    playAnimations: true,
+  },
+];
 
 // Build a big, softly-graded sky dome so the scene has a pleasant horizon.
 function createSky(): THREE.Mesh {
@@ -66,6 +119,7 @@ function createWater() {
   const material = new THREE.ShaderMaterial({
     transparent: true,
     fog: false,
+    depthWrite: false,
     uniforms,
     vertexShader: /* glsl */ `
       uniform float uTime;
@@ -123,7 +177,13 @@ function createWater() {
         float spec = pow(max(dot(normal, halfVec), 0.0), 120.0);
         col += vec3(1.0, 0.98, 0.9) * spec * 1.4;
 
-        gl_FragColor = vec4(col, 1.0);
+        // Realistic opacity: mostly see-through when looking straight down so
+        // the fish below read clearly, and more opaque/reflective at grazing
+        // angles where the sky reflection takes over.
+        float alpha = mix(0.55, 0.92, clamp(fresnel, 0.0, 1.0));
+        alpha = clamp(alpha + spec * 0.25, 0.0, 1.0);
+
+        gl_FragColor = vec4(col, alpha);
       }
     `,
   });
@@ -523,8 +583,10 @@ export default function PondScene() {
     scene.add(sunLight);
 
     // --- Ground / grass bank ------------------------------------------------
+    // A ring (not a full disc) so the pond hole stays open — looking down
+    // through the translucent water you see the dark pond floor, not the grass.
     const grass = new THREE.Mesh(
-      track(new THREE.CircleGeometry(16, 64)),
+      track(new THREE.RingGeometry(POND_RADIUS + 0.15, 16, 96, 1)),
       track(new THREE.MeshStandardMaterial({ color: '#7bc96a', roughness: 1 })),
     );
     grass.rotation.x = -Math.PI / 2;
@@ -540,6 +602,19 @@ export default function PondScene() {
     sand.position.y = -0.04;
     sand.receiveShadow = true;
     scene.add(sand);
+
+    // --- Pond floor ---------------------------------------------------------
+    // A dark bed beneath the water gives it real volume: the translucent
+    // surface reads as water over a bottom rather than a flat painted disc,
+    // and it's what the fish swim above.
+    const floor = new THREE.Mesh(
+      track(new THREE.CircleGeometry(POND_RADIUS, 48)),
+      track(new THREE.MeshStandardMaterial({ color: '#0e2330', roughness: 1 })),
+    );
+    floor.rotation.x = -Math.PI / 2;
+    floor.position.y = -0.6;
+    floor.receiveShadow = true;
+    scene.add(floor);
 
     // --- Water --------------------------------------------------------------
     const water = createWater();
@@ -656,6 +731,55 @@ export default function PondScene() {
     scene.add(rig.group);
     trackObject(rig.group);
 
+    // --- Real GLB assets (option B) ----------------------------------------
+    // Load each configured GLB, auto-center on its bounding box, auto-scale
+    // to the target height, place it, and play any animation clips it
+    // carries. Missing files are skipped silently so the scene still works
+    // with the procedural fallbacks.
+    const mixers: THREE.AnimationMixer[] = [];
+    const gltfLoader = new GLTFLoader();
+    for (const spec of POND_ASSETS) {
+      gltfLoader
+        .loadAsync(spec.url)
+        .then((gltf) => {
+          const obj = gltf.scene;
+          // Center horizontally so the base sits at the position.
+          const box = new THREE.Box3().setFromObject(obj);
+          const center = box.getCenter(new THREE.Vector3());
+          const size = box.getSize(new THREE.Vector3());
+          const height = Math.max(size.y, 0.0001);
+          const scale = spec.targetHeight / height;
+          obj.scale.setScalar(scale);
+          obj.position.set(
+            spec.position.x - center.x * scale,
+            spec.position.y - box.min.y * scale,
+            spec.position.z - center.z * scale,
+          );
+          obj.rotation.y = spec.rotationY;
+          // Enable shadows for the imported mesh.
+          obj.traverse((child) => {
+            const mesh = child as THREE.Mesh;
+            if (mesh.isMesh) {
+              mesh.castShadow = true;
+              mesh.receiveShadow = true;
+              if (Array.isArray(mesh.material)) mesh.material.forEach((m) => track(m));
+              else if (mesh.material) track(mesh.material);
+              if (mesh.geometry) track(mesh.geometry);
+            }
+          });
+          scene.add(obj);
+          if (spec.playAnimations && gltf.animations.length > 0) {
+            const mixer = new THREE.AnimationMixer(obj);
+            const action = mixer.clipAction(gltf.animations[0]);
+            action.play();
+            mixers.push(mixer);
+          }
+        })
+        .catch(() => {
+          /* missing asset — keep procedural fallback */
+        });
+    }
+
     // --- Controls -----------------------------------------------------------
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
@@ -685,8 +809,11 @@ export default function PondScene() {
         f.angle += f.speed * 0.01;
         const x = Math.cos(f.angle) * f.radius;
         const z = Math.sin(f.angle) * f.radius;
-        // Fish "surface" at the water line: dip below (hidden) and rise above.
-        f.group.position.set(x, Math.sin(time * 1.5 + f.angle) * 0.35, z);
+        // Fish live *under* the translucent surface: a fixed depth with a
+        // gentle vertical bob, so they read as swimming in the water rather
+        // than floating above it.
+        const depth = -0.28;
+        f.group.position.set(x, depth + Math.sin(time * 1.5 + f.phase) * 0.08, z);
         f.group.rotation.y = -f.angle + Math.PI / 2;
         f.tail.rotation.z = Math.sin(time * 8 + f.phase) * 0.5; // flick the tail
       }
@@ -704,6 +831,9 @@ export default function PondScene() {
       const flap = Math.sin(time * 12) * 0.6;
       butterfly.leftWing.rotation.z = flap;
       butterfly.rightWing.rotation.z = -flap;
+
+      // Advance the imported-model animation mixers.
+      for (const mixer of mixers) mixer.update(1 / 60);
 
       controls.update();
       renderer.render(scene, camera);
@@ -726,6 +856,7 @@ export default function PondScene() {
     return () => {
       cancelAnimationFrame(frameId);
       resizeObserver.disconnect();
+      mixers.forEach((m) => m.stopAllAction());
       controls.dispose();
       disposables.forEach((d) => d.dispose());
       renderer.dispose();
