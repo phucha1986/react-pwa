@@ -39,6 +39,12 @@ const routes: Routes = [
     icon: AddTaskIcon,
   },
   {
+    component: asyncComponentLoader(() => import('@/pages/HouseholdGame')),
+    path: '/HouseholdGame',
+    title: 'Household Game',
+    icon: HomeIcon,
+  },
+  {
     component: asyncComponentLoader(() => import('@/pages/AnimalGuessPage')),
     path: '/AnimalGuessPage',
     title: 'Animal Guess Page',

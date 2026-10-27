@@ -10,6 +10,7 @@ import elephantIcon from '../AnimalGame/logos/elephant.png';
 import lionIcon from '../AnimalGame/logos/lion.png';
 import rabbitIcon from '../AnimalGame/logos/rabbit.png';
 import turtleIcon from '../AnimalGame/logos/turtle.png';
+import lampIcon from '../HouseholdGame/logos/lamp.png';
 import candyIcon from './logos/candy.svg';
 import coloringIcon from './logos/coloring.svg';
 import fruitIcon from './logos/fruit.svg';
@@ -26,7 +27,7 @@ type MenuItem =
       images: string[];
       to: string;
       bg: string;
-      labelKey: 'memoryTitle' | 'whackTitle' | 'fruitTitle' | 'pondTitle';
+      labelKey: 'memoryTitle' | 'whackTitle' | 'fruitTitle' | 'pondTitle' | 'householdTitle';
     };
 
 const menuItems: MenuItem[] = [
@@ -40,6 +41,7 @@ const menuItems: MenuItem[] = [
   { images: [catIcon, dogIcon], to: '/WhackAMole', bg: '#FFD8A8', labelKey: 'whackTitle' },
   { label: 'Candy Crush', image: candyIcon, to: '/CandyCrush', bg: '#FFC2D4' },
   { images: [pondIcon], to: '/PondScene', bg: '#5ec8de', labelKey: 'pondTitle' },
+  { images: [lampIcon], to: '/HouseholdGame', bg: '#FFE5CC', labelKey: 'householdTitle' },
 ];
 
 export default function Welcome() {
@@ -61,7 +63,12 @@ export default function Welcome() {
         {menuItems.map((item) => {
           const label =
             'label' in item ? item.label : 'labelKey' in item ? t[item.labelKey] : t.animalsTitle;
-          const images = 'images' in item ? item.images : item.image ? [item.image] : [];
+          const images =
+            'images' in item
+              ? item.images
+              : 'image' in item
+                ? [item.image]
+                : [];
           const { to, bg } = item;
           return (
             <Box

@@ -68,6 +68,14 @@ export interface Dict {
   candyPlayAgain: string;
   pondTitle: string;
   pondHint: string;
+  architectureTitle: string;
+  architectureHint: string;
+  householdTitle: string;
+  householdPlay: string;
+  householdBack: string;
+  householdNext: string;
+  householdRestart: string;
+  household: Record<string, string>;
 }
 
 export const translations: Record<Lang, Dict> = {
@@ -187,6 +195,39 @@ export const translations: Record<Lang, Dict> = {
     candyPlayAgain: 'Play Again',
     pondTitle: 'The Pond',
     pondHint: 'A calm pond scene — drag to look around. A fishing game is coming soon!',
+    architectureTitle: 'Architecture',
+    architectureHint:
+      'How this app is built. Authored as an Archify JSON-IR and rendered at build time with the official @spexcode/archify runtime — see architecture/ and scripts/vite-plugin-archify.mjs.',
+    householdTitle: 'Household Things',
+    householdPlay: 'Play',
+    householdBack: 'Back',
+    householdNext: 'Next',
+    householdRestart: 'Restart',
+    household: {
+      table: 'Table',
+      chair: 'Chair',
+      lamp: 'Lamp',
+      pen: 'Pen',
+      book: 'Book',
+      cup: 'Cup',
+      clock: 'Clock',
+      phone: 'Phone',
+      bed: 'Bed',
+      spoon: 'Spoon',
+      fork: 'Fork',
+      tv: 'TV',
+      sofa: 'Sofa',
+      window: 'Window',
+      door: 'Door',
+      mirror: 'Mirror',
+      shower: 'Shower',
+      toilet: 'Toilet',
+      speaker: 'Speaker',
+      key: 'Key',
+      umbrella: 'Umbrella',
+      broom: 'Broom',
+      toiletpaper: 'Toilet paper',
+    },
   },
   vi: {
     question: (word) => `Con nào là ${word}?`,
@@ -304,6 +345,39 @@ export const translations: Record<Lang, Dict> = {
     candyPlayAgain: 'Chơi lại',
     pondTitle: 'Ao nước',
     pondHint: 'Một cảnh ao nước yên bình — hãy kéo để quan sát xung quanh. Trò câu cá sắp ra mắt!',
+    architectureTitle: 'Kiến trúc',
+    architectureHint:
+      'Cách ứng dụng này được xây dựng. Được mô tả dưới dạng JSON-IR của Archify và render khi build với runtime @spexcode/archify chính thức — xem architecture/ và scripts/vite-plugin-archify.mjs.',
+    householdTitle: 'Đồ dùng gia đình',
+    householdPlay: 'Chơi',
+    householdBack: 'Quay lại',
+    householdNext: 'Tiếp theo',
+    householdRestart: 'Chơi lại',
+    household: {
+      table: 'Bàn',
+      chair: 'Ghế',
+      lamp: 'Đèn',
+      pen: 'Bút',
+      book: 'Sách',
+      cup: 'Cốc',
+      clock: 'Đồng hồ',
+      phone: 'Điện thoại',
+      bed: 'Giường',
+      spoon: 'Thìa',
+      fork: 'Nĩa',
+      tv: 'Tivi',
+      sofa: 'Ghế sofa',
+      window: 'Cửa sổ',
+      door: 'Cửa',
+      mirror: 'Gương',
+      shower: 'Vòi sen',
+      toilet: 'Nhà vệ sinh',
+      speaker: 'Loa',
+      key: 'Chìa khóa',
+      umbrella: 'Ô',
+      broom: 'Chổi',
+      toiletpaper: 'Giấy vệ sinh',
+    },
   },
 };
 
