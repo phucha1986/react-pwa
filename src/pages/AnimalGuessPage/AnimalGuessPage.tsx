@@ -253,6 +253,7 @@ export default function AnimalGuessPage() {
       `}</style>
 
       <Typography
+        data-pw="question"
         sx={{
           fontFamily: "'Fredoka', 'Comic Sans MS', cursive",
           fontSize: 'clamp(24px, 5vw, 36px)',
@@ -269,6 +270,7 @@ export default function AnimalGuessPage() {
           {options.map((opt) => (
             <AnimalPhoto
               key={opt.key}
+              data-pw="option"
               $wrong={wrongPick === opt.key}
               $correct={success && opt.isCorrect}
               $disabled={success && !opt.isCorrect}
@@ -284,6 +286,7 @@ export default function AnimalGuessPage() {
       {confetti.map((piece) => (
         <ConfettiPiece
           key={piece.id}
+          data-pw="confetti"
           style={{
             left: `${piece.left}%`,
             width: piece.size,
