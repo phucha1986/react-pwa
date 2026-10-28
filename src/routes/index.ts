@@ -59,19 +59,7 @@ const routes: Routes = [
   {
     component: asyncComponentLoader(() => import('@/pages/PianoGame')),
     path: '/PianoGame',
-    title: 'Piano Game',
-    icon: PianoIcon,
-  },
-  {
-    component: asyncComponentLoader(() => import('@/pages/KidsPianoGame')),
-    path: '/KidsPianoGame',
-    title: 'Kids Piano Game',
-    icon: PianoIcon,
-  },
-  {
-    component: asyncComponentLoader(() => import('@/pages/KidsPianoGame/AutoPlayGame')),
-    path: '/AutoPlayGame',
-    title: 'Auto Play Game',
+    title: 'Piano Learning Game',
     icon: PianoIcon,
   },
   {

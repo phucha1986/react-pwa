@@ -27,15 +27,20 @@ type MenuItem =
       images: string[];
       to: string;
       bg: string;
-      labelKey: 'memoryTitle' | 'whackTitle' | 'fruitTitle' | 'pondTitle' | 'householdTitle';
+      labelKey:
+        | 'memoryTitle'
+        | 'whackTitle'
+        | 'fruitTitle'
+        | 'pondTitle'
+        | 'householdTitle'
+        | 'pianoTitle';
     };
 
 const menuItems: MenuItem[] = [
   { images: [lionIcon, elephantIcon], to: '/AnimalGame', bg: '#FFD93D' },
   { images: [fruitIcon], to: '/FruitGame', bg: '#A0E7E5', labelKey: 'fruitTitle' },
   { label: 'Flappy Bird', image: flappyBirdSprite, to: '/FlappyBird', bg: '#FFADAD' },
-  { label: 'Piano', image: pianoIcon, to: '/PianoGame', bg: '#B197FC' },
-  { label: 'Kids Piano Game', image: pianoIcon, to: '/KidsPianoGame', bg: '#B197FC' },
+  { images: [pianoIcon], to: '/PianoGame', bg: '#B197FC', labelKey: 'pianoTitle' },
   { label: 'Coloring', image: coloringIcon, to: '/ColoringGame', bg: '#FFA94D' },
   { images: [rabbitIcon, turtleIcon], to: '/MemoryMatch', bg: '#A0E7E5', labelKey: 'memoryTitle' },
   { images: [catIcon, dogIcon], to: '/WhackAMole', bg: '#FFD8A8', labelKey: 'whackTitle' },

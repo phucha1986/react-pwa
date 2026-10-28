@@ -31,14 +31,51 @@ export interface Dict {
   pianoTapToStart: string;
   pianoScore: string;
   pianoBest: string;
-  pianoAutoPlay: string;
   pianoHint: string;
   pianoRotate: string;
   pianoChooseSong: string;
-  songHappyBirthday: string;
+  pianoPlay: string;
+  pianoBack: string;
+  pianoContinue: string;
+  pianoSettings: string;
+  pianoProgressTitle: string;
+  pianoDifficulty: string;
+  pianoEasy: string;
+  pianoMedium: string;
+  pianoChallenge: string;
+  pianoVolume: string;
+  pianoMute: string;
+  pianoTempo: string;
+  pianoShowNoteNames: string;
+  pianoAnimations: string;
+  pianoFreePlay: string;
+  pianoPreview: string;
+  pianoPause: string;
+  pianoResume: string;
+  pianoRestart: string;
+  pianoResultsTitle: string;
+  pianoCorrect: string;
+  pianoAccuracy: string;
+  pianoStars: string;
+  pianoReplay: string;
+  pianoNextSong: string;
+  pianoCongrats: string;
+  pianoGoodTry: string;
+  pianoSongDone: string;
+  pianoSongsCompleted: string;
+  pianoTotalNotes: string;
+  pianoMissed: string;
+  pianoModeEasyHint: string;
+  pianoModeMediumHint: string;
+  pianoModeChallengeHint: string;
   songTwinkleTwinkle: string;
   songMaryLamb: string;
-  songJingleBells: string;
+  songOdeToJoy: string;
+  songFrereJacques: string;
+  songRowYourBoat: string;
+  songHotCrossBuns: string;
+  songLondonBridge: string;
+  songFirstMelody: string;
   coloringTitle: string;
   coloringChoose: string;
   coloringHint: string;
@@ -154,18 +191,55 @@ export const translations: Record<Lang, Dict> = {
     whackTime: 'Time',
     whackGameOver: 'Game Over',
     whackPlayAgain: 'Play',
-    pianoTitle: 'Piano Game',
+    pianoTitle: 'Piano Learning Game',
     pianoTapToStart: 'Tap to Play',
     pianoScore: 'Score',
     pianoBest: 'Best',
-    pianoAutoPlay: 'Auto play the song',
-    pianoHint: 'Tap the key when the note lands on the glowing line!',
+    pianoHint: 'Tap the key when the note reaches the line!',
     pianoRotate: 'Please rotate your device to landscape',
     pianoChooseSong: 'Choose a song',
-    songHappyBirthday: 'Happy Birthday',
+    pianoPlay: 'Play',
+    pianoBack: 'Back',
+    pianoContinue: 'Continue learning',
+    pianoSettings: 'Settings',
+    pianoProgressTitle: 'My progress',
+    pianoDifficulty: 'Difficulty',
+    pianoEasy: 'Easy',
+    pianoMedium: 'Medium',
+    pianoChallenge: 'Challenge',
+    pianoVolume: 'Volume',
+    pianoMute: 'Mute',
+    pianoTempo: 'Tempo',
+    pianoShowNoteNames: 'Show note names',
+    pianoAnimations: 'Animations',
+    pianoFreePlay: 'Free play',
+    pianoPreview: 'Preview',
+    pianoPause: 'Pause',
+    pianoResume: 'Resume',
+    pianoRestart: 'Restart',
+    pianoResultsTitle: 'Song complete!',
+    pianoCorrect: 'Correct notes',
+    pianoAccuracy: 'Accuracy',
+    pianoStars: 'Stars',
+    pianoReplay: 'Play again',
+    pianoNextSong: 'Next song',
+    pianoCongrats: 'Amazing! You played the whole song! 🎉',
+    pianoGoodTry: 'Nice try! Every practice makes you better.',
+    pianoSongDone: 'Song finished',
+    pianoSongsCompleted: 'Songs completed',
+    pianoTotalNotes: 'Notes in song',
+    pianoMissed: 'Missed',
+    pianoModeEasyHint: 'Colours, key highlights and note names — nice and slow.',
+    pianoModeMediumHint: 'Notes and note names, normal tempo.',
+    pianoModeChallengeHint: 'Just the notes — see how well you do.',
     songTwinkleTwinkle: 'Twinkle Twinkle',
     songMaryLamb: 'Mary Had a Little Lamb',
-    songJingleBells: 'Jingle Bells',
+    songOdeToJoy: 'Ode to Joy',
+    songFrereJacques: 'Frère Jacques',
+    songRowYourBoat: 'Row, Row, Row Your Boat',
+    songHotCrossBuns: 'Hot Cross Buns',
+    songLondonBridge: 'London Bridge Is Falling Down',
+    songFirstMelody: 'My First Melody',
     coloringTitle: 'Coloring',
     coloringChoose: 'Pick a picture to color',
     coloringHint: 'Pick a color, then drag over a part of the picture to paint it',
@@ -304,18 +378,55 @@ export const translations: Record<Lang, Dict> = {
     whackTime: 'Thời gian',
     whackGameOver: 'Hết cuộc chơi',
     whackPlayAgain: 'Chơi',
-    pianoTitle: 'Trò chơi Piano',
+    pianoTitle: 'Trò chơi Piano cho bé',
     pianoTapToStart: 'Chạm để chơi',
     pianoScore: 'Điểm',
     pianoBest: 'Kỷ lục',
-    pianoAutoPlay: 'Tự động chơi bài hát',
-    pianoHint: 'Chạm phím khi nốt nhạc rơi xuống đường sáng!',
+    pianoHint: 'Chạm phím khi nốt nhạc chạm đường kẻ!',
     pianoRotate: 'Vui lòng xoay máy sang chế độ ngang',
     pianoChooseSong: 'Chọn một bài hát',
-    songHappyBirthday: 'Chúc mừng sinh nhật',
+    pianoPlay: 'Chơi',
+    pianoBack: 'Quay lại',
+    pianoContinue: 'Tiếp tục học',
+    pianoSettings: 'Cài đặt',
+    pianoProgressTitle: 'Tiến độ của bé',
+    pianoDifficulty: 'Độ khó',
+    pianoEasy: 'Dễ',
+    pianoMedium: 'Trung bình',
+    pianoChallenge: 'Thử thách',
+    pianoVolume: 'Â lượng',
+    pianoMute: 'Tắt tiếng',
+    pianoTempo: 'Nhịp độ',
+    pianoShowNoteNames: 'Hiện tên nốt',
+    pianoAnimations: 'Hiệu ứng',
+    pianoFreePlay: 'Chơi tự do',
+    pianoPreview: 'Nghe thử',
+    pianoPause: 'Tạm dừng',
+    pianoResume: 'Tiếp tục',
+    pianoRestart: 'Chơi lại',
+    pianoResultsTitle: 'Hoàn thành bài hát!',
+    pianoCorrect: 'Nốt đúng',
+    pianoAccuracy: 'Độ chính xác',
+    pianoStars: 'Sao',
+    pianoReplay: 'Chơi lại',
+    pianoNextSong: 'Bài tiếp theo',
+    pianoCongrats: 'Tuyệt vời! Bé đã chơi trọn bài hát! 🎉',
+    pianoGoodTry: 'Làm tốt lắm! Mỗi lần luyện tập giúp bé tiến bộ hơn.',
+    pianoSongDone: 'Bài hát đã xong',
+    pianoSongsCompleted: 'Số bài đã hoàn thành',
+    pianoTotalNotes: 'Số nốt trong bài',
+    pianoMissed: 'Bỏ lỡ',
+    pianoModeEasyHint: 'Màu sắc, phím sáng và tên nốt — chậm rãi.',
+    pianoModeMediumHint: 'Nốt nhạc và tên nốt, nhịp độ bình thường.',
+    pianoModeChallengeHint: 'Chỉ có nốt nhạc — xem bé chơi tốt đến đâu.',
     songTwinkleTwinkle: 'Twinkle Twinkle',
     songMaryLamb: 'Mary có một con cừu',
-    songJingleBells: 'Jingle Bells',
+    songOdeToJoy: 'Ode to Joy',
+    songFrereJacques: 'Frère Jacques',
+    songRowYourBoat: 'Row, Row, Row Your Boat',
+    songHotCrossBuns: 'Hot Cross Buns',
+    songLondonBridge: 'London Bridge Is Falling Down',
+    songFirstMelody: 'Giai điệu đầu tiên của bé',
     coloringTitle: 'Tô màu',
     coloringChoose: 'Chọn một bức tranh để tô',
     coloringHint: 'Chọn màu, rồi kéo qua một phần của bức tranh để tô',
