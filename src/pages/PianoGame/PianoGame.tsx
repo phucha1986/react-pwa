@@ -14,6 +14,11 @@ import SongSelection from './SongSelection';
 
 type Screen = 'home' | 'songs' | 'play' | 'settings' | 'progress';
 
+/** The main menu links here with ?screen=songs so a child lands straight on the song list. */
+function initialScreen(): Screen {
+  return new URLSearchParams(window.location.search).get('screen') === 'songs' ? 'songs' : 'home';
+}
+
 /** Respect the OS "reduce motion" preference on first load. */
 function initialSettings(): Settings {
   const settings = loadSettings();
@@ -28,7 +33,7 @@ function initialSettings(): Settings {
 
 export default function PianoGame() {
   const [settings, setSettings] = useState<Settings>(() => initialSettings());
-  const [screen, setScreen] = useState<Screen>('home');
+  const [screen, setScreen] = useState<Screen>(() => initialScreen());
   const [songId, setSongId] = useState<string>(SONGS[0].id);
 
   const song = useMemo(() => getSong(songId) ?? SONGS[0], [songId]);

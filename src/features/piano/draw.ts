@@ -4,7 +4,7 @@ import { type CanvasLayout, noteHeight, noteY } from './positions';
 import type { Difficulty, Settings, TrackedNote } from './types';
 
 /** One colour per pitch class (C..B) so a note always looks the same. */
-const PALETTE = [
+export const PALETTE = [
   '#E5484D', // C
   '#F2720C', // C#
   '#F5C518', // D

@@ -40,7 +40,7 @@ const menuItems: MenuItem[] = [
   { images: [lionIcon, elephantIcon], to: '/AnimalGame', bg: '#FFD93D' },
   { images: [fruitIcon], to: '/FruitGame', bg: '#A0E7E5', labelKey: 'fruitTitle' },
   { label: 'Flappy Bird', image: flappyBirdSprite, to: '/FlappyBird', bg: '#FFADAD' },
-  { images: [pianoIcon], to: '/PianoGame', bg: '#B197FC', labelKey: 'pianoTitle' },
+  { images: [pianoIcon], to: '/PianoGame?screen=songs', bg: '#B197FC', labelKey: 'pianoTitle' },
   { label: 'Coloring', image: coloringIcon, to: '/ColoringGame', bg: '#FFA94D' },
   { images: [rabbitIcon, turtleIcon], to: '/MemoryMatch', bg: '#A0E7E5', labelKey: 'memoryTitle' },
   { images: [catIcon, dogIcon], to: '/WhackAMole', bg: '#FFD8A8', labelKey: 'whackTitle' },

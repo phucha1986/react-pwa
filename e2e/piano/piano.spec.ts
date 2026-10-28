@@ -13,6 +13,14 @@ test.describe('piano learning game', () => {
     await expect(page.getByTestId('piano-progress')).toBeVisible();
   });
 
+  test('main menu link lands straight on the song selector', async ({ page }) => {
+    await page.goto('/?screen=songs');
+    await page.getByAltText('Piano Learning Game').click();
+
+    await expect(page.getByTestId('piano-song-selection')).toBeVisible();
+    await expect(page.getByTestId(/^piano-song-card-/)).toHaveCount(8);
+  });
+
   test('play opens the song list with 8 public-domain songs', async ({ page }) => {
     await page.getByTestId('piano-play').click();
 
