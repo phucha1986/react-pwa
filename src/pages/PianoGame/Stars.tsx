@@ -1,5 +1,7 @@
 import { Box } from '@mui/material';
 
+import { GOLD } from './palette';
+
 /** Simple star row (no rating widget needed — keeps the DOM test-friendly). */
 export default function Stars({ count, size = 20 }: { count: number; size?: number }) {
   return (
@@ -9,7 +11,7 @@ export default function Stars({ count, size = 20 }: { count: number; size?: numb
           key={i}
           data-pw={`star-${i}`}
           sx={{
-            color: i <= count ? '#f59f00' : '#cfd8dc',
+            color: i <= count ? GOLD : '#3d4a6d',
             fontWeight: 700,
           }}
         >

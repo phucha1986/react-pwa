@@ -28,6 +28,18 @@ test.describe('piano learning game', () => {
     await expect(page.getByTestId(/^piano-song-card-/)).toHaveCount(8);
   });
 
+  test('difficulty chips filter the song list', async ({ page }) => {
+    await page.getByTestId('piano-play').click();
+
+    await expect(page.getByTestId(/^piano-song-card-/)).toHaveCount(8);
+
+    await page.getByTestId('piano-filter-medium').click();
+    await expect(page.getByTestId(/^piano-song-card-/)).toHaveCount(2);
+
+    await page.getByTestId('piano-filter-all').click();
+    await expect(page.getByTestId(/^piano-song-card-/)).toHaveCount(8);
+  });
+
   test('choosing a song opens gameplay with canvas + keyboard', async ({ page }) => {
     await page.getByTestId('piano-play').click();
     await page.getByTestId('piano-play-twinkle').click();

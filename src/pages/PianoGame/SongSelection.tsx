@@ -1,31 +1,41 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
 import { Box, Button, Stack, Typography } from '@mui/material';
 
 import { pianoAudio } from '@/features/piano/audio';
 import { PALETTE } from '@/features/piano/draw';
-import { noteLetter } from '@/features/piano/midi';
 import { SONGS } from '@/features/piano/songs';
 import { loadProgress } from '@/features/piano/storage';
-import type { Settings, Song } from '@/features/piano/types';
+import type { Difficulty, Settings, Song } from '@/features/piano/types';
 import { useLanguage } from '@/i18n/useLanguage';
 
 import Stars from './Stars';
+import {
+  DIFFICULTY_COLOR,
+  GOLD,
+  MUTED,
+  NAVY_BORDER,
+  NAVY_CARD,
+  PURPLE,
+  TEXT,
+  TOUCH_TARGET,
+} from './palette';
 
-/** Card colour comes from the song's first note, so it matches the falling notes. */
-function songColor(song: Song) {
-  const first = song.notes[0]?.midi ?? 60;
-  return PALETTE[((first % 12) + 12) % 12];
-}
+type Filter = Difficulty | 'all';
 
-const DIFFICULTY_EMOJI: Record<Song['difficulty'], string> = {
+const FILTERS: Filter[] = ['all', 'easy', 'medium', 'challenge'];
+
+const DIFFICULTY_EMOJI: Record<Difficulty, string> = {
   easy: '🌱',
   medium: '🌟',
   challenge: '🚀',
 };
 
-/** Kid-sized touch targets (>= 44px). */
-const TOUCH_TARGET = { minHeight: 48, minWidth: 48 };
+/** Note colour comes from the song's first note, so it matches the falling notes. */
+function songColor(song: Song) {
+  const first = song.notes[0]?.midi ?? 60;
+  return PALETTE[((first % 12) + 12) % 12];
+}
 
 interface SongSelectionProps {
   settings: Settings;
@@ -51,9 +61,11 @@ function previewSong(song: Song, settings: Settings) {
   }
 }
 
+/** PianoFlow-style song library: dark navy cards, difficulty chips, purple Play button. */
 export default function SongSelection({ settings, onPick, onBack }: SongSelectionProps) {
   const { t } = useLanguage();
   const progress = loadProgress();
+  const [filter, setFilter] = useState<Filter>('all');
 
   const difficultyLabel = (song: Song) =>
     song.difficulty === 'easy'
@@ -62,121 +74,208 @@ export default function SongSelection({ settings, onPick, onBack }: SongSelectio
         ? t.pianoMedium
         : t.pianoChallenge;
 
+  const filterLabel = (f: Filter) =>
+    f === 'all'
+      ? t.pianoFilterAll
+      : f === 'easy'
+        ? t.pianoEasy
+        : f === 'medium'
+          ? t.pianoMedium
+          : t.pianoChallenge;
+
   const preview = useCallback((song: Song) => previewSong(song, settings), [settings]);
 
+  const songs = SONGS.filter((song) => filter === 'all' || song.difficulty === filter);
+
   return (
-    <Stack data-pw="piano-song-selection" spacing={2} sx={{ py: 1 }}>
+    <Stack data-pw="piano-song-selection" spacing={1.5} sx={{ py: 1 }}>
       <Stack direction="row" spacing={1} alignItems="center">
-        <Button
+        <Box
           data-pw="piano-back-home"
-          size="large"
-          variant="contained"
+          role="button"
+          tabIndex={0}
+          aria-label={t.pianoBack}
           onClick={onBack}
-          sx={{ ...TOUCH_TARGET, bgcolor: '#3E63DD', color: '#fff', borderRadius: 2 }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') onBack();
+          }}
+          sx={{
+            ...TOUCH_TARGET,
+            width: 48,
+            borderRadius: 999,
+            bgcolor: NAVY_CARD,
+            border: `1px solid ${NAVY_BORDER}`,
+            color: TEXT,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 20,
+            cursor: 'pointer',
+          }}
         >
-          ← {t.pianoBack}
-        </Button>
-        <Typography variant="h5" fontWeight={800} sx={{ flex: 1 }} noWrap>
+          ←
+        </Box>
+        <Typography variant="h5" fontWeight={800} sx={{ flex: 1, color: TEXT }} noWrap>
           {t.pianoChooseSong}
         </Typography>
       </Stack>
 
-      <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
-          gap: 1.5,
-        }}
+      <Stack
+        data-pw="piano-filter-chips"
+        direction="row"
+        spacing={1}
+        sx={{ flexWrap: 'wrap', rowGap: 1 }}
       >
-        {SONGS.map((song) => {
+        {FILTERS.map((f) => {
+          const active = filter === f;
+          const color = f === 'all' ? PURPLE : DIFFICULTY_COLOR[f];
+
+          return (
+            <Box
+              key={f}
+              data-pw={`piano-filter-${f}`}
+              role="button"
+              tabIndex={0}
+              onClick={() => setFilter(f)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') setFilter(f);
+              }}
+              sx={{
+                px: 1.5,
+                py: 0.5,
+                minHeight: 40,
+                borderRadius: 999,
+                bgcolor: active ? color : 'transparent',
+                border: `1px solid ${active ? color : NAVY_BORDER}`,
+                color: active ? '#fff' : MUTED,
+                fontWeight: 700,
+                fontSize: 14,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              {filterLabel(f)}
+            </Box>
+          );
+        })}
+      </Stack>
+
+      <Stack data-pw="piano-song-list" spacing={1.25}>
+        {songs.map((song) => {
           const entry = progress[song.id];
-          const color = songColor(song);
+          const accent = songColor(song);
 
           return (
             <Box
               key={song.id}
               data-pw={`piano-song-card-${song.id}`}
               sx={{
-                p: 1.5,
-                bgcolor: color,
-                color: '#fff',
-                borderRadius: '1.5rem',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.18)',
+                p: 1.25,
+                bgcolor: NAVY_CARD,
+                border: `1px solid ${NAVY_BORDER}`,
+                borderRadius: 16,
+                color: TEXT,
                 display: 'flex',
                 alignItems: 'center',
-                gap: 1.25,
+                gap: 1,
                 flexWrap: 'wrap',
+                boxShadow: '0 6px 16px rgba(0,0,0,0.35)',
               }}
             >
               <Box
                 sx={{
-                  width: 52,
-                  height: 52,
+                  width: 44,
+                  height: 44,
                   flexShrink: 0,
-                  borderRadius: '50%',
-                  bgcolor: 'rgba(255,255,255,0.92)',
-                  color,
+                  borderRadius: 999,
+                  bgcolor: GOLD,
+                  color: '#1b1400',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontWeight: 800,
-                  fontSize: 22,
+                  fontSize: 18,
                 }}
               >
-                {noteLetter(song.notes[0]?.midi ?? 60)}
+                ★
               </Box>
 
-              <Box sx={{ flex: 1, minWidth: 0 }}>
+              <Box sx={{ flex: 1, minWidth: 160 }}>
                 <Typography variant="subtitle1" fontWeight={800} noWrap>
                   {t[song.titleKey]}
                 </Typography>
-                <Typography variant="body2" sx={{ opacity: 0.9 }} noWrap>
-                  {DIFFICULTY_EMOJI[song.difficulty]} {difficultyLabel(song)} · {song.notes.length}{' '}
-                  {t.pianoTotalNotes}
-                </Typography>
-                <Stars count={entry?.stars ?? 0} size={18} />
+                <Stack
+                  direction="row"
+                  spacing={0.75}
+                  sx={{ alignItems: 'center', flexWrap: 'wrap' }}
+                >
+                  <Box
+                    sx={{
+                      px: 1,
+                      py: 0.25,
+                      borderRadius: 999,
+                      bgcolor: DIFFICULTY_COLOR[song.difficulty],
+                      color: '#fff',
+                      fontSize: 12,
+                      fontWeight: 700,
+                    }}
+                  >
+                    {DIFFICULTY_EMOJI[song.difficulty]} {difficultyLabel(song)}
+                  </Box>
+                  <Typography variant="body2" sx={{ color: MUTED }} noWrap>
+                    {song.notes.length} {t.pianoTotalNotes}
+                  </Typography>
+                </Stack>
+                <Stars count={entry?.stars ?? 0} size={16} />
               </Box>
 
-              <Stack direction="row" spacing={0.75} sx={{ width: '100%', flexWrap: 'wrap', mt: 1 }}>
+              <Button
+                data-pw={`piano-play-${song.id}`}
+                size="large"
+                variant="contained"
+                onClick={() => onPick(song.id)}
+                sx={{
+                  ...TOUCH_TARGET,
+                  px: 2,
+                  borderRadius: 999,
+                  bgcolor: PURPLE,
+                  color: '#fff',
+                  fontWeight: 800,
+                  textTransform: 'none',
+                }}
+              >
+                ▶ {t.pianoPlay}
+              </Button>
+
+              <Stack
+                direction="row"
+                spacing={0.75}
+                sx={{ width: '100%', flexWrap: 'wrap', mt: 0.5 }}
+              >
                 <Button
                   data-pw={`piano-preview-${song.id}`}
                   size="large"
-                  variant="contained"
+                  variant="text"
                   onClick={() => preview(song)}
                   sx={{
                     ...TOUCH_TARGET,
                     flex: 1,
                     minWidth: 120,
-                    bgcolor: 'rgba(255,255,255,0.92)',
-                    color,
-                    borderRadius: 2,
+                    borderRadius: 999,
+                    bgcolor: 'rgba(255,255,255,0.08)',
+                    color: accent,
                     fontWeight: 700,
+                    textTransform: 'none',
                   }}
                 >
                   ♪ {t.pianoPreview}
-                </Button>
-                <Button
-                  data-pw={`piano-play-${song.id}`}
-                  size="large"
-                  variant="contained"
-                  onClick={() => onPick(song.id)}
-                  sx={{
-                    ...TOUCH_TARGET,
-                    flex: 1,
-                    minWidth: 120,
-                    bgcolor: '#1F2937',
-                    color: '#fff',
-                    borderRadius: 2,
-                    fontWeight: 700,
-                  }}
-                >
-                  ▶ {t.pianoPlay}
                 </Button>
               </Stack>
             </Box>
           );
         })}
-      </Box>
+      </Stack>
     </Stack>
   );
 }

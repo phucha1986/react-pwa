@@ -40,12 +40,12 @@ export function drawScene(ctx: CanvasRenderingContext2D, opts: DrawOptions): voi
 
   ctx.clearRect(0, 0, layout.width, layout.height);
 
-  // Background
-  ctx.fillStyle = settings.animations ? '#F7F8FB' : '#FFFFFF';
+  // Background — PianoFlow-style dark navy so the note colours pop.
+  ctx.fillStyle = settings.animations ? '#141a2e' : '#1d2540';
   ctx.fillRect(0, 0, layout.width, layout.height);
 
   // Lane guides so a child can see which key each column belongs to.
-  ctx.strokeStyle = 'rgba(0,0,0,0.06)';
+  ctx.strokeStyle = 'rgba(255,255,255,0.08)';
   ctx.lineWidth = 1;
   for (let i = 0; i < opts.keyLayout.whiteCount; i += 1) {
     ctx.beginPath();
@@ -55,7 +55,7 @@ export function drawScene(ctx: CanvasRenderingContext2D, opts: DrawOptions): voi
   }
 
   // Target line — where a note should be when the key is pressed.
-  ctx.strokeStyle = '#3E63DD';
+  ctx.strokeStyle = '#6c5ce7';
   ctx.lineWidth = 3;
   ctx.beginPath();
   ctx.moveTo(0, layout.targetY);
@@ -63,7 +63,7 @@ export function drawScene(ctx: CanvasRenderingContext2D, opts: DrawOptions): voi
   ctx.stroke();
 
   if (settings.animations) {
-    ctx.fillStyle = 'rgba(62,99,221,0.12)';
+    ctx.fillStyle = 'rgba(108,92,231,0.18)';
     ctx.fillRect(0, layout.targetY - 10, layout.width, 20);
   }
 
@@ -107,7 +107,7 @@ export function drawScene(ctx: CanvasRenderingContext2D, opts: DrawOptions): voi
   if (opts.pressedMidi !== null) {
     const { whiteIndex, blackRatio } = laneInfo(opts.keyLayout, opts.pressedMidi);
     const cx = whiteIndex * keyWidth + (blackRatio === null ? keyWidth / 2 : keyWidth * blackRatio);
-    ctx.fillStyle = 'rgba(62,99,221,0.25)';
+    ctx.fillStyle = 'rgba(108,92,231,0.3)';
     ctx.fillRect(cx - keyWidth / 2, layout.targetY, keyWidth, layout.height - layout.targetY);
   }
 }

@@ -5,6 +5,8 @@ import { Box } from '@mui/material';
 import type { KeyLayout } from '@/features/piano/keyboard';
 import { isBlackKey, noteLetter } from '@/features/piano/midi';
 
+import { NAVY_BORDER } from './palette';
+
 interface PianoKeyboardProps {
   layout: KeyLayout;
   keyWidth: number;
@@ -85,9 +87,9 @@ export default function PianoKeyboard({
                 width: keyWidth,
                 height: KEY_HEIGHT,
                 boxSizing: 'border-box',
-                border: '1px solid #b0bec5',
+                border: `1px solid ${NAVY_BORDER}`,
                 borderRadius: '0 0 8px 8px',
-                background: active ? '#d7e4ff' : '#ffffff',
+                background: active ? '#6c5ce7' : '#f7f8fb',
                 display: 'flex',
                 alignItems: 'flex-end',
                 justifyContent: 'center',
@@ -138,7 +140,7 @@ export default function PianoKeyboard({
                 zIndex: 2,
                 boxSizing: 'border-box',
                 borderRadius: '0 0 6px 6px',
-                background: active ? '#3b5bdb' : '#263238',
+                background: active ? '#8b7cf0' : '#263238',
                 display: 'flex',
                 alignItems: 'flex-end',
                 justifyContent: 'center',

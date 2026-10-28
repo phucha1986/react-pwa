@@ -11,6 +11,7 @@ import Home from './Home';
 import ProgressPanel from './ProgressPanel';
 import SettingsPanel from './SettingsPanel';
 import SongSelection from './SongSelection';
+import { NAVY, NAVY_BORDER, TEXT } from './palette';
 
 type Screen = 'home' | 'songs' | 'play' | 'settings' | 'progress';
 
@@ -48,7 +49,17 @@ export default function PianoGame() {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ py: 2 }}>
+    <Container
+      maxWidth="sm"
+      sx={{
+        py: 2,
+        bgcolor: NAVY,
+        color: TEXT,
+        borderRadius: 20,
+        border: `1px solid ${NAVY_BORDER}`,
+        boxShadow: `0 10px 30px rgba(0,0,0,0.35)`,
+      }}
+    >
       <Box data-pw="piano-game">
         {screen === 'home' ? (
           <Home

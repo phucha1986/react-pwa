@@ -68,6 +68,7 @@ export interface Dict {
   pianoModeEasyHint: string;
   pianoModeMediumHint: string;
   pianoModeChallengeHint: string;
+  pianoFilterAll: string;
   songTwinkleTwinkle: string;
   songMaryLamb: string;
   songOdeToJoy: string;
@@ -232,6 +233,7 @@ export const translations: Record<Lang, Dict> = {
     pianoModeEasyHint: 'Colours, key highlights and note names — nice and slow.',
     pianoModeMediumHint: 'Notes and note names, normal tempo.',
     pianoModeChallengeHint: 'Just the notes — see how well you do.',
+    pianoFilterAll: 'All',
     songTwinkleTwinkle: 'Twinkle Twinkle',
     songMaryLamb: 'Mary Had a Little Lamb',
     songOdeToJoy: 'Ode to Joy',
@@ -419,6 +421,7 @@ export const translations: Record<Lang, Dict> = {
     pianoModeEasyHint: 'Màu sắc, phím sáng và tên nốt — chậm rãi.',
     pianoModeMediumHint: 'Nốt nhạc và tên nốt, nhịp độ bình thường.',
     pianoModeChallengeHint: 'Chỉ có nốt nhạc — xem bé chơi tốt đến đâu.',
+    pianoFilterAll: 'Tất cả',
     songTwinkleTwinkle: 'Twinkle Twinkle',
     songMaryLamb: 'Mary có một con cừu',
     songOdeToJoy: 'Ode to Joy',

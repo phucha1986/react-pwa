@@ -5,6 +5,8 @@ import { saveSettings } from '@/features/piano/storage';
 import type { Difficulty, Settings } from '@/features/piano/types';
 import { useLanguage } from '@/i18n/useLanguage';
 
+import { MUTED, NAVY_BORDER, NAVY_CARD, PURPLE, TEXT, TOUCH_TARGET } from './palette';
+
 interface SettingsPanelProps {
   settings: Settings;
   onChange: (next: Settings) => void;
@@ -24,16 +26,25 @@ export default function SettingsPanel({ settings, onChange, onBack }: SettingsPa
 
   return (
     <Stack data-pw="piano-settings" spacing={2}>
-      <Typography variant="h5" fontWeight={700}>
+      <Typography variant="h5" fontWeight={800} sx={{ color: TEXT }}>
         {t.pianoSettings}
       </Typography>
 
       <Box data-pw="piano-difficulty">
-        <Typography variant="subtitle2">{t.pianoDifficulty}</Typography>
+        <Typography variant="subtitle2" sx={{ color: MUTED }}>
+          {t.pianoDifficulty}
+        </Typography>
         <Select
           value={settings.difficultyMode}
           onChange={(e) => update({ difficultyMode: e.target.value as Difficulty })}
-          sx={{ minWidth: 180, minHeight: 44 }}
+          sx={{
+            minWidth: 180,
+            minHeight: 44,
+            color: TEXT,
+            bgcolor: NAVY_CARD,
+            borderRadius: 999,
+            border: `1px solid ${NAVY_BORDER}`,
+          }}
         >
           <MenuItem value="easy">{t.pianoEasy}</MenuItem>
           <MenuItem value="medium">{t.pianoMedium}</MenuItem>
@@ -42,14 +53,16 @@ export default function SettingsPanel({ settings, onChange, onBack }: SettingsPa
       </Box>
 
       <Box data-pw="piano-volume">
-        <Typography variant="subtitle2">{t.pianoVolume}</Typography>
+        <Typography variant="subtitle2" sx={{ color: MUTED }}>
+          {t.pianoVolume}
+        </Typography>
         <Slider
           value={settings.volume}
           min={0}
           max={1}
           step={0.05}
           onChange={(_, v) => update({ volume: Number(v) })}
-          sx={{ minWidth: 200 }}
+          sx={{ minWidth: 200, color: PURPLE }}
         />
       </Box>
 
@@ -63,14 +76,16 @@ export default function SettingsPanel({ settings, onChange, onBack }: SettingsPa
       </Stack>
 
       <Box data-pw="piano-tempo">
-        <Typography variant="subtitle2">{t.pianoTempo}</Typography>
+        <Typography variant="subtitle2" sx={{ color: MUTED }}>
+          {t.pianoTempo}
+        </Typography>
         <Slider
           value={settings.tempoFactor}
           min={0.5}
           max={1.5}
           step={0.05}
           onChange={(_, v) => update({ tempoFactor: Number(v) })}
-          sx={{ minWidth: 200 }}
+          sx={{ minWidth: 200, color: PURPLE }}
         />
       </Box>
 
@@ -101,7 +116,21 @@ export default function SettingsPanel({ settings, onChange, onBack }: SettingsPa
         <Typography>{t.pianoFreePlay}</Typography>
       </Stack>
 
-      <Button data-pw="piano-settings-back" size="large" onClick={onBack}>
+      <Button
+        data-pw="piano-settings-back"
+        size="large"
+        variant="text"
+        onClick={onBack}
+        sx={{
+          ...TOUCH_TARGET,
+          bgcolor: NAVY_CARD,
+          border: `1px solid ${NAVY_BORDER}`,
+          color: TEXT,
+          borderRadius: 999,
+          fontWeight: 700,
+          textTransform: 'none',
+        }}
+      >
         {t.pianoBack}
       </Button>
     </Stack>
