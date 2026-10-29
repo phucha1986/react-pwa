@@ -14,16 +14,17 @@ interface PianoKeyboardProps {
   showNoteNames: boolean;
   onTap: (midi: number) => void;
   onRelease: () => void;
+  /** Height of the key bed. Defaults to a kid-sized 120px; accepts any CSS length. */
+  height?: number | string;
 }
 
 const KEY_HEIGHT = 120;
-const BLACK_HEIGHT = 78;
 
 /**
  * Touch-friendly on-screen keyboard. Keys are at least 44px wide (the layout
  * scrolls horizontally on tiny phones rather than shrinking), pointer events
  * handle multi-touch, and `touch-action: none` prevents scroll/zoom fighting
- * the child's fingers.
+ * the child's fingers. The key bed grows to whatever height the layout gives it.
  */
 export default function PianoKeyboard({
   layout,
@@ -32,6 +33,7 @@ export default function PianoKeyboard({
   showNoteNames,
   onTap,
   onRelease,
+  height = KEY_HEIGHT,
 }: PianoKeyboardProps) {
   const captured = useRef(false);
 
@@ -55,14 +57,14 @@ export default function PianoKeyboard({
       sx={{
         position: 'relative',
         width: '100%',
-        height: KEY_HEIGHT,
+        height,
         overflowX: 'auto',
         overflowY: 'hidden',
         touchAction: 'none',
         userSelect: 'none',
       }}
     >
-      <Box sx={{ position: 'relative', width: totalWidth, height: KEY_HEIGHT }}>
+      <Box sx={{ position: 'relative', width: totalWidth, height }}>
         {/* White keys */}
         {layout.whiteKeys.map((key) => {
           const active = pressedMidi === key.midi;
@@ -85,7 +87,7 @@ export default function PianoKeyboard({
                 left: key.index * keyWidth,
                 top: 0,
                 width: keyWidth,
-                height: KEY_HEIGHT,
+                height,
                 boxSizing: 'border-box',
                 border: `1px solid ${NAVY_BORDER}`,
                 borderRadius: '0 0 8px 8px',
@@ -136,7 +138,7 @@ export default function PianoKeyboard({
                 left: (key.index + key.ratio) * keyWidth - keyWidth * 0.3,
                 top: 0,
                 width: keyWidth * 0.6,
-                height: BLACK_HEIGHT,
+                height: '65%',
                 zIndex: 2,
                 boxSizing: 'border-box',
                 borderRadius: '0 0 6px 6px',

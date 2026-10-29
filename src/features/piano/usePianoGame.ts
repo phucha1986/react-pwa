@@ -80,15 +80,15 @@ export function usePianoGame(song: Song, settings: Settings): PianoGameApi {
     if (!canvas) return;
 
     const resize = () => {
-      const rect = canvas.getBoundingClientRect();
+      // offsetWidth/Height report the unrotated layout box. getBoundingClientRect
+      // would report swapped dimensions when the stage is rotated on a portrait phone.
+      const width = canvas.offsetWidth;
+      const height = canvas.offsetHeight;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.round(rect.width * dpr);
-      canvas.height = Math.round(rect.height * dpr);
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
       const ctx = canvas.getContext('2d');
       if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-      const width = rect.width;
-      const height = rect.height;
       const kw = whiteKeyWidth(width, keyLayout.whiteCount);
       setKeyWidth(kw);
 

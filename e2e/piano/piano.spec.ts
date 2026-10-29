@@ -173,4 +173,71 @@ test.describe('piano learning game', () => {
     });
     expect(overflow).toBeLessThanOrEqual(1);
   });
+
+  test('landscape stage splits into a notes half on top and a controls half below', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 812, height: 375 });
+    await page.getByTestId('piano-play').click();
+    await page.getByTestId('piano-play-twinkle').click();
+
+    const boxes = await page.evaluate(() => {
+      const rect = (sel: string) => {
+        const el = document.querySelector(sel);
+        if (!el) return null;
+        const r = el.getBoundingClientRect();
+        return { y: r.y, bottom: r.bottom, height: r.height };
+      };
+      return {
+        stage: rect('[data-pw="piano-stage"]'),
+        notes: rect('[data-pw="piano-notes-half"]'),
+        controls: rect('[data-pw="piano-controls-half"]'),
+        keyboard: rect('[data-pw="piano-keyboard"]'),
+      };
+    });
+
+    expect(boxes.stage).not.toBeNull();
+    expect(boxes.notes).not.toBeNull();
+    expect(boxes.controls).not.toBeNull();
+    expect(boxes.keyboard).not.toBeNull();
+
+    // The two halves share the stage roughly evenly.
+    expect(boxes.notes!.height).toBeGreaterThanOrEqual(boxes.stage!.height * 0.4);
+    expect(boxes.controls!.height).toBeGreaterThanOrEqual(boxes.stage!.height * 0.4);
+
+    // Falling notes sit above the buttons and the keys.
+    expect(boxes.notes!.bottom).toBeLessThanOrEqual(boxes.controls!.y + 1);
+
+    // The key bed keeps a kid-sized height and stays inside the stage.
+    expect(boxes.keyboard!.height).toBeGreaterThanOrEqual(40);
+    expect(boxes.keyboard!.bottom).toBeLessThanOrEqual(boxes.stage!.bottom + 1);
+  });
+
+  test('portrait phones render the game rotated so the layout stays landscape', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 375, height: 667 });
+    await page.getByTestId('piano-play').click();
+    await page.getByTestId('piano-play-twinkle').click();
+
+    const state = await page.evaluate(() => {
+      const stage = document.querySelector('[data-pw="piano-stage"]');
+      const inner = document.querySelector('[data-pw="piano-landscape"]');
+      const notes = document.querySelector('[data-pw="piano-notes-half"]');
+      const controls = document.querySelector('[data-pw="piano-controls-half"]');
+      return {
+        rotated: getComputedStyle(inner).transform !== 'none',
+        // In the game's own coordinate space the halves are landscape strips:
+        // wide (the screen's long edge) rather than tall.
+        notesIsLandscapeStrip: notes.offsetWidth > notes.offsetHeight,
+        controlsIsLandscapeStrip: controls.offsetWidth > controls.offsetHeight,
+        stageFitsViewport: stage.getBoundingClientRect().bottom <= window.innerHeight + 1,
+      };
+    });
+
+    expect(state.rotated).toBe(true);
+    expect(state.notesIsLandscapeStrip).toBe(true);
+    expect(state.controlsIsLandscapeStrip).toBe(true);
+    expect(state.stageFitsViewport).toBe(true);
+  });
 });
