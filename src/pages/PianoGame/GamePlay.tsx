@@ -60,15 +60,16 @@ export default function GamePlay({ song, settings, onHome, onPickSong }: GamePla
   const bottomHalf = useMeasuredHeight<HTMLDivElement>();
   const bottomChrome = useMeasuredHeight<HTMLDivElement>();
 
-  // Each half gets exactly half the stage, so the key bed is whatever the bottom
-  // half has left after the buttons and the hint line.
+  // The buttons must always be fully visible, so the bottom half reserves room for
+  // them plus a minimum key bed; the notes half gives up height when the results
+  // card makes the bottom half taller than half the stage.
+  const reservedBottom = bottomChrome.height + HALF_GAP + MIN_KEY_HEIGHT;
+  const bottomHalfMin = Math.min(reservedBottom, stageBox.height);
   const spaceLeft = bottomHalf.height - bottomChrome.height - HALF_GAP;
-  const keyHeight = Math.min(MAX_KEY_HEIGHT, Math.max(MIN_KEY_HEIGHT, spaceLeft));
+  // If even the reserve does not fit, the key bed shrinks to nothing rather than
+  // pushing the buttons past the edge of the (clipping) stage.
+  const bedHeight = Math.max(0, Math.min(MAX_KEY_HEIGHT, spaceLeft));
   const showHint = stageBox.height >= MIN_STAGE_FOR_HINT;
-
-  // On a short stage the key bed takes whatever is left instead of its minimum,
-  // so the bottom half never spills past the stage.
-  const bedHeight = Math.min(keyHeight, Math.max(24, spaceLeft));
 
   const reduced = prefersReducedMotion();
   const totalSeconds = songDurationSeconds(song, settings.tempoFactor);
@@ -98,6 +99,9 @@ export default function GamePlay({ song, settings, onHome, onPickSong }: GamePla
             display: 'flex',
             flexDirection: 'column',
             gap: '6px',
+            // Once the bottom half needs more room for the buttons, the notes area
+            // shrinks; anything that does not fit stays inside this box.
+            overflow: 'hidden',
           }}
         >
           <Stack
@@ -113,27 +117,31 @@ export default function GamePlay({ song, settings, onHome, onPickSong }: GamePla
             </Box>
           </Stack>
 
-          <Box
-            data-pw="piano-progress-bar"
-            sx={{ height: 6, borderRadius: 3, background: NAVY_BORDER }}
-          >
+          {game.phase !== 'finished' ? (
             <Box
-              sx={{
-                height: '100%',
-                width: `${progressPct}%`,
-                borderRadius: 3,
-                background: PURPLE,
-                transition: reduced ? 'none' : 'width 200ms linear',
-              }}
-            />
-          </Box>
+              data-pw="piano-progress-bar"
+              sx={{ height: 6, borderRadius: 3, background: NAVY_BORDER }}
+            >
+              <Box
+                sx={{
+                  height: '100%',
+                  width: `${progressPct}%`,
+                  borderRadius: 3,
+                  background: PURPLE,
+                  transition: reduced ? 'none' : 'width 200ms linear',
+                }}
+              />
+            </Box>
+          ) : null}
 
           <Box
             data-pw="piano-canvas"
             sx={{
               position: 'relative',
               flex: 1,
-              minHeight: 60,
+              // A finished song has nothing falling, so the canvas yields height to
+              // the results card and the buttons instead of forcing overflow.
+              minHeight: game.phase === 'finished' ? 0 : 60,
               borderRadius: 12,
               overflow: 'hidden',
               border: `1px solid ${NAVY_BORDER}`,
@@ -214,36 +222,40 @@ export default function GamePlay({ song, settings, onHome, onPickSong }: GamePla
           data-pw="piano-controls-half"
           sx={{
             flex: '1 1 0',
-            minHeight: 0,
+            minHeight: bottomHalfMin,
             display: 'flex',
             flexDirection: 'column',
             gap: `${HALF_GAP}px`,
           }}
         >
-          <Box ref={bottomChrome.ref} data-pw="piano-controls">
+          {/* Chrome never shrinks: the buttons are always fully displayed. */}
+          <Box ref={bottomChrome.ref} data-pw="piano-controls" sx={{ flex: '0 0 auto' }}>
             {game.phase === 'finished' ? (
               <Stack
                 data-pw="piano-results"
-                spacing={1}
+                direction="row"
+                spacing={1.5}
                 sx={{
-                  textAlign: 'center',
-                  p: 2,
-                  borderRadius: 16,
+                  alignItems: 'center',
+                  p: 1,
+                  borderRadius: 12,
                   background: NAVY_CARD,
                   border: `1px solid ${NAVY_BORDER}`,
                 }}
               >
-                <Typography variant="h6" fontWeight={800} sx={{ color: TEXT }}>
-                  {t.pianoResultsTitle}
-                </Typography>
-                <Typography variant="body1" sx={{ color: MUTED }}>
-                  {game.stars >= 3 ? t.pianoCongrats : t.pianoGoodTry}
-                </Typography>
-                <Stars count={game.stars} size={26} />
-                <Typography variant="body2">
-                  {t.pianoCorrect}: {game.score.correct} / {game.score.total} · {t.pianoAccuracy}:{' '}
-                  {Math.round(accuracy(game.score) * 100)}% · {t.pianoMissed}: {game.score.missed}
-                </Typography>
+                <Box sx={{ flex: '1 1 auto', minWidth: 0 }}>
+                  <Typography variant="subtitle2" fontWeight={800} sx={{ color: TEXT }}>
+                    {t.pianoResultsTitle}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: MUTED }}>
+                    {game.stars >= 3 ? t.pianoCongrats : t.pianoGoodTry}
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: MUTED }}>
+                    {t.pianoCorrect}: {game.score.correct} / {game.score.total} · {t.pianoAccuracy}:{' '}
+                    {Math.round(accuracy(game.score) * 100)}% · {t.pianoMissed}: {game.score.missed}
+                  </Typography>
+                </Box>
+                <Stars count={game.stars} size={22} />
                 <Stack
                   direction="row"
                   spacing={1}

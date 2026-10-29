@@ -240,4 +240,67 @@ test.describe('piano learning game', () => {
     expect(state.controlsIsLandscapeStrip).toBe(true);
     expect(state.stageFitsViewport).toBe(true);
   });
+
+  test('no game button is clipped by the stage on a portrait phone', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 667 });
+
+    // A fast tempo makes the song finish quickly so the results card is on screen.
+    await page.evaluate(() => {
+      localStorage.setItem('piano-settings', JSON.stringify({ tempoFactor: 10, muted: true }));
+    });
+    await page.reload();
+    await page.waitForLoadState('networkidle');
+
+    await page.getByTestId('piano-play').click();
+    await page.getByTestId('piano-play-twinkle').click();
+    await page.getByTestId('piano-start').click();
+
+    await expect(page.getByTestId('piano-results')).toBeVisible({ timeout: 15000 });
+
+    const clipped = await page.evaluate(() => {
+      const stage = document.querySelector('[data-pw="piano-stage"]');
+      const sr = stage.getBoundingClientRect();
+      const offenders: string[] = [];
+      // Only elements that belong to the game itself; the BottomBar sits outside
+      // the stage and is not expected to be inside it.
+      for (const el of stage.querySelectorAll('[data-pw]')) {
+        if (el.getAttribute('data-pw') === 'piano-stage') continue;
+        if (el.tagName !== 'BUTTON' && el.getAttribute('data-pw') !== 'piano-keyboard') continue;
+        const r = el.getBoundingClientRect();
+        if (!r.width || !r.height) continue;
+        if (
+          r.left < sr.left - 1 ||
+          r.right > sr.right + 1 ||
+          r.top < sr.top - 1 ||
+          r.bottom > sr.bottom + 1
+        ) {
+          offenders.push(el.getAttribute('data-pw') ?? 'unknown');
+        }
+      }
+      return offenders;
+    });
+
+    expect(clipped).toEqual([]);
+
+    // The bottom half must not overflow its own box either.
+    const overflow = await page.evaluate(() => {
+      const half = document.querySelector('[data-pw="piano-controls-half"]');
+      return half.scrollHeight - half.offsetHeight;
+    });
+    expect(overflow).toBeLessThanOrEqual(1);
+
+    // The notes half yields height to the buttons when the results card is shown.
+    // Measured in the game's own coordinate space (offsetHeight is rotation-safe),
+    // the two halves plus their gap must still fit inside the stage.
+    const fit = await page.evaluate(() => {
+      const stage = document.querySelector('[data-pw="piano-stage"]');
+      const notes = document.querySelector('[data-pw="piano-notes-half"]');
+      const controls = document.querySelector('[data-pw="piano-controls-half"]');
+      return {
+        stage: stage.offsetHeight,
+        used: notes.offsetHeight + controls.offsetHeight + 8,
+      };
+    });
+    expect(fit.used).toBeLessThanOrEqual(fit.stage + 1);
+  });
 });
