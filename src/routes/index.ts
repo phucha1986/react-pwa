@@ -4,6 +4,7 @@ import CookieIcon from '@mui/icons-material/Cookie';
 import GavelIcon from '@mui/icons-material/Gavel';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import HomeIcon from '@mui/icons-material/Home';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
 import PaletteIcon from '@mui/icons-material/Palette';
 import PetsIcon from '@mui/icons-material/Pets';
 import PianoIcon from '@mui/icons-material/Piano';
@@ -97,6 +98,12 @@ const routes: Routes = [
     path: '/Architecture',
     title: 'Architecture',
     icon: TerrainIcon,
+  },
+  {
+    component: asyncComponentLoader(() => import('@/pages/ComicBook')),
+    path: '/ComicBook',
+    title: 'Dế Mèn Comic Book',
+    icon: MenuBookIcon,
   },
   {
     component: asyncComponentLoader(() => import('@/pages/Page3')),

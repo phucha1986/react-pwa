@@ -11,6 +11,7 @@ const PARENT_ROUTES: Record<string, string> = {
   '/AnimalGuessPage': '/AnimalGame',
   '/AnimalGame': '/',
   '/PianoGame': '/',
+  '/ComicBook': '/',
   '/page-3': '/',
   '/page-4': '/',
 };

@@ -1,0 +1,9 @@
+export const PAPER = '#fffdf5';
+export const INK = '#26303f';
+export const ACCENT = '#e07a5f';
+export const SKY = '#dfeef7';
+export const GRASS = '#7fbf6b';
+export const WATER = '#8ec7e0';
+export const NIGHT = '#1d2540';
+export const GOLD = '#f5b301';
+export const TOUCH_TARGET = { minHeight: 48, minWidth: 48 };

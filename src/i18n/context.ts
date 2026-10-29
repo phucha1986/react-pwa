@@ -114,6 +114,13 @@ export interface Dict {
   householdNext: string;
   householdRestart: string;
   household: Record<string, string>;
+  comicTitle: string;
+  comicHint: string;
+  comicPrevPage: string;
+  comicNextPage: string;
+  comicReadAloud: string;
+  comicStopReading: string;
+  comicPageLabel: (page: number, total: number) => string;
 }
 
 export const translations: Record<Lang, Dict> = {
@@ -304,6 +311,14 @@ export const translations: Record<Lang, Dict> = {
       broom: 'Broom',
       toiletpaper: 'Toilet paper',
     },
+    comicTitle: 'Dế Mèn Comic Book',
+    comicHint:
+      'A short kid-friendly comic adventure. Tap the page numbers, turn the pages, or listen to it read aloud.',
+    comicPrevPage: 'Previous',
+    comicNextPage: 'Next',
+    comicReadAloud: 'Read aloud',
+    comicStopReading: 'Stop reading',
+    comicPageLabel: (page: number, total: number) => `Page ${page} of ${total}`,
   },
   vi: {
     question: (word) => `Con nào là ${word}?`,
@@ -492,6 +507,14 @@ export const translations: Record<Lang, Dict> = {
       broom: 'Chổi',
       toiletpaper: 'Giấy vệ sinh',
     },
+    comicTitle: 'Truyện tranh Dế Mèn',
+    comicHint:
+      'Một cuộc phiêu lưu truyện tranh ngắn cho bé. Chạm số trang, lật trang hoặc nghe đọc to.',
+    comicPrevPage: 'Trang trước',
+    comicNextPage: 'Trang sau',
+    comicReadAloud: 'Đọc to',
+    comicStopReading: 'Dừng đọc',
+    comicPageLabel: (page: number, total: number) => `Trang ${page}/${total}`,
   },
 };
 

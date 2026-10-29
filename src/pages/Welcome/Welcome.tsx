@@ -13,6 +13,7 @@ import turtleIcon from '../AnimalGame/logos/turtle.png';
 import lampIcon from '../HouseholdGame/logos/lamp.png';
 import candyIcon from './logos/candy.svg';
 import coloringIcon from './logos/coloring.svg';
+import comicIcon from './logos/comic.svg';
 import fruitIcon from './logos/fruit.svg';
 import pianoIcon from './logos/piano.svg';
 import pondIcon from './logos/pond.svg';
@@ -33,7 +34,8 @@ type MenuItem =
         | 'fruitTitle'
         | 'pondTitle'
         | 'householdTitle'
-        | 'pianoTitle';
+        | 'pianoTitle'
+        | 'comicTitle';
     };
 
 const menuItems: MenuItem[] = [
@@ -47,6 +49,7 @@ const menuItems: MenuItem[] = [
   { label: 'Candy Crush', image: candyIcon, to: '/CandyCrush', bg: '#FFC2D4' },
   { images: [pondIcon], to: '/PondScene', bg: '#5ec8de', labelKey: 'pondTitle' },
   { images: [lampIcon], to: '/HouseholdGame', bg: '#FFE5CC', labelKey: 'householdTitle' },
+  { images: [comicIcon], to: '/ComicBook', bg: '#F4D7A1', labelKey: 'comicTitle' },
 ];
 
 export default function Welcome() {
