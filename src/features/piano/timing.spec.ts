@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { SongClock, hitWindowSeconds, songDurationSeconds } from './timing';
+import { SongClock, fallSpeedPxPerSecond, hitWindowSeconds, songDurationSeconds } from './timing';
 import type { Song } from './types';
 
 describe('song clock', () => {
@@ -39,6 +39,15 @@ describe('song clock', () => {
     expect(hitWindowSeconds('challenge', 1)).toBeCloseTo(0.4, 6);
     // Slower tempo => proportionally wider window (still fair).
     expect(hitWindowSeconds('easy', 0.5)).toBeCloseTo(1.8, 6);
+  });
+
+  test('falling speed gives kids a long visible lead and slows with easier modes', () => {
+    // A 300 px runway at 'easy' must keep a note on screen for ~4.5 s.
+    expect(fallSpeedPxPerSecond('easy', 300)).toBeCloseTo(66.667, 3);
+    expect(fallSpeedPxPerSecond('medium', 300)).toBeCloseTo(93.75, 3);
+    expect(fallSpeedPxPerSecond('challenge', 300)).toBeCloseTo(136.364, 3);
+    // Easier modes are always slower than harder ones.
+    expect(fallSpeedPxPerSecond('easy', 300)).toBeLessThan(fallSpeedPxPerSecond('challenge', 300));
   });
 
   test('song duration includes intro + last note', () => {

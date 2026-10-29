@@ -162,6 +162,74 @@ test.describe('piano learning game', () => {
     expect(notePixels).toBeGreaterThan(200);
   });
 
+  test('falling notes stay visually separable, not one merged blob', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 667 });
+    await page.getByTestId('piano-play').click();
+    await page.getByTestId('piano-play-twinkle').click();
+    await page.getByTestId('piano-start').click();
+    await page.waitForTimeout(2500);
+
+    const runs = await page.evaluate(() => {
+      const PALETTE = [
+        [229, 72, 77],
+        [242, 114, 12],
+        [245, 197, 24],
+        [63, 166, 107],
+        [47, 128, 237],
+        [142, 68, 173],
+        [17, 165, 165],
+        [101, 163, 11],
+        [214, 64, 158],
+        [201, 123, 16],
+        [62, 99, 221],
+        [124, 92, 219],
+      ];
+      const canvas = document.querySelector('[data-pw="piano-canvas"] canvas');
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      const w = canvas.width;
+      const h = canvas.height;
+      const cssH = canvas.offsetHeight;
+      const targetY = cssH - Math.max(34, cssH * 0.16);
+      const limit = Math.floor(targetY * (h / cssH));
+      const data = ctx.getImageData(0, 0, w, limit).data;
+
+      // Rows that hold a real cluster of note pixels, then group them into runs.
+      const noteRows: number[] = [];
+      for (let y = 0; y < limit; y += 1) {
+        let count = 0;
+        for (let x = 0; x < w; x += 1) {
+          const i = (y * w + x) * 4;
+          if (data[i + 3] === 0) continue;
+          for (const [r, g, b] of PALETTE) {
+            if (
+              Math.abs(data[i] - r) < 12 &&
+              Math.abs(data[i + 1] - g) < 12 &&
+              Math.abs(data[i + 2] - b) < 12
+            ) {
+              count += 1;
+              break;
+            }
+          }
+        }
+        if (count >= 20) noteRows.push(y);
+      }
+
+      const groups: { start: number; end: number }[] = [];
+      for (const y of noteRows) {
+        const last = groups[groups.length - 1];
+        if (last && y === last.end + 1) last.end = y;
+        else groups.push({ start: y, end: y });
+      }
+      return { groups, runwayRows: limit };
+    });
+
+    // Several notes must be on screen at once, and they must be separated by
+    // gaps — a single continuous run would mean the bars merged into a blob.
+    expect(runs.groups.length).toBeGreaterThanOrEqual(2);
+    const gaps = runs.groups.slice(1).map((g, i) => g.start - runs.groups[i].end - 1);
+    expect(Math.max(...gaps)).toBeGreaterThanOrEqual(1);
+  });
+
   test('mobile viewport has no horizontal overflow', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
     await page.getByTestId('piano-play').click();

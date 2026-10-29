@@ -67,6 +67,8 @@ export function hitWindowSeconds(difficulty: Difficulty, tempoFactor: number): n
 /** Vertical scroll speed in px/second for the falling-notes canvas. */
 export function fallSpeedPxPerSecond(difficulty: Difficulty, canvasHeight: number): number {
   // Notes should be visible for roughly this many seconds before the target line.
-  const leadSeconds = { easy: 2.6, medium: 2.0, challenge: 1.6 }[difficulty];
+  // Kids need a long lead: a note must be clearly visible, and its key highlighted,
+  // for several seconds before it has to be pressed.
+  const leadSeconds = { easy: 4.5, medium: 3.2, challenge: 2.2 }[difficulty];
   return canvasHeight / leadSeconds;
 }

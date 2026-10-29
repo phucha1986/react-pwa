@@ -70,7 +70,7 @@ export function drawScene(ctx: CanvasRenderingContext2D, opts: DrawOptions): voi
   for (const item of tracked) {
     const { whiteIndex, blackRatio } = laneInfo(opts.keyLayout, item.note.midi);
     const cx = whiteIndex * keyWidth + (blackRatio === null ? keyWidth / 2 : keyWidth * blackRatio);
-    const h = noteHeight(item.note, layout);
+    const h = noteHeight(item.note, layout, difficulty, opts.secondsPerBeat);
     const bottom = noteY(item.note, elapsedSeconds, layout, difficulty, opts.secondsPerBeat);
     const top = bottom - h;
 

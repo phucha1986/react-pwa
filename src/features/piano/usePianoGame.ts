@@ -95,7 +95,9 @@ export function usePianoGame(song: Song, settings: Settings): PianoGameApi {
       layoutRef.current = {
         width,
         height,
-        targetY: height - Math.max(60, height * 0.18),
+        // The target line stays close to the keyboard so the strip above it is as
+        // long as possible; that strip is the runway the falling speed is based on.
+        targetY: height - Math.max(34, height * 0.16),
         pxPerBeat: Math.max(28, Math.min(60, height / 8)),
       };
     };

@@ -23,14 +23,32 @@ export function noteY(
   difficulty: Difficulty,
   secondsPerBeat: number,
 ): number {
-  const speed = fallSpeedPxPerSecond(difficulty, layout.height);
+  const speed = fallSpeedPxPerSecond(difficulty, layout.targetY);
   const secondsUntilTarget = note.startBeat * secondsPerBeat - elapsedSeconds;
   return layout.targetY - secondsUntilTarget * speed;
 }
 
-/** Note height in px, proportional to its duration in beats. */
-export function noteHeight(note: SongNote, layout: CanvasLayout): number {
-  return Math.max(14, Math.round(note.durationBeats * layout.pxPerBeat));
+/**
+ * Note height in px, proportional to its duration in beats.
+ *
+ * A note can never be taller than the distance it travels while it sounds,
+ * otherwise the next note in the same lane would overlap it and a child could
+ * not tell the notes apart. Slower falling therefore means shorter bars, with a
+ * gap left between neighbours so each note stays visually separable.
+ */
+export function noteHeight(
+  note: SongNote,
+  layout: CanvasLayout,
+  difficulty: Difficulty,
+  secondsPerBeat: number,
+): number {
+  const travel =
+    note.durationBeats * fallSpeedPxPerSecond(difficulty, layout.targetY) * secondsPerBeat;
+  const gap = Math.max(2, travel * 0.25);
+  return Math.max(
+    8,
+    Math.min(Math.round(note.durationBeats * layout.pxPerBeat), Math.round(travel - gap)),
+  );
 }
 
 /**
