@@ -14,6 +14,35 @@ const n = (midi: number, startBeat: number, durationBeats: number): SongNote => 
   durationBeats,
 });
 
+/**
+ * Merge runs of the same pitch that sit directly next to each other into one
+ * longer note. A child taps once for a held note, so `C, C` on consecutive
+ * beats is one bar on the canvas rather than two bars that look identical and
+ * force two taps for the same sound.
+ *
+ * Only notes that are exactly contiguous are merged — a gap means the child
+ * has to re-strike the key, so those stay separate.
+ */
+export function mergeRepeatedNotes(notes: SongNote[]): SongNote[] {
+  const ordered = [...notes].sort((a, b) => a.startBeat - b.startBeat);
+  const merged: SongNote[] = [];
+
+  for (const note of ordered) {
+    const previous = merged[merged.length - 1];
+    if (
+      previous &&
+      previous.midi === note.midi &&
+      note.startBeat === previous.startBeat + previous.durationBeats
+    ) {
+      previous.durationBeats += note.durationBeats;
+      continue;
+    }
+    merged.push({ ...note });
+  }
+
+  return merged;
+}
+
 // C4=60, D4=62, E4=64, F4=65, G4=67, A4=69, B4=71, C5=72, D5=74, E5=76.
 
 const twinkle: Song = {
@@ -330,7 +359,7 @@ export const SONGS: Song[] = [
   frereJacques,
   odeToJoy,
   londonBridge,
-];
+].map((song) => ({ ...song, notes: mergeRepeatedNotes(song.notes) }));
 
 export function getSong(id: string): Song | undefined {
   return SONGS.find((s) => s.id === id);
