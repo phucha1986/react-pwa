@@ -327,12 +327,13 @@ export default function FlappyBird() {
           touchAction: 'manipulation',
         }}
       >
-        <canvas ref={canvasRef} width={W} height={H} style={{ width: '100%', height: '100%' }} />
+        <canvas data-pw="flappy-canvas" ref={canvasRef} width={W} height={H} style={{ width: '100%', height: '100%' }} />
 
         {/* HUD */}
         {phase === 'playing' && (
           <Box sx={{ position: 'absolute', top: 12, left: 0, right: 0, textAlign: 'center' }}>
             <Typography
+              data-pw="flappy-score"
               variant="h3"
               sx={{
                 fontWeight: 900,
@@ -359,12 +360,13 @@ export default function FlappyBird() {
             }}
           >
             <Typography
+              data-pw="flappy-ready-title"
               variant="h5"
               sx={{ fontWeight: 800, color: '#fff', textShadow: '0 2px 4px rgba(0,0,0,0.4)' }}
             >
               {t.flappyTitle}
             </Typography>
-            <Typography sx={{ color: '#fff', textShadow: '0 1px 3px rgba(0,0,0,0.4)' }}>
+            <Typography data-pw="flappy-ready-hint" sx={{ color: '#fff', textShadow: '0 1px 3px rgba(0,0,0,0.4)' }}>
               {t.flappyTapToStart}
             </Typography>
           </Box>
@@ -383,7 +385,7 @@ export default function FlappyBird() {
               bgcolor: 'rgba(0,0,0,0.35)',
             }}
           >
-            <Typography variant="h4" sx={{ fontWeight: 900, color: '#FF6B6B' }}>
+            <Typography data-pw="flappy-gameover" variant="h4" sx={{ fontWeight: 900, color: '#FF6B6B' }}>
               {t.flappyGameOver}
             </Typography>
             <Stack direction="row" spacing={4}>
@@ -401,6 +403,7 @@ export default function FlappyBird() {
               </Box>
             </Stack>
             <Button
+              data-pw="flappy-play-again"
               variant="contained"
               onClick={(e) => {
                 e.stopPropagation();

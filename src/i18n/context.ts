@@ -15,6 +15,22 @@ export interface Dict {
   flappyBest: string;
   flappyGameOver: string;
   flappyPlayAgain: string;
+  airplane1942Title: string;
+  airplane1942Hint: string;
+  airplane1942Score: string;
+  airplane1942Best: string;
+  airplane1942Wave: string;
+  airplane1942GameOver: string;
+  airplane1942PlayAgain: string;
+  airplane1942Play: string;
+  squadronTitle: string;
+  squadronHint: string;
+  squadronScore: string;
+  squadronBest: string;
+  squadronWave: string;
+  squadronGameOver: string;
+  squadronPlayAgain: string;
+  squadronPlay: string;
   memoryTitle: string;
   memoryHint: string;
   memoryPairs: string;
@@ -187,6 +203,22 @@ export const translations: Record<Lang, Dict> = {
     flappyBest: 'Best',
     flappyGameOver: 'Game Over',
     flappyPlayAgain: 'Play Again',
+    airplane1942Title: '1942 Airplane',
+    airplane1942Hint: 'Fly, shoot and clear the formation for a perfect bonus!',
+    airplane1942Score: 'Score',
+    airplane1942Best: 'Best',
+    airplane1942Wave: 'Wave',
+    airplane1942GameOver: 'Game Over',
+    airplane1942PlayAgain: 'Play Again',
+    airplane1942Play: 'Play',
+    squadronTitle: 'Sky Squadron',
+    squadronHint: 'Fly, shoot and clear the squadron for a perfect bonus!',
+    squadronScore: 'Score',
+    squadronBest: 'Best',
+    squadronWave: 'Wave',
+    squadronGameOver: 'Game Over',
+    squadronPlayAgain: 'Play Again',
+    squadronPlay: 'Play',
     memoryTitle: 'Animal Memory',
     memoryHint: 'Tap two cards to find matching animal pairs!',
     memoryPairs: 'Pairs',
@@ -383,6 +415,22 @@ export const translations: Record<Lang, Dict> = {
     flappyBest: 'Kỷ lục',
     flappyGameOver: 'Hết cuộc chơi',
     flappyPlayAgain: 'Chơi lại',
+    airplane1942Title: 'Máy bay 1942',
+    airplane1942Hint: 'Bay, bắn và diệt trọn đội hình để nhận điểm thưởng!',
+    airplane1942Score: 'Điểm',
+    airplane1942Best: 'Kỷ lục',
+    airplane1942Wave: 'Đợt',
+    airplane1942GameOver: 'Hết cuộc chơi',
+    airplane1942PlayAgain: 'Chơi lại',
+    airplane1942Play: 'Chơi',
+    squadronTitle: 'Squadron Sky',
+    squadronHint: 'Bay, bn và ditrng ohi hnh rceive im thrr!',
+    squadronScore: 'Điểm',
+    squadronBest: 'Kỷ lục',
+    squadronWave: 'Đoàn',
+    squadronGameOver: 'Hết cuộc chơi',
+    squadronPlayAgain: 'Chơi lại',
+    squadronPlay: 'Chơi',
     memoryTitle: 'Trò nhớ hình',
     memoryHint: 'Chạm hai thẻ để tìm cặp động vật giống nhau!',
     memoryPairs: 'Cặp',
@@ -517,6 +565,9 @@ export const translations: Record<Lang, Dict> = {
     comicPageLabel: (page: number, total: number) => `Trang ${page}/${total}`,
   },
 };
+
+// Reuse the existing Vietnamese wording so the diacritics stay correct.
+translations.vi.squadronHint = translations.vi.airplane1942Hint;
 
 export interface LanguageContextValue {
   lang: Lang;

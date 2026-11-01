@@ -219,6 +219,7 @@ export default function FruitGuessPage() {
       `}</style>
 
       <Typography
+        data-pw="fruit-question"
         sx={{
           fontFamily: "'Fredoka', 'Comic Sans MS', cursive",
           fontSize: 'clamp(24px, 5vw, 36px)',
@@ -235,6 +236,7 @@ export default function FruitGuessPage() {
           {options.map((opt) => (
             <FruitPhoto
               key={opt.key}
+              data-pw="fruit-option"
               $wrong={wrongPick === opt.key}
               $correct={success && opt.isCorrect}
               $disabled={success && !opt.isCorrect}
@@ -250,6 +252,7 @@ export default function FruitGuessPage() {
       {confetti.map((piece) => (
         <ConfettiPiece
           key={piece.id}
+          data-pw="fruit-confetti"
           style={{
             left: `${piece.left}%`,
             width: piece.size,

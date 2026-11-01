@@ -120,10 +120,10 @@ export default function MemoryMatch() {
       }}
     >
       <Stack spacing={1} alignItems="center" sx={{ mb: 2 }}>
-        <Typography variant="h4" sx={{ fontWeight: 800, color: '#4D96FF' }}>
+        <Typography data-pw="memory-title" variant="h4" sx={{ fontWeight: 800, color: '#4D96FF' }}>
           {t.memoryTitle}
         </Typography>
-        <Typography variant="body1" sx={{ color: '#8a7a5c', textAlign: 'center' }}>
+        <Typography data-pw="memory-hint" variant="body1" sx={{ color: '#8a7a5c', textAlign: 'center' }}>
           {t.memoryHint}
         </Typography>
       </Stack>
@@ -140,10 +140,10 @@ export default function MemoryMatch() {
             minWidth: 90,
           }}
         >
-          <Typography variant="caption" color="text.secondary">
+          <Typography data-pw="memory-pairs-label" variant="caption" color="text.secondary">
             {t.memoryPairs}
           </Typography>
-          <Typography variant="h5" sx={{ fontWeight: 800, color: '#6BCB77' }}>
+          <Typography data-pw="memory-pairs" variant="h5" sx={{ fontWeight: 800, color: '#6BCB77' }}>
             {foundPairs}/{totalPairs}
           </Typography>
         </Box>
@@ -158,10 +158,10 @@ export default function MemoryMatch() {
             minWidth: 90,
           }}
         >
-          <Typography variant="caption" color="text.secondary">
+          <Typography data-pw="memory-moves-label" variant="caption" color="text.secondary">
             {t.memoryMoves}
           </Typography>
-          <Typography variant="h5" sx={{ fontWeight: 800, color: '#FF6B6B' }}>
+          <Typography data-pw="memory-moves" variant="h5" sx={{ fontWeight: 800, color: '#FF6B6B' }}>
             {moves}
           </Typography>
         </Box>
@@ -174,6 +174,7 @@ export default function MemoryMatch() {
           return (
             <Box
               key={card.id}
+              data-pw="memory-card"
               onClick={() => handleFlip(i)}
               sx={{
                 aspectRatio: '1 / 1',
@@ -240,7 +241,7 @@ export default function MemoryMatch() {
 
       {won && (
         <Box sx={{ textAlign: 'center', mt: 3 }}>
-          <Typography variant="h5" sx={{ fontWeight: 800, color: '#6BCB77' }}>
+          <Typography data-pw="memory-win" variant="h5" sx={{ fontWeight: 800, color: '#6BCB77' }}>
             {t.memoryWin}
           </Typography>
         </Box>
@@ -248,6 +249,7 @@ export default function MemoryMatch() {
 
       <Stack alignItems="center" sx={{ mt: 3 }}>
         <Button
+          data-pw="memory-play-again"
           onClick={reset}
           variant="contained"
           size="large"

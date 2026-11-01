@@ -120,10 +120,10 @@ export default function WhackAMole() {
     >
       <style>{whackKeyframes}</style>
       <Stack spacing={1} alignItems="center" sx={{ mb: 2 }}>
-        <Typography variant="h4" sx={{ fontWeight: 800, color: '#FF922B' }}>
+        <Typography data-pw="whack-title" variant="h4" sx={{ fontWeight: 800, color: '#FF922B' }}>
           {t.whackTitle}
         </Typography>
-        <Typography variant="body1" sx={{ color: '#8a7a5c', textAlign: 'center' }}>
+        <Typography data-pw="whack-hint" variant="body1" sx={{ color: '#8a7a5c', textAlign: 'center' }}>
           {t.whackHint}
         </Typography>
       </Stack>
@@ -140,10 +140,10 @@ export default function WhackAMole() {
             minWidth: 90,
           }}
         >
-          <Typography variant="caption" color="text.secondary">
+          <Typography data-pw="whack-score-label" variant="caption" color="text.secondary">
             {t.whackScore}
           </Typography>
-          <Typography variant="h5" sx={{ fontWeight: 800, color: '#6BCB77' }}>
+          <Typography data-pw="whack-score" variant="h5" sx={{ fontWeight: 800, color: '#6BCB77' }}>
             {score}
           </Typography>
         </Box>
@@ -158,10 +158,11 @@ export default function WhackAMole() {
             minWidth: 90,
           }}
         >
-          <Typography variant="caption" color="text.secondary">
+          <Typography data-pw="whack-time-label" variant="caption" color="text.secondary">
             {t.whackTime}
           </Typography>
           <Typography
+            data-pw="whack-time"
             variant="h5"
             sx={{
               fontWeight: 800,
@@ -179,6 +180,7 @@ export default function WhackAMole() {
           return (
             <Box
               key={i}
+              data-pw="whack-hole"
               onClick={() => handleWhack(i)}
               sx={{
                 aspectRatio: '1 / 1',
@@ -195,6 +197,7 @@ export default function WhackAMole() {
             >
               {isHere && mole && (
                 <Box
+                  data-pw="whack-mole"
                   component="img"
                   src={mole.src}
                   alt=""
@@ -215,6 +218,7 @@ export default function WhackAMole() {
       <Stack alignItems="center" sx={{ mt: 3 }}>
         {phase === 'idle' && (
           <Button
+            data-pw="whack-play"
             onClick={start}
             variant="contained"
             size="large"
@@ -234,10 +238,11 @@ export default function WhackAMole() {
         )}
         {phase === 'over' && (
           <Stack spacing={2} alignItems="center">
-            <Typography variant="h5" sx={{ fontWeight: 800, color: '#4D96FF' }}>
+            <Typography data-pw="whack-gameover" variant="h5" sx={{ fontWeight: 800, color: '#4D96FF' }}>
               {t.whackGameOver} — {score}
             </Typography>
             <Button
+              data-pw="whack-play-again"
               onClick={start}
               variant="contained"
               size="large"

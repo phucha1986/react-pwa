@@ -1,6 +1,7 @@
 import AddTaskIcon from '@mui/icons-material/AddTask';
 import BugReportIcon from '@mui/icons-material/BugReport';
 import CookieIcon from '@mui/icons-material/Cookie';
+import FlightIcon from '@mui/icons-material/Flight';
 import GavelIcon from '@mui/icons-material/Gavel';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import HomeIcon from '@mui/icons-material/Home';
@@ -56,6 +57,18 @@ const routes: Routes = [
     path: '/FlappyBird',
     title: 'Flappy Bird',
     icon: GitHubIcon,
+  },
+  {
+    component: asyncComponentLoader(() => import('@/pages/Airplane1942')),
+    path: '/Airplane1942',
+    title: '1942 Airplane',
+    icon: FlightIcon,
+  },
+  {
+    component: asyncComponentLoader(() => import('@/pages/Squadron')),
+    path: '/Squadron',
+    title: 'Sky Squadron',
+    icon: FlightIcon,
   },
   {
     component: asyncComponentLoader(() => import('@/pages/PianoGame')),

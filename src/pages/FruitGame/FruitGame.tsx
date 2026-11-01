@@ -68,6 +68,7 @@ function FruitGame() {
               sm={4}
               md={3}
               key={fruit.alt}
+              data-pw="fruit-tile"
               onClick={() => handleNavigate(fruit.alt)}
             >
               <Paper

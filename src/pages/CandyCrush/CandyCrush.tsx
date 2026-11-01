@@ -495,7 +495,7 @@ export default function CandyCrush() {
           py: 0.75,
         }}
       >
-        <Typography variant="h6" sx={{ color: '#E64980', fontWeight: 800, whiteSpace: 'nowrap' }}>
+        <Typography data-pw="candy-title" variant="h6" sx={{ color: '#E64980', fontWeight: 800, whiteSpace: 'nowrap' }}>
           {t.candyTitle}
         </Typography>
         <Box
@@ -509,10 +509,11 @@ export default function CandyCrush() {
             whiteSpace: 'nowrap',
           }}
         >
-          <Typography variant="caption" color="#999" sx={{ display: 'block', lineHeight: 1 }}>
+          <Typography data-pw="candy-score-label" variant="caption" color="#999" sx={{ display: 'block', lineHeight: 1 }}>
             {t.candyScore}
           </Typography>
           <Typography
+            data-pw="candy-score"
             variant="subtitle1"
             fontWeight="bold"
             color="#E64980"
@@ -532,10 +533,11 @@ export default function CandyCrush() {
             whiteSpace: 'nowrap',
           }}
         >
-          <Typography variant="caption" color="#999" sx={{ display: 'block', lineHeight: 1 }}>
+          <Typography data-pw="candy-moves-label" variant="caption" color="#999" sx={{ display: 'block', lineHeight: 1 }}>
             {t.candyMoves}
           </Typography>
           <Typography
+            data-pw="candy-moves"
             variant="subtitle1"
             fontWeight="bold"
             color="#7048E8"
@@ -545,12 +547,12 @@ export default function CandyCrush() {
           </Typography>
         </Box>
         {phase === 'idle' && (
-          <Button onClick={startGame} variant="contained" sx={playButtonSx}>
+          <Button data-pw="candy-play" onClick={startGame} variant="contained" sx={playButtonSx}>
             {t.candyPlay}
           </Button>
         )}
         {phase === 'over' && (
-          <Button onClick={startGame} variant="contained" sx={playButtonSx}>
+          <Button data-pw="candy-play-again" onClick={startGame} variant="contained" sx={playButtonSx}>
             {t.candyPlayAgain}
           </Button>
         )}
@@ -569,6 +571,7 @@ export default function CandyCrush() {
         }}
       >
         <Box
+          data-pw="candy-board"
           sx={{
             display: 'grid',
             gridTemplateColumns: `repeat(${SIZE}, 1fr)`,
@@ -595,6 +598,7 @@ export default function CandyCrush() {
               return (
                 <Box
                   key={k}
+                  data-pw="candy-cell"
                   onClick={() => handleCellClick(r, c)}
                   onPointerDown={(e) => handleCellPointerDown(e, r, c)}
                   onPointerMove={handleCellPointerMove}

@@ -171,6 +171,7 @@ export default function HouseholdGame() {
               sx={{ mb: 2 }}
             >
               <Typography
+                data-pw="household-title"
                 sx={{
                   fontFamily: "'Fredoka', 'Comic Sans MS', cursive",
                   fontSize: { xs: 24, sm: 32 },
@@ -183,6 +184,7 @@ export default function HouseholdGame() {
               <Button
                 startIcon={<PlayArrowIcon />}
                 variant="outlined"
+                data-pw="household-play"
                 onClick={() => startQuiz(householdItems[0].key)}
                 sx={{
                   borderRadius: 3,
@@ -200,6 +202,7 @@ export default function HouseholdGame() {
                 <Grid item xs={6} sm={4} md={3} key={item.key}>
                   <Paper
                     elevation={6}
+                    data-pw="household-tile"
                     sx={{
                       bgcolor: item.bg,
                       borderRadius: '2rem',
@@ -243,6 +246,7 @@ export default function HouseholdGame() {
           <Stack alignItems="center" sx={{ minHeight: 'calc(100vh - 64px)' }}>
             <Button
               startIcon={<ArrowBackIcon />}
+              data-pw="household-back"
               onClick={backToGallery}
               sx={{
                 mb: 1,
@@ -254,6 +258,7 @@ export default function HouseholdGame() {
             </Button>
 
             <Typography
+              data-pw="household-question"
               sx={{
                 fontFamily: "'Fredoka', 'Comic Sans MS', cursive",
                 fontSize: 'clamp(24px, 5vw, 36px)',
@@ -280,6 +285,7 @@ export default function HouseholdGame() {
                 {options.map((opt) => (
                   <ItemPhoto
                     key={opt.key}
+                    data-pw="household-option"
                     $wrong={wrongPick === opt.key}
                     $correct={success && opt.isCorrect}
                     $disabled={success && !opt.isCorrect}
@@ -295,6 +301,7 @@ export default function HouseholdGame() {
             {confetti.map((piece) => (
               <ConfettiPiece
                 key={piece.id}
+                data-pw="household-confetti"
                 style={{
                   left: `${piece.left}%`,
                   width: piece.size,

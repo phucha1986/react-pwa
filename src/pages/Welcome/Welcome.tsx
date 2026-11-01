@@ -11,6 +11,7 @@ import lionIcon from '../AnimalGame/logos/lion.png';
 import rabbitIcon from '../AnimalGame/logos/rabbit.png';
 import turtleIcon from '../AnimalGame/logos/turtle.png';
 import lampIcon from '../HouseholdGame/logos/lamp.png';
+import airplaneIcon from './logos/airplane.svg';
 import candyIcon from './logos/candy.svg';
 import coloringIcon from './logos/coloring.svg';
 import comicIcon from './logos/comic.svg';
@@ -35,13 +36,17 @@ type MenuItem =
         | 'pondTitle'
         | 'householdTitle'
         | 'pianoTitle'
-        | 'comicTitle';
+        | 'comicTitle'
+        | 'airplane1942Title'
+        | 'squadronTitle';
     };
 
 const menuItems: MenuItem[] = [
   { images: [lionIcon, elephantIcon], to: '/AnimalGame', bg: '#FFD93D' },
   { images: [fruitIcon], to: '/FruitGame', bg: '#A0E7E5', labelKey: 'fruitTitle' },
   { label: 'Flappy Bird', image: flappyBirdSprite, to: '/FlappyBird', bg: '#FFADAD' },
+  { images: [airplaneIcon], to: '/Airplane1942', bg: '#CFE1FF', labelKey: 'airplane1942Title' },
+  { images: [airplaneIcon], to: '/Squadron', bg: '#9AD1FF', labelKey: 'squadronTitle' },
   { images: [pianoIcon], to: '/PianoGame?screen=songs', bg: '#B197FC', labelKey: 'pianoTitle' },
   { label: 'Coloring', image: coloringIcon, to: '/ColoringGame', bg: '#FFA94D' },
   { images: [rabbitIcon, turtleIcon], to: '/MemoryMatch', bg: '#A0E7E5', labelKey: 'memoryTitle' },

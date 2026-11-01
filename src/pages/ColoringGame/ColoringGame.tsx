@@ -253,13 +253,14 @@ export default function ColoringGame() {
             mb: 1,
           }}
         >
-          <IconButton onClick={goBack} aria-label={t.coloringBack} sx={{ color: '#333', p: 0.5 }}>
+          <IconButton data-pw="coloring-back" onClick={goBack} aria-label={t.coloringBack} sx={{ color: '#333', p: 0.5 }}>
             <ArrowBackIcon />
           </IconButton>
-          <Typography variant="h6" fontWeight="bold" color="#333">
+          <Typography data-pw="coloring-name" variant="h6" fontWeight="bold" color="#333">
             {t[activeItem.nameKey]}
           </Typography>
           <Box
+            data-pw="coloring-progress"
             sx={{
               display: 'flex',
               alignItems: 'center',
@@ -315,7 +316,7 @@ export default function ColoringGame() {
         </Box>
 
         {isComplete && (
-          <Typography variant="subtitle1" color="#2F9E44" fontWeight="bold" sx={{ my: 0.5 }}>
+          <Typography data-pw="coloring-complete" variant="subtitle1" color="#2F9E44" fontWeight="bold" sx={{ my: 0.5 }}>
             {t.coloringComplete}
           </Typography>
         )}
@@ -327,6 +328,7 @@ export default function ColoringGame() {
             return (
               <Box
                 key={swatch.color}
+                data-pw="coloring-swatch"
                 onClick={() => setSelectedColor(swatch.color)}
                 aria-label={swatch.name}
                 sx={{
@@ -357,6 +359,7 @@ export default function ColoringGame() {
             return (
               <Box
                 key={brush.r}
+                data-pw="coloring-brush"
                 onClick={() => setBrushIndex(i)}
                 aria-label={t[brush.labelKey]}
                 title={t[brush.labelKey]}
@@ -388,11 +391,12 @@ export default function ColoringGame() {
           })}
         </Stack>
 
-        <Typography variant="body2" color="#666" sx={{ mb: 1, textAlign: 'center' }}>
+        <Typography data-pw="coloring-hint" variant="body2" color="#666" sx={{ mb: 1, textAlign: 'center' }}>
           {t.coloringHint}
         </Typography>
 
         <Button
+          data-pw="coloring-reset"
           startIcon={<RestartAltIcon />}
           onClick={resetDabs}
           variant="outlined"
@@ -416,10 +420,10 @@ export default function ColoringGame() {
         pb: 12,
       }}
     >
-      <Typography variant="h4" fontWeight="bold" color="#333" align="center" sx={{ mb: 1 }}>
+      <Typography data-pw="coloring-title" variant="h4" fontWeight="bold" color="#333" align="center" sx={{ mb: 1 }}>
         {t.coloringTitle}
       </Typography>
-      <Typography variant="body1" color="#666" align="center" sx={{ mb: 3 }}>
+      <Typography data-pw="coloring-choose" variant="body1" color="#666" align="center" sx={{ mb: 3 }}>
         {t.coloringChoose}
       </Typography>
 
@@ -434,6 +438,7 @@ export default function ColoringGame() {
           <Box
             key={item.id}
             onClick={() => openItem(item)}
+            data-pw="coloring-item"
             sx={{
               width: 150,
               bgcolor: '#fff',
