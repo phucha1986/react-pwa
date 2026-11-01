@@ -91,4 +91,58 @@ test.describe('animal game', () => {
 
     await expect(page).toHaveURL('/AnimalGame');
   });
+
+  test('a correct pick disables the other three options', async ({ page }) => {
+    await page.goto('/AnimalGuessPage?animal=lion');
+    await page.waitForLoadState('networkidle');
+
+    const correct = page
+      .getByTestId('option')
+      .filter({ has: page.getByRole('img', { name: 'Lion' }) });
+    await correct.click();
+
+    const others = page
+      .getByTestId('option')
+      .filter({ hasNot: page.getByRole('img', { name: 'Lion' }) });
+    await expect(others).toHaveCount(3);
+    await expect(others.first()).toHaveCSS('opacity', '0.4');
+  });
+
+  test('a wrong pick shakes then settles back after the timeout', async ({ page }) => {
+    await page.goto('/AnimalGuessPage?animal=lion');
+    await page.waitForLoadState('networkidle');
+
+    const wrong = page
+      .getByTestId('option')
+      .filter({ hasNot: page.getByRole('img', { name: 'Lion' }) })
+      .first();
+    await wrong.click();
+
+    await expect(wrong).toHaveCSS('animation-name', 'shake');
+    await page.waitForTimeout(600);
+    await expect(wrong).toHaveCSS('animation-name', 'pop-in');
+  });
+
+  test('reindeer is the last animal and auto-advance wraps back to lion', async ({ page }) => {
+    await page.goto('/AnimalGuessPage?animal=reindeer');
+    await page.waitForLoadState('networkidle');
+
+    await expect(page.getByTestId('question')).toHaveText('Which one is the Reindeer?');
+
+    const correct = page
+      .getByTestId('option')
+      .filter({ has: page.getByRole('img', { name: 'Reindeer' }) });
+    await correct.click();
+
+    await expect(page.getByTestId('question')).toHaveText("🎉 Great Job! It's Reindeer!");
+    await expect(page).toHaveURL(/animal=lion/, { timeout: 12000 });
+  });
+
+  test('an unknown animal falls back to the raw key', async ({ page }) => {
+    await page.goto('/AnimalGuessPage?animal=unicorn');
+    await page.waitForLoadState('networkidle');
+
+    await expect(page.getByTestId('question')).toHaveText('Which one is the unicorn?');
+    await expect(page.getByTestId('option')).toHaveCount(4);
+  });
 });
