@@ -27,3 +27,15 @@ export function noteLetter(midi: number): string {
 export function isBlackKey(midi: number): boolean {
   return [1, 3, 6, 8, 10].includes(((midi % 12) + 12) % 12);
 }
+
+/**
+ * Synthesia-style falling notes are coloured by hand: the lower register is the
+ * left hand (cyan) and the upper register is the right hand (orange). A single
+ * threshold keeps the two hands visually distinct on the canvas and on the keys.
+ */
+export const HAND_COLOR_LEFT = '#22b5e5';
+export const HAND_COLOR_RIGHT = '#f2a03a';
+
+export function handColor(midi: number): string {
+  return midi >= 68 ? HAND_COLOR_RIGHT : HAND_COLOR_LEFT;
+}

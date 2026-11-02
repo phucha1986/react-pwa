@@ -3,9 +3,7 @@ import { useRef } from 'react';
 import { Box } from '@mui/material';
 
 import type { KeyLayout } from '@/features/piano/keyboard';
-import { isBlackKey, noteLetter } from '@/features/piano/midi';
-
-import { NAVY_BORDER } from './palette';
+import { handColor, isBlackKey, noteLetter } from '@/features/piano/midi';
 
 interface PianoKeyboardProps {
   layout: KeyLayout;
@@ -65,6 +63,22 @@ export default function PianoKeyboard({
       }}
     >
       <Box sx={{ position: 'relative', width: totalWidth, height }}>
+        {/* Maroon apron band across the top of the key bed, just under the
+            red target line — matches the Synthesia reference look. */}
+        <Box
+          data-pw="piano-apron"
+          sx={{
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            width: '100%',
+            height: 14,
+            zIndex: 1,
+            pointerEvents: 'none',
+            background: 'linear-gradient(180deg, #a23b3b 0%, #8b3232 100%)',
+            boxShadow: 'inset 0 2px 3px rgba(0,0,0,0.35)',
+          }}
+        />
         {/* White keys */}
         {layout.whiteKeys.map((key) => {
           const active = pressedMidi === key.midi;
@@ -89,15 +103,18 @@ export default function PianoKeyboard({
                 width: keyWidth,
                 height,
                 boxSizing: 'border-box',
-                border: `1px solid ${NAVY_BORDER}`,
-                borderRadius: '0 0 8px 8px',
-                background: active ? '#6c5ce7' : '#f7f8fb',
+                border: `1px solid #c2c8d4`,
+                borderRadius: '0 0 6px 6px',
+                background: active
+                  ? handColor(key.midi)
+                  : 'linear-gradient(180deg, #ffffff 0%, #eef1f6 78%, #dfe3eb 100%)',
+                boxShadow: active ? `0 0 12px ${handColor(key.midi)}` : 'inset 0 -3px 4px rgba(0,0,0,0.12)',
                 display: 'flex',
                 alignItems: 'flex-end',
                 justifyContent: 'center',
                 pb: 0.5,
                 cursor: 'pointer',
-                transition: 'background 120ms ease',
+                transition: 'background 120ms ease, box-shadow 120ms ease',
               }}
             >
               {showNoteNames && !isBlackKey(key.midi) ? (
@@ -141,14 +158,15 @@ export default function PianoKeyboard({
                 height: '65%',
                 zIndex: 2,
                 boxSizing: 'border-box',
-                borderRadius: '0 0 6px 6px',
-                background: active ? '#8b7cf0' : '#263238',
+                borderRadius: '0 0 5px 5px',
+                background: active ? handColor(key.midi) : 'linear-gradient(180deg, #2b313b 0%, #171b21 100%)',
+                boxShadow: active ? `0 0 12px ${handColor(key.midi)}` : 'inset 0 -2px 3px rgba(0,0,0,0.4)',
                 display: 'flex',
                 alignItems: 'flex-end',
                 justifyContent: 'center',
                 pb: 0.5,
                 cursor: 'pointer',
-                transition: 'background 120ms ease',
+                transition: 'background 120ms ease, box-shadow 120ms ease',
               }}
             >
               {showNoteNames ? (

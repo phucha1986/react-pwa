@@ -1,5 +1,5 @@
 import { type KeyLayout, laneInfo } from './keyboard';
-import { noteLetter } from './midi';
+import { noteLetter, handColor } from './midi';
 import { type CanvasLayout, noteHeight, noteY } from './positions';
 import type { Difficulty, Settings, TrackedNote } from './types';
 
@@ -40,12 +40,12 @@ export function drawScene(ctx: CanvasRenderingContext2D, opts: DrawOptions): voi
 
   ctx.clearRect(0, 0, layout.width, layout.height);
 
-  // Background — PianoFlow-style dark navy so the note colours pop.
-  ctx.fillStyle = settings.animations ? '#141a2e' : '#1d2540';
+  // Background — Synthesia-style charcoal so the glowing note bars pop.
+  ctx.fillStyle = settings.animations ? '#15171c' : '#1b1d23';
   ctx.fillRect(0, 0, layout.width, layout.height);
 
   // Lane guides so a child can see which key each column belongs to.
-  ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
   ctx.lineWidth = 1;
   for (let i = 0; i < opts.keyLayout.whiteCount; i += 1) {
     ctx.beginPath();
@@ -54,17 +54,17 @@ export function drawScene(ctx: CanvasRenderingContext2D, opts: DrawOptions): voi
     ctx.stroke();
   }
 
-  // Target line — where a note should be when the key is pressed.
-  ctx.strokeStyle = '#6c5ce7';
-  ctx.lineWidth = 3;
+  // Target line — a thin red separator just above the keyboard.
+  ctx.strokeStyle = '#d32f2f';
+  ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.moveTo(0, layout.targetY);
   ctx.lineTo(layout.width, layout.targetY);
   ctx.stroke();
 
   if (settings.animations) {
-    ctx.fillStyle = 'rgba(108,92,231,0.18)';
-    ctx.fillRect(0, layout.targetY - 10, layout.width, 20);
+    ctx.fillStyle = 'rgba(211,47,47,0.12)';
+    ctx.fillRect(0, layout.targetY - 8, layout.width, 16);
   }
 
   for (const item of tracked) {
@@ -76,18 +76,24 @@ export function drawScene(ctx: CanvasRenderingContext2D, opts: DrawOptions): voi
 
     if (bottom < 0 || top > layout.height) continue;
 
-    const color = PALETTE[((item.note.midi % 12) + 12) % 12];
+    const color = item.status === 'hit' ? '#3FA66B' : handColor(item.note.midi);
     const radius = Math.min(keyWidth / 2 - 4, h / 2);
 
     ctx.globalAlpha = item.status === 'missed' ? 0.35 : 1;
-    ctx.fillStyle = item.status === 'hit' ? '#3FA66B' : color;
 
+    // Soft outer glow around the note bar, matching the reference.
+    if (settings.animations && item.status !== 'missed') {
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 8;
+    }
+    ctx.fillStyle = color;
     roundRect(ctx, cx - (keyWidth / 2 - 4), top, keyWidth - 8, h, radius);
     ctx.fill();
+    ctx.shadowBlur = 0;
     ctx.globalAlpha = 1;
 
     if (settings.showNoteNames) {
-      ctx.fillStyle = '#FFFFFF';
+      ctx.fillStyle = '#101216';
       ctx.font = `bold ${Math.min(16, h)}px system-ui, sans-serif`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
@@ -103,12 +109,14 @@ export function drawScene(ctx: CanvasRenderingContext2D, opts: DrawOptions): voi
     }
   }
 
-  // Highlight the key currently being pressed.
+  // Highlight the key currently being pressed, tinted with its hand colour.
   if (opts.pressedMidi !== null) {
     const { whiteIndex, blackRatio } = laneInfo(opts.keyLayout, opts.pressedMidi);
     const cx = whiteIndex * keyWidth + (blackRatio === null ? keyWidth / 2 : keyWidth * blackRatio);
-    ctx.fillStyle = 'rgba(108,92,231,0.3)';
+    ctx.fillStyle = handColor(opts.pressedMidi);
+    ctx.globalAlpha = 0.3;
     ctx.fillRect(cx - keyWidth / 2, layout.targetY, keyWidth, layout.height - layout.targetY);
+    ctx.globalAlpha = 1;
   }
 }
 

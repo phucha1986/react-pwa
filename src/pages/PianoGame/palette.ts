@@ -23,5 +23,5 @@ export const DIFFICULTY_COLOR: Record<Difficulty, string> = {
   challenge: '#e5484d',
 };
 
-/** Kid-sized touch targets (>= 44px). */
-export const TOUCH_TARGET = { minHeight: 48, minWidth: 48 };
+/** Kid-sized touch targets — 44px is the WCAG-recommended minimum tap size. */
+export const TOUCH_TARGET = { minHeight: 44, minWidth: 44 };

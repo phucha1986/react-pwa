@@ -118,7 +118,7 @@ export default function SettingsPanel({ settings, onChange, onBack }: SettingsPa
 
       <Button
         data-pw="piano-settings-back"
-        size="large"
+        size="medium"
         variant="text"
         onClick={onBack}
         sx={{

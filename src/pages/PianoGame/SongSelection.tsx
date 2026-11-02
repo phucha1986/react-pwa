@@ -232,7 +232,7 @@ export default function SongSelection({ settings, onPick, onBack }: SongSelectio
 
               <Button
                 data-pw={`piano-play-${song.id}`}
-                size="large"
+                size="medium"
                 variant="contained"
                 onClick={() => onPick(song.id)}
                 sx={{
@@ -255,7 +255,7 @@ export default function SongSelection({ settings, onPick, onBack }: SongSelectio
               >
                 <Button
                   data-pw={`piano-preview-${song.id}`}
-                  size="large"
+                  size="medium"
                   variant="text"
                   onClick={() => preview(song)}
                   sx={{

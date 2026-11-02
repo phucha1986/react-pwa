@@ -11,13 +11,22 @@ import Home from './Home';
 import ProgressPanel from './ProgressPanel';
 import SettingsPanel from './SettingsPanel';
 import SongSelection from './SongSelection';
+import Coop from './Coop';
 import { NAVY, NAVY_BORDER, TEXT } from './palette';
 
-type Screen = 'home' | 'songs' | 'play' | 'settings' | 'progress';
+type Screen = 'home' | 'songs' | 'play' | 'settings' | 'progress' | 'coop';
 
 /** The main menu links here with ?screen=songs so a child lands straight on the song list. */
 function initialScreen(): Screen {
-  return new URLSearchParams(window.location.search).get('screen') === 'songs' ? 'songs' : 'home';
+  const screen = new URLSearchParams(window.location.search).get('screen');
+  if (screen === 'songs') return 'songs';
+  if (screen === 'coop') return 'coop';
+  return 'home';
+}
+
+/** Co-op side comes from the URL so a guest can open a ready-made join link (?side=guest&code=XXXX). */
+function initialCoopSide(): 'host' | 'guest' {
+  return new URLSearchParams(window.location.search).get('side') === 'guest' ? 'guest' : 'host';
 }
 
 /** Respect the OS "reduce motion" preference on first load. */
@@ -36,6 +45,8 @@ export default function PianoGame() {
   const [settings, setSettings] = useState<Settings>(() => initialSettings());
   const [screen, setScreen] = useState<Screen>(() => initialScreen());
   const [songId, setSongId] = useState<string>(SONGS[0].id);
+  const coopSide = initialCoopSide();
+  const [coopActive, setCoopActive] = useState(false);
 
   const song = useMemo(() => getSong(songId) ?? SONGS[0], [songId]);
 
@@ -45,6 +56,13 @@ export default function PianoGame() {
 
   const openSong = (id: string) => {
     setSongId(id);
+    setScreen('play');
+  };
+
+  // Co-op hand-off: the lobby resolved a shared song, so start play for this side.
+  const startCoop = (id: string) => {
+    setSongId(id);
+    setCoopActive(true);
     setScreen('play');
   };
 
@@ -67,6 +85,7 @@ export default function PianoGame() {
             onContinue={() => setScreen('play')}
             onSettings={() => setScreen('settings')}
             onProgress={() => setScreen('progress')}
+            onCoop={() => setScreen('coop')}
           />
         ) : null}
 
@@ -78,8 +97,17 @@ export default function PianoGame() {
           <GamePlay
             song={song}
             settings={settings}
+            coopSide={coopActive ? coopSide : undefined}
             onHome={() => setScreen('home')}
             onPickSong={() => setScreen('songs')}
+          />
+        ) : null}
+
+        {screen === 'coop' ? (
+          <Coop
+            side={coopSide}
+            onStart={startCoop}
+            onBack={() => setScreen('home')}
           />
         ) : null}
 

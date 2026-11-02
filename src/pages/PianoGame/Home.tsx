@@ -19,6 +19,7 @@ interface HomeProps {
   onContinue: () => void;
   onSettings: () => void;
   onProgress: () => void;
+  onCoop: () => void;
 }
 
 const pillCard = (color: string) => ({
@@ -36,7 +37,7 @@ const pillCard = (color: string) => ({
 });
 
 /** PianoFlow-style landing: logo block plus big rounded pill cards. */
-export default function Home({ onPlay, onContinue, onSettings, onProgress }: HomeProps) {
+export default function Home({ onPlay, onContinue, onSettings, onProgress, onCoop }: HomeProps) {
   const { t } = useLanguage();
   const progress = loadProgress();
   const hasProgress = Object.keys(progress).length > 0;
@@ -72,7 +73,7 @@ export default function Home({ onPlay, onContinue, onSettings, onProgress }: Hom
       <Button
         data-pw="piano-play"
         variant="contained"
-        size="large"
+        size="medium"
         onClick={onPlay}
         sx={pillCard(PURPLE)}
       >
@@ -91,7 +92,7 @@ export default function Home({ onPlay, onContinue, onSettings, onProgress }: Hom
         <Button
           data-pw="piano-continue"
           variant="contained"
-          size="large"
+          size="medium"
           onClick={onContinue}
           sx={pillCard(TEAL)}
         >
@@ -108,7 +109,7 @@ export default function Home({ onPlay, onContinue, onSettings, onProgress }: Hom
         <Button
           data-pw="piano-settings"
           variant="text"
-          size="large"
+          size="medium"
           onClick={onSettings}
           sx={{
             ...TOUCH_TARGET,
@@ -125,7 +126,7 @@ export default function Home({ onPlay, onContinue, onSettings, onProgress }: Hom
         <Button
           data-pw="piano-progress"
           variant="text"
-          size="large"
+          size="medium"
           onClick={onProgress}
           sx={{
             ...TOUCH_TARGET,
@@ -138,6 +139,23 @@ export default function Home({ onPlay, onContinue, onSettings, onProgress }: Hom
           }}
         >
           {t.pianoProgressTitle}
+        </Button>
+        <Button
+          data-pw="piano-coop"
+          variant="text"
+          size="medium"
+          onClick={onCoop}
+          sx={{
+            ...TOUCH_TARGET,
+            borderRadius: 999,
+            bgcolor: NAVY_CARD,
+            border: `1px solid ${NAVY_BORDER}`,
+            color: TEXT,
+            textTransform: 'none',
+            fontWeight: 700,
+          }}
+        >
+          {t.coopTitle}
         </Button>
       </Stack>
     </Stack>

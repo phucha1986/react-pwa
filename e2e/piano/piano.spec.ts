@@ -115,20 +115,12 @@ test.describe('piano learning game', () => {
     await page.waitForTimeout(2500);
 
     const notePixels = await page.evaluate(() => {
-      // One colour per pitch class, matching PALETTE in src/features/piano/draw.ts.
+      // Note colours now follow the hand-based scheme in src/features/piano/draw.ts
+      // (cyan left hand, orange right hand, green when hit).
       const PALETTE = [
-        [229, 72, 77],
-        [242, 114, 12],
-        [245, 197, 24],
-        [63, 166, 107],
-        [47, 128, 237],
-        [142, 68, 173],
-        [17, 165, 165],
-        [101, 163, 11],
-        [214, 64, 158],
-        [201, 123, 16],
-        [62, 99, 221],
-        [124, 92, 219],
+        [34, 181, 229], // #22b5e5 left hand
+        [242, 160, 58], // #f2a03a right hand
+        [63, 166, 107], // #3FA66B hit
       ];
       const canvas = document.querySelector('[data-pw="piano-canvas"] canvas');
       const ctx = canvas.getContext('2d', { willReadFrequently: true });
@@ -171,18 +163,9 @@ test.describe('piano learning game', () => {
 
     const runs = await page.evaluate(() => {
       const PALETTE = [
-        [229, 72, 77],
-        [242, 114, 12],
-        [245, 197, 24],
-        [63, 166, 107],
-        [47, 128, 237],
-        [142, 68, 173],
-        [17, 165, 165],
-        [101, 163, 11],
-        [214, 64, 158],
-        [201, 123, 16],
-        [62, 99, 221],
-        [124, 92, 219],
+        [34, 181, 229], // #22b5e5 left hand
+        [242, 160, 58], // #f2a03a right hand
+        [63, 166, 107], // #3FA66B hit
       ];
       const canvas = document.querySelector('[data-pw="piano-canvas"] canvas');
       const ctx = canvas.getContext('2d', { willReadFrequently: true });

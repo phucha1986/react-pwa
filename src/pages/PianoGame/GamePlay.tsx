@@ -6,6 +6,8 @@ import { accuracy } from '@/features/piano/scoring';
 import { songDurationSeconds } from '@/features/piano/timing';
 import type { Settings, Song } from '@/features/piano/types';
 import { usePianoGame } from '@/features/piano/usePianoGame';
+import { COOP_COUNTDOWN_SECONDS, coopCountdownLabel, coopRange, songForSide } from '@/features/piano/coop';
+import type { CoopSide } from '@/features/piano/coop';
 import { useLanguage } from '@/i18n/useLanguage';
 
 import LandscapeStage from './LandscapeStage';
@@ -18,6 +20,7 @@ interface GamePlayProps {
   settings: Settings;
   onHome: () => void;
   onPickSong: () => void;
+  coopSide?: CoopSide;
 }
 
 const prefersReducedMotion = () =>
@@ -53,9 +56,46 @@ function useMeasuredHeight<T extends HTMLElement>() {
   return { ref, height };
 }
 
-export default function GamePlay({ song, settings, onHome, onPickSong }: GamePlayProps) {
+export default function GamePlay({ song, settings, onHome, onPickSong, coopSide }: GamePlayProps) {
   const { t } = useLanguage();
-  const game = usePianoGame(song, settings);
+
+  // In co-op each device only plays its own octave: the song is filtered to the
+  // notes that fall on this side and the keyboard/canvas render only that range.
+  const coopSong = coopSide ? songForSide(song, coopSide) : song;
+  const coopKeyRange = coopSide ? coopRange(coopSide) : undefined;
+  const game = usePianoGame(coopSong, settings, coopKeyRange ?? { low: 60, high: 72 });
+
+  // Co-op countdown: pressing Start begins a shared 3-2-1-GO countdown. Both
+  // devices run the identical countdown and call engine.start on "GO", so the
+  // song begins at the same logical moment on each device without a server.
+  const [countdownEndMs, setCountdownEndMs] = useState<number | null>(null);
+  const [countdownRemaining, setCountdownRemaining] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (countdownEndMs === null) return;
+    const tick = () => {
+      const remaining = (countdownEndMs - performance.now()) / 1000;
+      if (remaining <= 0) {
+        setCountdownRemaining(0);
+        game.start();
+        setCountdownEndMs(null);
+      } else {
+        setCountdownRemaining(remaining);
+      }
+    };
+    tick();
+    const id = window.setInterval(tick, 100);
+    return () => window.clearInterval(id);
+  }, [countdownEndMs, game]);
+
+  const startOrCountdown = () => {
+    if (!coopSide) {
+      game.start();
+      return;
+    }
+    setCountdownEndMs(performance.now() + COOP_COUNTDOWN_SECONDS * 1000);
+  };
+
   const stageBox = useMeasuredHeight<HTMLDivElement>();
   const bottomHalf = useMeasuredHeight<HTMLDivElement>();
   const bottomChrome = useMeasuredHeight<HTMLDivElement>();
@@ -166,20 +206,37 @@ export default function GamePlay({ song, settings, onHome, onPickSong }: GamePla
                 <Button
                   data-pw="piano-start"
                   variant="contained"
-                  size="large"
-                  onClick={game.start}
+                  size="medium"
+                  onClick={startOrCountdown}
                   sx={{
                     ...TOUCH_TARGET,
                     bgcolor: PURPLE,
                     color: '#fff',
                     borderRadius: 999,
                     fontWeight: 800,
-                    px: 3,
+                    px: 2,
                     textTransform: 'none',
                   }}
                 >
-                  {t.pianoTapToStart}
+                  {coopSide ? t.coopStart : t.pianoTapToStart}
                 </Button>
+              </Stack>
+            ) : null}
+
+            {countdownRemaining !== null && countdownRemaining > 0 ? (
+              <Stack
+                data-pw="piano-countdown-overlay"
+                sx={{
+                  position: 'absolute',
+                  inset: 0,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  pointerEvents: 'none',
+                }}
+              >
+                <Typography variant="h1" fontWeight={900} sx={{ color: '#fff', fontSize: 64 }}>
+                  {coopCountdownLabel(countdownRemaining)}
+                </Typography>
               </Stack>
             ) : null}
 
@@ -197,7 +254,7 @@ export default function GamePlay({ song, settings, onHome, onPickSong }: GamePla
                 <Button
                   data-pw="piano-resume"
                   variant="contained"
-                  size="large"
+                  size="medium"
                   onClick={game.resume}
                   sx={{
                     ...TOUCH_TARGET,
@@ -205,7 +262,7 @@ export default function GamePlay({ song, settings, onHome, onPickSong }: GamePla
                     color: '#fff',
                     borderRadius: 999,
                     fontWeight: 800,
-                    px: 3,
+                    px: 2,
                     textTransform: 'none',
                   }}
                 >
@@ -264,7 +321,7 @@ export default function GamePlay({ song, settings, onHome, onPickSong }: GamePla
                   <Button
                     data-pw="piano-replay"
                     variant="contained"
-                    size="large"
+                    size="medium"
                     onClick={game.restart}
                     sx={{
                       ...TOUCH_TARGET,
@@ -280,7 +337,7 @@ export default function GamePlay({ song, settings, onHome, onPickSong }: GamePla
                   <Button
                     data-pw="piano-next-song"
                     variant="text"
-                    size="large"
+                    size="medium"
                     onClick={onPickSong}
                     sx={{
                       ...TOUCH_TARGET,
@@ -300,7 +357,7 @@ export default function GamePlay({ song, settings, onHome, onPickSong }: GamePla
             <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', rowGap: 1 }}>
               <Button
                 data-pw="piano-pause"
-                size="large"
+                size="medium"
                 variant="text"
                 onClick={game.pause}
                 disabled={game.phase !== 'running'}
@@ -318,7 +375,7 @@ export default function GamePlay({ song, settings, onHome, onPickSong }: GamePla
               </Button>
               <Button
                 data-pw="piano-restart"
-                size="large"
+                size="medium"
                 variant="text"
                 onClick={game.restart}
                 disabled={game.phase === 'idle'}
@@ -336,7 +393,7 @@ export default function GamePlay({ song, settings, onHome, onPickSong }: GamePla
               </Button>
               <Button
                 data-pw="piano-home"
-                size="large"
+                size="medium"
                 variant="text"
                 onClick={onHome}
                 sx={{

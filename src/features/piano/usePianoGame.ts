@@ -33,7 +33,11 @@ export interface PianoGameApi {
  * and draws directly, so React never re-renders per frame; state updates only
  * happen on discrete game events.
  */
-export function usePianoGame(song: Song, settings: Settings): PianoGameApi {
+export function usePianoGame(
+  song: Song,
+  settings: Settings,
+  range: { low: number; high: number } = { low: 60, high: 72 },
+): PianoGameApi {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const layoutRef = useRef<CanvasLayout>({ width: 0, height: 0, targetY: 0, pxPerBeat: 40 });
   const pressedRef = useRef<number | null>(null);
@@ -47,7 +51,7 @@ export function usePianoGame(song: Song, settings: Settings): PianoGameApi {
   const [progress, setProgress] = useState<Progress>(() => loadProgress());
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
-  const keyLayout = useMemo(() => buildKeyLayout(60, 72), []);
+  const keyLayout = useMemo(() => buildKeyLayout(range.low, range.high), [range.low, range.high]);
 
   const settingsRef = useRef(settings);
   settingsRef.current = settings;

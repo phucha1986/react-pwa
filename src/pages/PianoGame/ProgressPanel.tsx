@@ -58,7 +58,7 @@ export default function ProgressPanel({ onBack }: { onBack: () => void }) {
 
       <Button
         data-pw="piano-progress-back"
-        size="large"
+        size="medium"
         variant="text"
         onClick={onBack}
         sx={{

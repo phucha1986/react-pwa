@@ -85,6 +85,22 @@ export interface Dict {
   pianoModeMediumHint: string;
   pianoModeChallengeHint: string;
   pianoFilterAll: string;
+  coopTitle: string;
+  coopHint: string;
+  coopHost: string;
+  coopJoin: string;
+  coopCode: string;
+  coopEnterCode: string;
+  coopWaiting: string;
+  coopReady: string;
+  coopStart: string;
+  coopCountdown: string;
+  coopHostLabel: string;
+  coopGuestLabel: string;
+  coopShareCode: string;
+  coopYourCode: string;
+  coopJoinTitle: string;
+  coopSplitHint: string;
   songTwinkleTwinkle: string;
   songMaryLamb: string;
   songOdeToJoy: string;
@@ -273,6 +289,22 @@ export const translations: Record<Lang, Dict> = {
     pianoModeMediumHint: 'Notes and note names, normal tempo.',
     pianoModeChallengeHint: 'Just the notes — see how well you do.',
     pianoFilterAll: 'All',
+    coopTitle: 'Play together',
+    coopHint: 'Two devices, one song. Share the code and play side by side.',
+    coopHost: 'Host a game',
+    coopJoin: 'Join a game',
+    coopCode: 'Game code',
+    coopEnterCode: 'Enter the code',
+    coopWaiting: 'Waiting for a player to join…',
+    coopReady: 'Both players ready',
+    coopStart: 'Start',
+    coopCountdown: 'Get ready',
+    coopHostLabel: 'Host',
+    coopGuestLabel: 'Guest',
+    coopShareCode: 'Share this code with your friend',
+    coopYourCode: 'Your code',
+    coopJoinTitle: 'Join with a code',
+    coopSplitHint: 'This device plays the highlighted keys. Put the two devices side by side to form one piano.',
     songTwinkleTwinkle: 'Twinkle Twinkle',
     songMaryLamb: 'Mary Had a Little Lamb',
     songOdeToJoy: 'Ode to Joy',
@@ -485,8 +517,22 @@ export const translations: Record<Lang, Dict> = {
     pianoModeMediumHint: 'Nốt nhạc và tên nốt, nhịp độ bình thường.',
     pianoModeChallengeHint: 'Chỉ có nốt nhạc — xem bé chơi tốt đến đâu.',
     pianoFilterAll: 'Tất cả',
-    songTwinkleTwinkle: 'Twinkle Twinkle',
-    songMaryLamb: 'Mary có một con cừu',
+    coopTitle: 'Chơi cùng nhau',
+    coopHint: 'Hai thiết, một bài. Share mã và chơi cạnh nhau.',
+    coopHost: 'Host một game',
+    coopJoin: 'Join một game',
+    coopCode: 'Mã game',
+    coopEnterCode: 'Nhập mã',
+    coopWaiting: 'Chờ cho một chơi join…',
+    coopReady: 'Hai chơi ready',
+    coopStart: 'Start',
+    coopCountdown: 'Sanc ready',
+    coopHostLabel: 'Host',
+    coopGuestLabel: 'Guest',
+    coopShareCode: 'Share mã với một friend',
+    coopYourCode: 'Mã của bạn',
+    coopJoinTitle: 'Join với mã',
+    coopSplitHint: 'Thiêt play key highlight. Put hai thiết cạnh để form một piano.',
     songOdeToJoy: 'Ode to Joy',
     songFrereJacques: 'Frère Jacques',
     songRowYourBoat: 'Row, Row, Row Your Boat',
