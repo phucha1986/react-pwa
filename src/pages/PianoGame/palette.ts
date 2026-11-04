@@ -24,4 +24,4 @@ export const DIFFICULTY_COLOR: Record<Difficulty, string> = {
 };
 
 /** Kid-sized touch targets — 44px is the WCAG-recommended minimum tap size. */
-export const TOUCH_TARGET = { minHeight: 44, minWidth: 44 };
+export const TOUCH_TARGET = { minHeight: 56, minWidth: 44 };
