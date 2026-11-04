@@ -100,7 +100,9 @@ export interface Dict {
   coopShareCode: string;
   coopYourCode: string;
   coopJoinTitle: string;
-  coopSplitHint: string;
+  coopSplitHintGuest: string;
+  coopOctaveLow: string;
+  coopOctaveHigh: string;
   songTwinkleTwinkle: string;
   songMaryLamb: string;
   songOdeToJoy: string;
@@ -304,7 +306,10 @@ export const translations: Record<Lang, Dict> = {
     coopShareCode: 'Share this code with your friend',
     coopYourCode: 'Your code',
     coopJoinTitle: 'Join with a code',
-    coopSplitHint: 'This device plays the highlighted keys. Put the two devices side by side to form one piano.',
+    coopSplitHintGuest:
+      'Two devices, one piano. This one shows the upper octave (C5–C6) — put them side by side to play a full two-octave keyboard.',
+    coopOctaveLow: 'Lower octave (C4–C5)',
+    coopOctaveHigh: 'Upper octave (C5–C6)',
     songTwinkleTwinkle: 'Twinkle Twinkle',
     songMaryLamb: 'Mary Had a Little Lamb',
     songOdeToJoy: 'Ode to Joy',
@@ -532,7 +537,12 @@ export const translations: Record<Lang, Dict> = {
     coopShareCode: 'Share mã với một friend',
     coopYourCode: 'Mã của bạn',
     coopJoinTitle: 'Join với mã',
-    coopSplitHint: 'Thiêt play key highlight. Put hai thiết cạnh để form một piano.',
+    coopSplitHintGuest:
+      'Hai thiết bị, một đàn. Thiết này hiện quãng tám trên (C5–C6) — đặt cạnh nhau để chơi cả bàn phím hai quãng tám.',
+    coopOctaveLow: 'Quãng tám dưới (C4–C5)',
+    coopOctaveHigh: 'Quãng tám trên (C5–C6)',
+    songTwinkleTwinkle: 'Twinkle Twinkle',
+    songMaryLamb: 'Mary Had a Little Lamb',
     songOdeToJoy: 'Ode to Joy',
     songFrereJacques: 'Frère Jacques',
     songRowYourBoat: 'Row, Row, Row Your Boat',

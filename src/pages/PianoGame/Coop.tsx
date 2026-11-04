@@ -6,15 +6,7 @@ import { decodeCoopCode, encodeCoopCode } from '@/features/piano/coop';
 import { SONGS } from '@/features/piano/songs';
 import { useLanguage } from '@/i18n/useLanguage';
 
-import {
-  GOLD,
-  MUTED,
-  NAVY_BORDER,
-  NAVY_CARD,
-  PURPLE,
-  TEXT,
-  TOUCH_TARGET,
-} from './palette';
+import { GOLD, MUTED, NAVY_BORDER, NAVY_CARD, PURPLE, TEXT, TOUCH_TARGET } from './palette';
 
 interface CoopProps {
   /** Which role this device is playing: the host shares a code, the guest enters one. */
@@ -31,9 +23,11 @@ interface CoopProps {
  * countdown so the identical song begins at the same logical moment.
  */
 export default function Coop({ side, onStart, onBack }: CoopProps) {
-  const { t } = useLanguage();
-
-  return side === 'host' ? <CoopHost onStart={onStart} onBack={onBack} /> : <CoopJoin onStart={onStart} />;
+  return side === 'host' ? (
+    <CoopHost side={side} onStart={onStart} onBack={onBack} />
+  ) : (
+    <CoopJoin side={side} onStart={onStart} onBack={onBack} />
+  );
 }
 
 /** Host lobby: choose a song, show its invite code, wait for a guest, then Start. */
@@ -80,7 +74,12 @@ function CoopHost({ onStart, onBack }: CoopProps) {
       </Typography>
 
       {/* Pick the song the two devices will share. */}
-      <Stack data-pw="piano-coop-songs" direction="row" spacing={1} sx={{ flexWrap: 'wrap', rowGap: 1 }}>
+      <Stack
+        data-pw="piano-coop-songs"
+        direction="row"
+        spacing={1}
+        sx={{ flexWrap: 'wrap', rowGap: 1 }}
+      >
         {SONGS.map((song) => (
           <Button
             key={song.id}
@@ -119,7 +118,12 @@ function CoopHost({ onStart, onBack }: CoopProps) {
         <Typography variant="subtitle2" fontWeight={800} sx={{ color: MUTED }}>
           {t.coopYourCode}
         </Typography>
-        <Typography data-pw="piano-coop-code-value" variant="h4" fontWeight={900} sx={{ color: GOLD, letterSpacing: 2 }}>
+        <Typography
+          data-pw="piano-coop-code-value"
+          variant="h4"
+          fontWeight={900}
+          sx={{ color: GOLD, letterSpacing: 2 }}
+        >
           {code}
         </Typography>
         <Typography variant="body2" sx={{ color: MUTED }}>
@@ -170,7 +174,7 @@ function CoopJoin({ onStart }: CoopProps) {
         {t.coopJoinTitle}
       </Typography>
       <Typography variant="body2" sx={{ color: MUTED }}>
-        {t.coopSplitHint}
+        {t.coopSplitHintGuest}
       </Typography>
 
       <Box
@@ -201,7 +205,12 @@ function CoopJoin({ onStart }: CoopProps) {
             minWidth: 160,
           }}
         />
-        <Typography data-pw="piano-coop-code-value" variant="h4" fontWeight={900} sx={{ color: GOLD, letterSpacing: 2 }}>
+        <Typography
+          data-pw="piano-coop-code-value"
+          variant="h4"
+          fontWeight={900}
+          sx={{ color: GOLD, letterSpacing: 2 }}
+        >
           {code || '····'}
         </Typography>
       </Box>

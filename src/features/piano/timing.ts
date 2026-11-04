@@ -49,10 +49,15 @@ export class SongClock {
   }
 }
 
-/** Song duration in seconds (last note end), including the intro. */
-export function songDurationSeconds(song: Song, tempoFactor: number): number {
+/** Beat the song runs until: the end of the last note, or `endBeat` when set. */
+export function songEndBeat(song: Song): number {
   const lastBeat = song.notes.reduce((max, n) => Math.max(max, n.startBeat + n.durationBeats), 0);
-  return lastBeat * (60 / (song.bpm * tempoFactor));
+  return song.endBeat ?? lastBeat;
+}
+
+/** Song duration in seconds (last note end, or `endBeat` when set), including the intro. */
+export function songDurationSeconds(song: Song, tempoFactor: number): number {
+  return songEndBeat(song) * (60 / (song.bpm * tempoFactor));
 }
 
 /**

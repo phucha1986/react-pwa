@@ -1,4 +1,5 @@
-import { buildKeyLayout } from './keyboard';
+import { mergeRepeatedNotes } from './songs';
+import { songEndBeat } from './timing';
 import type { Song, SongNote } from './types';
 
 /**
@@ -7,46 +8,72 @@ import type { Song, SongNote } from './types';
  * The invite code is derived deterministically from the song id, so a guest who
  * types the host's code can resolve the exact same song on their own device.
  * Both devices then run the identical deterministic engine and start together
- * via a shared countdown. The single piano is split by pitch range: the host
- * device shows the lower register (left half of the keyboard) and the guest the
- * upper register (right half), so placing the two devices side by side forms one
- * continuous keyboard and each device only ever sees the notes in its own range.
+ * via a shared countdown.
+ *
+ * The two devices form ONE two-octave piano: the host shows the lower octave
+ * (C4..C5) and the guest the upper octave (C5..C6). Put side by side they line
+ * up into a single continuous keyboard, so a child can play across both devices
+ * exactly like one bigger instrument. Each device keeps its own full octave of
+ * keys (8 white + 5 black), never a half keyboard.
+ *
+ * The melodies are written for one octave, so for co-op each song is arranged
+ * across two octaves: phrases alternate between the lower and upper octave,
+ * which keeps the tune recognisable while giving both devices notes to play
+ * throughout the song. A note is owned by whichever device shows its key.
  */
 
 export type CoopSide = 'host' | 'guest';
 
 /**
- * Pitch ranges each side owns. The full song keyboard is C4..C5 (midi 60..72);
- * the host owns the lower register and the guest the upper register, split at
- * the octave so the two halves line up into one keyboard when the devices sit
- * next to each other (host on the left, guest on the right).
+ * The octave each side owns. The host is the lower octave C4..C5 (midi 60..72)
+ * and the guest the upper octave C5..C6 (midi 72..84). They share the seam note
+ * C5 (72), so side by side the two keyboards read as one C4..C6 piano.
  */
-export const COOP_HOST_RANGE = { low: 60, high: 65 }; // C4..F4
-export const COOP_GUEST_RANGE = { low: 66, high: 72 }; // F#4..C5
+export const COOP_HOST_RANGE = { low: 60, high: 72 }; // C4..C5
+export const COOP_GUEST_RANGE = { low: 72, high: 84 }; // C5..C6
 
 export function coopRange(side: CoopSide): { low: number; high: number } {
   return side === 'host' ? COOP_HOST_RANGE : COOP_GUEST_RANGE;
 }
 
-/** Whether a note belongs to the given side's half of the keyboard. */
-export function inCoopRange(midi: number, side: CoopSide): boolean {
-  const { low, high } = coopRange(side);
-  return midi >= low && midi <= high;
+/** The pitch where the lower octave hands over to the upper one (C5). */
+const COOP_SEAM_MIDI = 72;
+
+/** Which device owns a pitch: the lower device below the seam, upper at/above it. */
+export function noteOwner(midi: number): CoopSide {
+  return midi < COOP_SEAM_MIDI ? 'host' : 'guest';
 }
 
 /**
- * The song as seen by one side: same id/title/tempo, but only the notes that
- * fall in that side's range. Feeding this to the engine means it tracks, scores
- * and sounds exactly the notes this device is responsible for.
+ * The song arranged across two octaves for co-op. The original melody sits in
+ * one octave; here every other bar is lifted an octave so the tune alternates
+ * between the host's lower keys and the guest's upper keys. This is fully
+ * deterministic (same song -> same arrangement on both devices) and keeps every
+ * pitch inside C4..C6.
  */
-export function songForSide(song: Song, side: CoopSide): Song {
-  return { ...song, notes: song.notes.filter((note) => inCoopRange(note.midi, side)) };
+export function coopArrangement(song: Song): Song {
+  const barBeats = Math.max(1, song.timeSignature.beats);
+  const lifted: SongNote[] = song.notes.map((note) => {
+    const bar = Math.floor(note.startBeat / barBeats);
+    return bar % 2 === 1 ? { ...note, midi: note.midi + 12 } : { ...note };
+  });
+  return { ...song, notes: mergeRepeatedNotes(lifted) };
 }
 
-/** The visible keyboard for one side — its own half of the keys. */
-export function coopKeyLayout(side: CoopSide): ReturnType<typeof buildKeyLayout> {
-  const { low, high } = coopRange(side);
-  return buildKeyLayout(low, high);
+/**
+ * The song as seen by one side: the two-octave arrangement, filtered down to the
+ * notes that fall on this device's octave. `endBeat` is pinned to the end of the
+ * full arrangement so both devices run for the whole song and finish together,
+ * even though each only tracks its own octave's notes.
+ */
+export function songForSide(song: Song, side: CoopSide): Song {
+  const arrangement = coopArrangement(song);
+  const owned = (midi: number) => (side === 'host' ? midi < COOP_SEAM_MIDI : midi >= COOP_SEAM_MIDI);
+  return {
+    ...arrangement,
+    notes: arrangement.notes.filter((note) => owned(note.midi)),
+    endBeat: songEndBeat(arrangement),
+  };
 }
 
 /**
@@ -109,9 +136,4 @@ export interface CoopState {
   code: string;
   songId: string;
   phase: CoopPhase;
-}
-
-/** A note is only ever handled by the side that owns its pitch. */
-export function noteSide(note: SongNote): CoopSide {
-  return inCoopRange(note.midi, 'host') ? 'host' : 'guest';
 }

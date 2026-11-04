@@ -354,4 +354,129 @@ test.describe('piano learning game', () => {
     });
     expect(fit.used).toBeLessThanOrEqual(fit.stage + 1);
   });
+
+  // ---- co-op: two devices, one two-octave piano (host = lower, guest = upper) ----
+
+  test('co-op host lobby shows a four-character invite code', async ({ page }) => {
+    await page.goto('/PianoGame?screen=coop');
+    await page.waitForLoadState('networkidle');
+
+    await expect(page.getByTestId('piano-coop-host')).toBeVisible();
+    await expect(page.getByTestId('piano-coop-code')).toBeVisible();
+    await expect(page.getByTestId('piano-coop-start')).toBeVisible();
+
+    // The alphabet deliberately omits 0/O/1/I so small fingers can't confuse them.
+    const code = await page.getByTestId('piano-coop-code-value').innerText();
+    expect(code.trim()).toMatch(/^[A-HJ-NP-Z2-9]{4}$/);
+  });
+
+  test('co-op host starts on the lower octave C4-C5', async ({ page }) => {
+    await page.goto('/PianoGame?screen=coop');
+    await page.waitForLoadState('networkidle');
+
+    // The lobby button animates in, so skip the stability check before clicking.
+    await page.getByTestId('piano-coop-start').click({ force: true });
+
+    await expect(page.getByTestId('piano-gameplay')).toBeVisible();
+    await expect(page.getByTestId('piano-coop-turn')).toHaveText(/Lower octave/);
+
+    // Host owns midi 60..72 and must not expose the guest's upper octave.
+    await expect(page.getByTestId('piano-key-60')).toBeVisible();
+    await expect(page.getByTestId('piano-key-72')).toBeVisible();
+    await expect(page.getByTestId('piano-key-84')).toHaveCount(0);
+  });
+
+  test('co-op guest resolves the host code and starts on the upper octave C5-C6', async ({
+    page,
+  }) => {
+    // T2BJ is the deterministic code for "hot-cross-buns" (FNV-1a of the song id).
+    await page.goto('/PianoGame?screen=coop&side=guest&code=T2BJ');
+    await page.waitForLoadState('networkidle');
+
+    await expect(page.getByTestId('piano-coop-join')).toBeVisible();
+    await expect(page.getByTestId('piano-coop-code-value')).toHaveText('T2BJ');
+    await expect(page.getByTestId('piano-coop-join-start')).toBeVisible();
+
+    await page.getByTestId('piano-coop-join-start').click();
+
+    await expect(page.getByTestId('piano-gameplay')).toBeVisible();
+    await expect(page.getByTestId('piano-coop-turn')).toHaveText(/Upper octave/);
+
+    // Guest owns midi 72..84 and must not expose the host's lower octave.
+    await expect(page.getByTestId('piano-key-72')).toBeVisible();
+    await expect(page.getByTestId('piano-key-84')).toBeVisible();
+    await expect(page.getByTestId('piano-key-60')).toHaveCount(0);
+  });
+
+  test('co-op guest cannot start until the typed code resolves to a song', async ({ page }) => {
+    // ZZZZ is not the code of any song, so the Start button stays disabled.
+    await page.goto('/PianoGame?screen=coop&side=guest&code=ZZZZ');
+    await page.waitForLoadState('networkidle');
+
+    await expect(page.getByTestId('piano-coop-join-start')).toBeDisabled();
+  });
+
+  // Notes must actually fall down the canvas on each device, in that device's
+  // hand colour. handColor() is cyan (#22b5e5) below midi 68 and orange
+  // (#f2a03a) at/above it, so on Hot Cross Buns the host (C4-C5, 60-64) is all
+  // cyan and the guest (C5-C6, 72-76) is all orange. Sampling only the upper
+  // region proves the bars are falling, not resting on the target line.
+  // Runs in the browser page (Playwright serialises it), so it may only touch
+  // DOM globals - no Node-scope closures.
+  function countNotePixels() {
+    const PALETTE = [
+      [34, 181, 229],
+      [242, 160, 58],
+    ]; // cyan host / orange guest
+    const canvas = document.querySelector('[data-pw="piano-canvas"] canvas');
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    const w = canvas.width;
+    const h = canvas.height;
+    const limit = Math.floor(h * 0.6);
+    const data = ctx.getImageData(0, 0, w, limit).data;
+    let count = 0;
+    for (let y = 0; y < limit; y += 1) {
+      for (let x = 0; x < w; x += 1) {
+        const i = (y * w + x) * 4;
+        if (data[i + 3] === 0) continue;
+        for (const [r, g, b] of PALETTE) {
+          if (
+            Math.abs(data[i] - r) < 24 &&
+            Math.abs(data[i + 1] - g) < 24 &&
+            Math.abs(data[i + 2] - b) < 24
+          ) {
+            count += 1;
+            break;
+          }
+        }
+      }
+    }
+    return count;
+  }
+
+  test('co-op host canvas has falling notes in the host (cyan) colour', async ({ page }) => {
+    await page.goto('/PianoGame?screen=coop');
+    await page.waitForLoadState('networkidle');
+
+    await page.getByTestId('piano-coop-start').click({ force: true });
+    // The lobby Start opens the gameplay screen, which shows its own Start
+    // overlay; clicking that begins the 3s countdown and then the falling notes.
+    await page.getByTestId('piano-start').click({ force: true });
+    await page.waitForTimeout(5500);
+
+    const pixels = await page.evaluate(countNotePixels);
+    expect(pixels).toBeGreaterThan(200);
+  });
+
+  test('co-op guest canvas has falling notes in the guest (orange) colour', async ({ page }) => {
+    await page.goto('/PianoGame?screen=coop&side=guest&code=T2BJ');
+    await page.waitForLoadState('networkidle');
+
+    await page.getByTestId('piano-coop-join-start').click();
+    await page.getByTestId('piano-start').click({ force: true });
+    await page.waitForTimeout(5500);
+
+    const pixels = await page.evaluate(countNotePixels);
+    expect(pixels).toBeGreaterThan(200);
+  });
 });

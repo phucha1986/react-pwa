@@ -21,6 +21,12 @@ export interface Song {
   /** Lead-in beats before the first note, so the child can get ready. */
   introBeats: number;
   notes: SongNote[];
+  /**
+   * Beat the song runs until, overriding the end of the last note. Used by
+   * co-op: each device only tracks its own half of the notes, but both must
+   * keep running for the whole song so they finish together.
+   */
+  endBeat?: number;
 }
 
 export type SongTitleKey =

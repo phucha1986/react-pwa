@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Box, Button, Stack, Typography } from '@mui/material';
 
@@ -28,6 +28,8 @@ const prefersReducedMotion = () =>
 
 const MIN_KEY_HEIGHT = 40;
 const MAX_KEY_HEIGHT = 170;
+/** The full single-mode key bed, used by both co-op devices too. */
+const KEY_RANGE = { low: 60, high: 72 };
 /** Gap between the blocks inside the bottom half. */
 const HALF_GAP = 8;
 /** Below this stage height the mode hint is dropped so the keys keep their space. */
@@ -59,11 +61,16 @@ function useMeasuredHeight<T extends HTMLElement>() {
 export default function GamePlay({ song, settings, onHome, onPickSong, coopSide }: GamePlayProps) {
   const { t } = useLanguage();
 
-  // In co-op each device only plays its own octave: the song is filtered to the
-  // notes that fall on this side and the keyboard/canvas render only that range.
-  const coopSong = coopSide ? songForSide(song, coopSide) : song;
-  const coopKeyRange = coopSide ? coopRange(coopSide) : undefined;
-  const game = usePianoGame(coopSong, settings, coopKeyRange ?? { low: 60, high: 72 });
+  // In co-op the two devices form one two-octave piano: this device shows its
+  // own octave (host C4..C5, guest C5..C6) and plays only the notes that fall on
+  // those keys. Put side by side the two keyboards read as a single C4..C6 piano.
+  //
+  // Must be memoised: `songForSide` returns a new object, and the engine inside
+  // `usePianoGame` is keyed on song identity. An unmemoised song would rebuild
+  // the engine on every render and reset the game mid-play.
+  const coopSong = useMemo(() => (coopSide ? songForSide(song, coopSide) : song), [song, coopSide]);
+  const keyRange = coopSide ? coopRange(coopSide) : KEY_RANGE;
+  const game = usePianoGame(coopSong, settings, keyRange);
 
   // Co-op countdown: pressing Start begins a shared 3-2-1-GO countdown. Both
   // devices run the identical countdown and call engine.start on "GO", so the
@@ -71,13 +78,17 @@ export default function GamePlay({ song, settings, onHome, onPickSong, coopSide 
   const [countdownEndMs, setCountdownEndMs] = useState<number | null>(null);
   const [countdownRemaining, setCountdownRemaining] = useState<number | null>(null);
 
+  // Depends on `game.start` (stable while the song is unchanged), never on the
+  // `game` object itself — that is a fresh literal every render, and this effect
+  // calls setState synchronously, so depending on it would loop forever.
+  const startGame = game.start;
   useEffect(() => {
     if (countdownEndMs === null) return;
     const tick = () => {
       const remaining = (countdownEndMs - performance.now()) / 1000;
       if (remaining <= 0) {
         setCountdownRemaining(0);
-        game.start();
+        startGame();
         setCountdownEndMs(null);
       } else {
         setCountdownRemaining(remaining);
@@ -86,7 +97,7 @@ export default function GamePlay({ song, settings, onHome, onPickSong, coopSide 
     tick();
     const id = window.setInterval(tick, 100);
     return () => window.clearInterval(id);
-  }, [countdownEndMs, game]);
+  }, [countdownEndMs, startGame]);
 
   const startOrCountdown = () => {
     if (!coopSide) {
@@ -156,6 +167,19 @@ export default function GamePlay({ song, settings, onHome, onPickSong, coopSide 
               {t.pianoScore}: {game.score.correct}
             </Box>
           </Stack>
+
+          {coopSide ? (
+            <Stack
+              data-pw="piano-coop-turn"
+              direction="row"
+              spacing={1}
+              sx={{ alignItems: 'center' }}
+            >
+              <Typography variant="caption" sx={{ color: MUTED, fontWeight: 700 }}>
+                {coopSide === 'host' ? t.coopOctaveLow : t.coopOctaveHigh}
+              </Typography>
+            </Stack>
+          ) : null}
 
           {game.phase !== 'finished' ? (
             <Box
