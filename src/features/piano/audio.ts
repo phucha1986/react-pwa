@@ -56,6 +56,16 @@ export class PianoAudio {
   /**
    * Play one note. `when` is an absolute AudioContext time, which keeps
    * scheduled notes aligned with the song clock even when the tab is busy.
+   *
+   * The timbre aims at an acoustic grand piano rather a plain synth:
+   * - a partial stack (fundamental + overtones) whose upper harmonics grow
+   *   with the register, so low notes have body and high notes are brighter;
+   * - a short low-frequency "hammer thump" on the attack for the felt strike;
+   * - a real attack/decay envelope (overshoot, settle, long soft tail) wired
+   *   through the oscillator chain so notes swell then fade like a struck
+   *   string, instead of popping on and off;
+   * - a tiny deterministic per-pitch tuning wobble, since real pianos are not
+   *   perfectly equal-tempered.
    */
   playNote(midi: number, durationSeconds: number, when = 0, gain = 0.8) {
     const ctx = this.ensure();
@@ -64,26 +74,51 @@ export class PianoAudio {
     const startTime = when > 0 ? Math.max(when, ctx.currentTime) : ctx.currentTime;
     const freq = midiToFrequency(midi);
 
+    // Deterministic tuning wobble (-2.4..+2.4 cents) so repeated strikes of the
+    // same key match, but the row does not sound like one cloned synth pad.
+    const cents = (((midi * 7) % 9) - 4) * 0.6;
+    const tuned = freq * Math.pow(2, cents / 1200);
+
+    // 0 at the low end, 1 at the high end of the playable range.
+    const register = Math.min(1, Math.max(0, (midi - 48) / 36));
+
     const voiceGain = ctx.createGain();
     voiceGain.connect(this.master);
 
-    // Pleasant piano-ish attack/decay: fast attack, exponential decay, soft release.
-    const peak = 0.32 * gain;
-    voiceGain.gain.setValueAtTime(0.0001, startTime);
-    voiceGain.gain.linearRampToValueAtTime(peak, startTime + 0.012);
-    voiceGain.gain.exponentialRampToValueAtTime(
-      peak * 0.35,
-      startTime + Math.min(0.4, durationSeconds),
-    );
-    voiceGain.gain.exponentialRampToValueAtTime(0.0001, startTime + durationSeconds + 0.05);
+    // Dynamic: a harder strike is louder and opens the upper partials.
+    const loud = 0.26 + 0.14 * gain;
 
-    const oscillators = [
-      this.tone(ctx, freq, 'triangle', 1),
-      this.tone(ctx, freq * 2, 'sine', 0.22),
-      this.tone(ctx, freq * 3, 'sine', 0.08),
+    // Envelope: hammer-like overshoot, quick settle, then a long natural decay
+    // where the fundamental sustains and fades out slowly.
+    voiceGain.gain.setValueAtTime(0.0001, startTime);
+    voiceGain.gain.linearRampToValueAtTime(loud * 1.18, startTime + 0.006);
+    voiceGain.gain.exponentialRampToValueAtTime(loud * 0.55, startTime + 0.12);
+    voiceGain.gain.exponentialRampToValueAtTime(loud * 0.16, startTime + durationSeconds * 0.6);
+    voiceGain.gain.exponentialRampToValueAtTime(0.0001, startTime + durationSeconds + 0.4);
+
+    const releaseAt = startTime + durationSeconds + 0.45;
+
+    // Fundamental plus overtones; upper partials are quieter and brighter with
+    // register. All route through voiceGain so the envelope above actually
+    // shapes them (the previous wiring bypassed it, leaving notes unenveloped).
+    const partials: { ratio: number; level: number }[] = [
+      { ratio: 1, level: 1 },
+      { ratio: 2, level: 0.3 + 0.14 * register },
+      { ratio: 3, level: 0.15 },
+      { ratio: 4, level: 0.06 + 0.06 * register },
+      { ratio: 5, level: 0.035 },
     ];
 
-    const releaseAt = startTime + durationSeconds + 0.06;
+    // Every partial feeds voiceGain, so the envelope above shapes the whole
+    // stack (attack/decay) instead of the partials popping straight to master.
+    const oscillators = partials.map((p) =>
+      this.tone(ctx, tuned * p.ratio, 'sine', p.level, voiceGain),
+    );
+
+    // Felt-hammer strike: a brief low impulse just under the fundamental.
+    const thump = this.tone(ctx, tuned * 0.5, 'sine', 0.5 * loud, voiceGain);
+    oscillators.push(thump);
+
     for (const osc of oscillators) {
       osc.start(startTime);
       osc.stop(releaseAt);
@@ -109,14 +144,21 @@ export class PianoAudio {
     }
   }
 
-  private tone(ctx: AudioContext, freq: number, type: OscillatorType, level: number) {
+  /** Build one oscillator->gain chain feeding `dest` (defaults to the master). */
+  private tone(
+    ctx: AudioContext,
+    freq: number,
+    type: OscillatorType,
+    level: number,
+    dest: GainNode = this.master!,
+  ) {
     const osc = ctx.createOscillator();
     osc.type = type;
     osc.frequency.value = freq;
     const g = ctx.createGain();
     g.gain.value = level;
     osc.connect(g);
-    g.connect(this.master!);
+    g.connect(dest);
     return osc;
   }
 
