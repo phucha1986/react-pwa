@@ -159,8 +159,10 @@ export interface Dict {
   numberHint: string;
   numberScore: string;
   numberLevel: string;
-  numberSay: (n: number) => string;
+  numberSay: (n: number, count: number) => string;
 }
+
+const viNumberWords = ['không', 'một', 'hai', 'ba', 'bốn', 'năm', 'sáu', 'bảy', 'tám', 'chín'];
 
 export const translations: Record<Lang, Dict> = {
   en: {
@@ -394,10 +396,11 @@ export const translations: Record<Lang, Dict> = {
     comicStopReading: 'Stop reading',
     comicPageLabel: (page: number, total: number) => `Page ${page} of ${total}`,
     numberTitle: 'Find the Number',
-    numberHint: 'Look at the big number, then tap the same number in the grid!',
+    numberHint: 'Look at the big number, then tap every tile with that number!',
     numberScore: 'Found',
     numberLevel: 'Level',
-    numberSay: (n: number) => `Find the number ${n}`,
+    numberSay: (n: number, count: number) =>
+      count > 1 ? `Find all the ${n}s — there are ${count}` : `Find the number ${n}`,
   },
   vi: {
     question: (word) => `Con nào là ${word}?`,
@@ -630,11 +633,13 @@ export const translations: Record<Lang, Dict> = {
     comicStopReading: 'Dừng đọc',
     comicPageLabel: (page: number, total: number) => `Trang ${page}/${total}`,
     numberTitle: 'Tim Số',
-    numberHint: 'Look at the big number, then tap the same number in the grid!',
+    numberHint: 'Nhìn số lớn, rồi bấm tất cả các ô có số đó!',
     numberScore: 'Found',
     numberLevel: 'Level',
-    numberSay: (n: number) =>
-      `Tim số ${['zero', 'mot', 'hai', 'ba', 'bon', 'non', 'sau', 'seit', 'pal', 'kao'][n]}`,
+    numberSay: (n: number, count: number) =>
+      count > 1
+        ? `Tìm tất cả số ${viNumberWords[n]} — có ${count} số`
+        : `Tim số ${viNumberWords[n]}`,
   },
 };
 

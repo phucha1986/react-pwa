@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
+import CheckIcon from '@mui/icons-material/Check';
 import { Box, Container, Typography } from '@mui/material';
 
 import { useLanguage } from '@/i18n/useLanguage';
@@ -15,7 +16,6 @@ const LEVELS = [
   { cols: 3, rows: 3, max: 10 },
 ];
 const LEVEL_UP_EVERY = 5;
-const WIN_EVERY = 5;
 
 const PALETTE = [
   '#FF6B6B',
@@ -38,11 +38,24 @@ function levelForScore(score: number): number {
   return Math.min(Math.floor(score / LEVEL_UP_EVERY), LEVELS.length - 1);
 }
 
+// How many copies of the target to hide on a board. Every level has at least
+// two rows, so boards always have more than one match to hunt for; bigger
+// boards get more copies, but never more than half the tiles.
+function matchCountFor(count: number): number {
+  return Math.max(2, Math.min(3, Math.floor(count / 3)));
+}
+
 function buildRound(level: number): { target: number; tiles: Tile[]; cols: number } {
   const { cols, rows, max } = LEVELS[level];
   const count = cols * rows;
   const target = Math.floor(Math.random() * max);
-  const targetPos = Math.floor(Math.random() * count);
+  const matches = matchCountFor(count);
+
+  // Pick the matching positions up front so the target appears `matches` times.
+  const targetPositions = new Set<number>();
+  while (targetPositions.size < matches) {
+    targetPositions.add(Math.floor(Math.random() * count));
+  }
 
   // Distractors are drawn from the other digits without repeats, so the board
   // shows as few duplicated numbers as possible. Only when the grid is bigger
@@ -51,13 +64,16 @@ function buildRound(level: number): { target: number; tiles: Tile[]; cols: numbe
   others.sort(() => Math.random() - 0.5);
 
   const tiles: Tile[] = [];
+  let distractorIndex = 0;
   for (let i = 0; i < count; i++) {
-    if (i === targetPos) {
+    if (targetPositions.has(i)) {
       tiles.push({ value: target, bg: PALETTE[i % PALETTE.length] });
     } else {
-      const poolIndex = i - (i > targetPos ? 1 : 0);
       const value =
-        poolIndex < others.length ? others[poolIndex] : others[poolIndex % others.length];
+        distractorIndex < others.length
+          ? others[distractorIndex]
+          : others[distractorIndex % others.length];
+      distractorIndex++;
       tiles.push({ value, bg: PALETTE[(i + 3) % PALETTE.length] });
     }
   }
@@ -71,21 +87,26 @@ export default function NumberGame() {
     buildRound(0),
   );
   const [score, setScore] = useState(0);
-  const [found, setFound] = useState(false);
+  const [foundIndices, setFoundIndices] = useState<Set<number>>(() => new Set());
   const [wrongIndex, setWrongIndex] = useState<number | null>(null);
 
   const { target, tiles, cols } = round;
   const level = levelForScore(score);
+  // How many copies of the target are hiding on this board.
+  const matches = matchCountFor(tiles.length);
+  const foundCount = foundIndices.size;
+  const roundDone = foundCount >= matches;
 
   const handleTap = (i: number) => {
-    if (found) return;
+    if (roundDone) return;
     const tile = tiles[i];
     if (!tile) return;
     playTap();
     if (tile.value === target) {
+      if (foundIndices.has(i)) return;
       playCorrect();
       playSparkle();
-      setFound(true);
+      setFoundIndices((prev) => new Set(prev).add(i));
       setScore((s) => s + 1);
     } else {
       playWrong();
@@ -100,26 +121,26 @@ export default function NumberGame() {
     return () => window.clearTimeout(id);
   }, [wrongIndex]);
 
-  // Celebrate a milestone every few finds.
+  // Celebrate when the kid clears a whole round (all copies found).
   useEffect(() => {
-    if (score > 0 && score % WIN_EVERY === 0) playWin();
-  }, [score]);
+    if (roundDone) playWin();
+  }, [roundDone]);
 
-  // Once the kid finds it, show a fresh board after a happy pause.
+  // Once every copy is found, show a fresh board after a happy pause.
   useEffect(() => {
-    if (!found) return;
+    if (!roundDone) return;
     const id = window.setTimeout(() => {
       setRound(buildRound(level));
-      setFound(false);
+      setFoundIndices(new Set());
       setWrongIndex(null);
     }, 900);
     return () => window.clearTimeout(id);
-  }, [found, level]);
+  }, [roundDone, level]);
 
   // Narrate the target number aloud whenever a new round is shown.
   useEffect(() => {
-    speak(t.numberSay(target), lang);
-  }, [round, target, lang, t]);
+    speak(t.numberSay(target, matches), lang);
+  }, [round, target, matches, lang, t]);
 
   const gridStyle = useMemo(
     () => ({
@@ -146,13 +167,7 @@ export default function NumberGame() {
   0%, 100% { transform: scale(1); }
   50%      { transform: scale(1.08); }
 }
-@keyframes numberPop {
-  0%   { transform: scale(1) rotate(0deg); }
-  35%  { transform: scale(1.35) rotate(-8deg); }
-  60%  { transform: scale(0.92) rotate(6deg); }
-  80%  { transform: scale(1.12) rotate(-3deg); }
-  100% { transform: scale(1) rotate(0deg); }
-}
+
 @keyframes numberShake {
   0%, 100% { transform: translateX(0) rotate(0deg); }
   20%      { transform: translateX(-8px) rotate(-6deg); }
@@ -165,6 +180,15 @@ export default function NumberGame() {
   60%  { transform: translateY(8%) scale(1.08); opacity: 1; }
   80%  { transform: translateY(-4%) scale(0.96); }
   100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+@keyframes numberGlow {
+  0%, 100% { transform: scale(1.05); filter: brightness(1); }
+  50%      { transform: scale(1.12); filter: brightness(1.18); }
+}
+@keyframes badgePop {
+  0%   { transform: scale(0) rotate(-30deg); opacity: 0; }
+  60%  { transform: scale(1.3) rotate(10deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
 }`,
     [],
   );
@@ -219,20 +243,24 @@ export default function NumberGame() {
 
       <Box sx={gridStyle}>
         {tiles.map((tile, i) => {
-          const isWinner = found && tile.value === target;
+          const isWinner = foundIndices.has(i);
           const isWrong = wrongIndex === i;
           return (
             <Box
               key={i}
               data-pw="number-tile"
+              data-found={isWinner ? 'true' : 'false'}
               onClick={() => handleTap(i)}
               sx={{
+                position: 'relative',
                 aspectRatio: '1 / 1',
                 borderRadius: '1.5rem',
                 bgcolor: tile.bg,
                 backgroundImage: `linear-gradient(160deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0) 45%, rgba(0,0,0,0.12) 100%)`,
-                border: '4px solid rgba(255,255,255,0.85)',
-                boxShadow: '0 6px 14px rgba(0,0,0,0.22)',
+                border: isWinner ? '5px solid #2E7D32' : '4px solid rgba(255,255,255,0.85)',
+                boxShadow: isWinner
+                  ? '0 0 0 6px rgba(46,125,50,0.25), 0 10px 22px rgba(46,125,50,0.45)'
+                  : '0 6px 14px rgba(0,0,0,0.22)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -241,7 +269,7 @@ export default function NumberGame() {
                 '&:hover': { transform: 'scale(1.06)' },
                 '&:active': { transform: 'scale(0.9)' },
                 animation: isWinner
-                  ? 'numberPop 0.6s ease-in-out'
+                  ? 'numberGlow 1.1s ease-in-out infinite'
                   : isWrong
                     ? 'numberShake 0.45s ease-in-out'
                     : 'numberDrop 0.5s ease-in-out both',
@@ -253,14 +281,38 @@ export default function NumberGame() {
                 sx={{
                   fontFamily: FUN_FONT,
                   fontWeight: 900,
-                  color: '#333',
+                  color: isWinner ? '#fff' : '#333',
                   fontSize: 'clamp(3rem, 9vw, 5rem)',
                   lineHeight: 1,
-                  textShadow: '0 2px 0 rgba(255,255,255,0.85), 0 4px 8px rgba(0,0,0,0.18)',
+                  textShadow: isWinner
+                    ? '0 2px 0 rgba(0,0,0,0.25), 0 5px 12px rgba(46,125,50,0.5)'
+                    : '0 2px 0 rgba(255,255,255,0.85), 0 4px 8px rgba(0,0,0,0.18)',
                 }}
               >
                 {tile.value}
               </Typography>
+              {isWinner && (
+                <Box
+                  data-pw="number-tile-check"
+                  sx={{
+                    position: 'absolute',
+                    top: '0.5rem',
+                    right: '0.5rem',
+                    width: 44,
+                    height: 44,
+                    borderRadius: '50%',
+                    bgcolor: '#2E7D32',
+                    color: '#fff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: '0 4px 10px rgba(0,0,0,0.35)',
+                    animation: 'badgePop 0.45s ease-out both',
+                  }}
+                >
+                  <CheckIcon sx={{ fontSize: 28 }} />
+                </Box>
+              )}
             </Box>
           );
         })}
