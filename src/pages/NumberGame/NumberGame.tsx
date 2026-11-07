@@ -43,13 +43,21 @@ function buildRound(level: number): { target: number; tiles: Tile[]; cols: numbe
   const count = cols * rows;
   const target = Math.floor(Math.random() * max);
   const targetPos = Math.floor(Math.random() * count);
+
+  // Distractors are drawn from the other digits without repeats, so the board
+  // shows as few duplicated numbers as possible. Only when the grid is bigger
+  // than the available digit pool do we have to reuse a digit.
+  const others = Array.from({ length: max - 1 }, (_, n) => (target + 1 + n) % max);
+  others.sort(() => Math.random() - 0.5);
+
   const tiles: Tile[] = [];
   for (let i = 0; i < count; i++) {
     if (i === targetPos) {
       tiles.push({ value: target, bg: PALETTE[i % PALETTE.length] });
     } else {
-      let value = Math.floor(Math.random() * max);
-      while (value === target) value = Math.floor(Math.random() * max);
+      const poolIndex = i - (i > targetPos ? 1 : 0);
+      const value =
+        poolIndex < others.length ? others[poolIndex] : others[poolIndex % others.length];
       tiles.push({ value, bg: PALETTE[(i + 3) % PALETTE.length] });
     }
   }
