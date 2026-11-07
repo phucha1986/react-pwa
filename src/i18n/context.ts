@@ -155,6 +155,11 @@ export interface Dict {
   comicReadAloud: string;
   comicStopReading: string;
   comicPageLabel: (page: number, total: number) => string;
+  numberTitle: string;
+  numberHint: string;
+  numberScore: string;
+  numberLevel: string;
+  numberSay: (n: number) => string;
 }
 
 export const translations: Record<Lang, Dict> = {
@@ -388,6 +393,11 @@ export const translations: Record<Lang, Dict> = {
     comicReadAloud: 'Read aloud',
     comicStopReading: 'Stop reading',
     comicPageLabel: (page: number, total: number) => `Page ${page} of ${total}`,
+    numberTitle: 'Find the Number',
+    numberHint: 'Look at the big number, then tap the same number in the grid!',
+    numberScore: 'Found',
+    numberLevel: 'Level',
+    numberSay: (n: number) => `Find the number ${n}`,
   },
   vi: {
     question: (word) => `Con nào là ${word}?`,
@@ -619,6 +629,12 @@ export const translations: Record<Lang, Dict> = {
     comicReadAloud: 'Đọc to',
     comicStopReading: 'Dừng đọc',
     comicPageLabel: (page: number, total: number) => `Trang ${page}/${total}`,
+    numberTitle: 'Tim Số',
+    numberHint: 'Look at the big number, then tap the same number in the grid!',
+    numberScore: 'Found',
+    numberLevel: 'Level',
+    numberSay: (n: number) =>
+      `Tim số ${['zero', 'mot', 'hai', 'ba', 'bon', 'non', 'sau', 'seit', 'pal', 'kao'][n]}`,
   },
 };
 

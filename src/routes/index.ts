@@ -1,6 +1,7 @@
 import AddTaskIcon from '@mui/icons-material/AddTask';
 import BugReportIcon from '@mui/icons-material/BugReport';
 import CookieIcon from '@mui/icons-material/Cookie';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import FlightIcon from '@mui/icons-material/Flight';
 import GavelIcon from '@mui/icons-material/Gavel';
 import GitHubIcon from '@mui/icons-material/GitHub';
@@ -93,6 +94,12 @@ const routes: Routes = [
     path: '/WhackAMole',
     title: 'Whack-a-Mole',
     icon: GavelIcon,
+  },
+  {
+    component: asyncComponentLoader(() => import('@/pages/NumberGame')),
+    path: '/NumberGame',
+    title: 'Find the Number',
+    icon: EmojiEventsIcon,
   },
   {
     component: asyncComponentLoader(() => import('@/pages/CandyCrush')),

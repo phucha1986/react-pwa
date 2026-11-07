@@ -16,6 +16,7 @@ import candyIcon from './logos/candy.svg';
 import coloringIcon from './logos/coloring.svg';
 import comicIcon from './logos/comic.svg';
 import fruitIcon from './logos/fruit.svg';
+import numbersIcon from './logos/numbers.svg';
 import pianoIcon from './logos/piano.svg';
 import pondIcon from './logos/pond.svg';
 
@@ -38,7 +39,8 @@ type MenuItem =
         | 'pianoTitle'
         | 'comicTitle'
         | 'airplane1942Title'
-        | 'squadronTitle';
+        | 'squadronTitle'
+        | 'numberTitle';
     };
 
 const menuItems: MenuItem[] = [
@@ -51,6 +53,7 @@ const menuItems: MenuItem[] = [
   { label: 'Coloring', image: coloringIcon, to: '/ColoringGame', bg: '#FFA94D' },
   { images: [rabbitIcon, turtleIcon], to: '/MemoryMatch', bg: '#A0E7E5', labelKey: 'memoryTitle' },
   { images: [catIcon, dogIcon], to: '/WhackAMole', bg: '#FFD8A8', labelKey: 'whackTitle' },
+  { images: [numbersIcon], to: '/NumberGame', bg: '#FFD93D', labelKey: 'numberTitle' },
   { label: 'Candy Crush', image: candyIcon, to: '/CandyCrush', bg: '#FFC2D4' },
   { images: [pondIcon], to: '/PondScene', bg: '#5ec8de', labelKey: 'pondTitle' },
   { images: [lampIcon], to: '/HouseholdGame', bg: '#FFE5CC', labelKey: 'householdTitle' },
