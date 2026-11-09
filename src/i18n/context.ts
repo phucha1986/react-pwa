@@ -4,6 +4,8 @@ export type Lang = 'en' | 'vi';
 
 export interface Dict {
   question: (word: string) => string;
+  questionOne: (word: string) => string;
+  questionMany: (word: string, count: number) => string;
   greatJob: (word: string) => string;
   animalsTitle: string;
   animals: Record<string, string>;
@@ -167,6 +169,8 @@ const viNumberWords = ['không', 'một', 'hai', 'ba', 'bốn', 'năm', 'sáu', 
 export const translations: Record<Lang, Dict> = {
   en: {
     question: (word) => `Which one is the ${word}?`,
+    questionOne: (word) => `Find the ${word} — there is 1`,
+    questionMany: (word, count) => `Find all the ${word}s — there are ${count}`,
     greatJob: (word) => `Great Job! It's ${word}!`,
     animalsTitle: 'Animals',
     fruitTitle: 'Fruits',
@@ -404,6 +408,8 @@ export const translations: Record<Lang, Dict> = {
   },
   vi: {
     question: (word) => `Con nào là ${word}?`,
+    questionOne: (word) => `Tìm con ${word} — có 1 con`,
+    questionMany: (word, count) => `Tìm tất cả con ${word} — có ${count} con`,
     greatJob: (word) => `Giỏi lắm! Đó là ${word}!`,
     animalsTitle: 'Động vật',
     fruitTitle: 'Trái cây',

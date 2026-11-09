@@ -8,7 +8,9 @@ import LanguageToggle from '@/components/LanguageToggle';
 
 // Maps each route to its parent route so the Back button can navigate up the tree.
 const PARENT_ROUTES: Record<string, string> = {
-  '/AnimalGuessPage': '/AnimalGame',
+  // The guess page is entered straight from the home menu (it auto-advances
+  // through animals), so back returns home rather than the picker grid.
+  '/AnimalGuessPage': '/',
   '/AnimalGame': '/',
   '/PianoGame': '/',
   '/ComicBook': '/',

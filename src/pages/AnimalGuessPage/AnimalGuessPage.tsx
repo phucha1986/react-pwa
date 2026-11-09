@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+import CheckIcon from '@mui/icons-material/Check';
 import { Container, Typography } from '@mui/material';
 
 import { useLanguage } from '@/i18n/useLanguage';
@@ -36,7 +37,7 @@ import whaleIcon from '../AnimalGame/logos/whale.png';
 import yakIcon from '../AnimalGame/logos/yak.png';
 import zebraIcon from '../AnimalGame/logos/zebra.png';
 import { playSuccessSound, playWrongSound, speak } from './sound';
-import { AnimalPhoto, ConfettiPiece, Stage, StageGrid } from './styled';
+import { AnimalPhoto, CheckBadge, ConfettiPiece, QuestionImage, Stage, StageGrid } from './styled';
 
 // Animal data map
 const animalData: Record<string, { word: string; icon: string }> = {
@@ -74,32 +75,42 @@ const animalData: Record<string, { word: string; icon: string }> = {
 
 const CONFETTI_COLORS = ['#FF6B6B', '#4D96FF', '#FFD93D', '#6BCB77', '#FFADAD', '#A0E7E5'];
 
-// Pastel palette for the answer circles — the 4 options always get 4 unique colors
-const PASTEL_PALETTE = ['#FFD6E0', '#D6E9FF', '#FFF3C4', '#D9F2E3', '#E8D6FF', '#FFE5CC'];
+// Vivid tile palette, same colors as the Number game — every tile gets a
+// bright rounded square so the board reads as colorful, not washed-out pastel.
+const TILE_PALETTE = [
+  '#FF6B6B',
+  '#FFD93D',
+  '#6BCB77',
+  '#4D96FF',
+  '#B197FC',
+  '#FFA94D',
+  '#A0E7E5',
+  '#FFC2D4',
+];
 
-// Each animal's own dominant color (in palette terms) — its circle avoids it
-// (e.g. the blue whale never gets a blue circle, the pink flamingo never pink)
+// Each animal's own dominant color (in palette terms) — its tile avoids it
+// (e.g. the blue whale never gets a blue tile, the pink flamingo never pink).
 const ANIMAL_AVOID_COLORS: Record<string, string> = {
-  lion: '#FFF3C4', // gold
-  monkey: '#FFE5CC', // brown
-  giraffe: '#FFF3C4', // yellow
-  parrot: '#D9F2E3', // green
-  turtle: '#D9F2E3', // green
-  dog: '#FFE5CC', // brown
-  horse: '#FFE5CC', // brown
-  whale: '#D6E9FF', // blue
-  tiger: '#FFE5CC', // orange
-  octopus: '#FFD6E0', // red
-  eagle: '#FFE5CC', // brown
-  crocodile: '#D9F2E3', // green
-  flamingo: '#FFD6E0', // pink
-  leopard: '#FFF3C4', // gold
-  squirrel: '#FFE5CC', // orange
-  frog: '#D9F2E3', // green
-  hummingbird: '#D9F2E3', // green
-  orangutan: '#FFE5CC', // orange
-  yak: '#FFE5CC', // brown
-  reindeer: '#FFE5CC', // brown
+  lion: '#FFD93D', // gold
+  monkey: '#FFA94D', // brown
+  giraffe: '#FFD93D', // yellow
+  parrot: '#6BCB77', // green
+  turtle: '#6BCB77', // green
+  dog: '#FFA94D', // brown
+  horse: '#FFA94D', // brown
+  whale: '#4D96FF', // blue
+  tiger: '#FFA94D', // orange
+  octopus: '#FF6B6B', // red
+  eagle: '#FFA94D', // brown
+  crocodile: '#6BCB77', // green
+  flamingo: '#FFC2D4', // pink
+  leopard: '#FFD93D', // gold
+  squirrel: '#FFA94D', // orange
+  frog: '#6BCB77', // green
+  hummingbird: '#6BCB77', // green
+  orangutan: '#FFA94D', // orange
+  yak: '#FFA94D', // brown
+  reindeer: '#FFA94D', // brown
 };
 
 type Confetti = {
@@ -110,6 +121,53 @@ type Confetti = {
   duration: number;
   delay: number;
 };
+
+// Gentle difficulty ladder, mirroring the Number game: the grid grows as the
+// kid scores, starting tiny (2x2) so a 4-year-old can succeed and capping at
+// 3x3 so the board stays easy to scan for little ones.
+const LEVELS = [
+  { cols: 2, rows: 2 },
+  { cols: 3, rows: 2 },
+  { cols: 3, rows: 3 },
+];
+const LEVEL_UP_EVERY = 5;
+
+function levelForScore(score: number): number {
+  return Math.min(Math.floor(score / LEVEL_UP_EVERY), LEVELS.length - 1);
+}
+
+// How many copies of the target hide on a board: on the small 4-tile board
+// there is exactly one target, so the kid finds a single animal; bigger
+// boards hide more copies (6 tiles -> 2, 9 tiles -> 3).
+function matchCountFor(count: number): number {
+  return count <= 4 ? 1 : Math.max(2, Math.min(3, Math.floor(count / 3)));
+}
+
+// Are two grid slots neighbours — side by side in the same row, or stacked in
+// the same column?
+function areAdjacent(a: number, b: number, cols: number): boolean {
+  const ra = Math.floor(a / cols);
+  const rb = Math.floor(b / cols);
+  const ca = a % cols;
+  const cb = b % cols;
+  return (ra === rb && Math.abs(ca - cb) === 1) || (ca === cb && Math.abs(ra - rb) === 1);
+}
+
+// Pick slots for the target copies so no two copies sit next to each other —
+// the kid should never see the same animal twice side by side. Falls back to
+// the diagonal, which always satisfies the constraint on our boards.
+function pickSpreadSlots(boardSize: number, cols: number, matches: number): number[] {
+  for (let attempt = 0; attempt < 20; attempt++) {
+    const shuffled = [...Array(boardSize).keys()].sort(() => Math.random() - 0.5);
+    const chosen: number[] = [];
+    for (const slot of shuffled) {
+      if (chosen.some((c) => areAdjacent(c, slot, cols))) continue;
+      chosen.push(slot);
+      if (chosen.length === matches) return chosen;
+    }
+  }
+  return Array.from({ length: matches }, (_, i) => i * (cols + 1));
+}
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -129,7 +187,7 @@ export default function AnimalGuessPage() {
     [animalKey, t],
   );
 
-  const [success, setSuccess] = useState(false);
+  const [foundSlots, setFoundSlots] = useState<Set<number>>(() => new Set());
   const [wrongPick, setWrongPick] = useState<string | null>(null);
   const [confetti, setConfetti] = useState<Confetti[]>([]);
   // Tracks which animal was actually answered, so the success effect never
@@ -137,19 +195,43 @@ export default function AnimalGuessPage() {
   // "Great job" a second time and advance again).
   const answeredKeyRef = useRef<string | null>(null);
 
+  // Mirrors the Number game: every correct pick raises the score, and the
+  // board grows a step every LEVEL_UP_EVERY finds. The component stays
+  // mounted as the animal query param changes, so the score carries over.
+  // The level is frozen for the whole round (like NumberGame's buildRound) so
+  // crossing a boundary mid-round never rebuilds the board under the kid.
+  const [score, setScore] = useState(0);
+  const [prevKey, setPrevKey] = useState(animalKey);
+  const [roundLevel, setRoundLevel] = useState(() => levelForScore(score));
+  if (prevKey !== animalKey) {
+    setPrevKey(animalKey);
+    setRoundLevel(levelForScore(score));
+  }
+  const { cols, rows } = LEVELS[roundLevel];
+  const boardSize = cols * rows;
+  const matches = matchCountFor(boardSize);
+
+  const roundDone = foundSlots.size >= matches;
+
   // Reset state when the animal changes and announce the question
   useEffect(() => {
-    setSuccess(false);
+    setFoundSlots(new Set());
     setWrongPick(null);
     setConfetti([]);
     answeredKeyRef.current = null;
-    speak(t.question(animal?.word ?? ''), undefined, lang);
-  }, [animalKey, animal?.word, t, lang]);
+    speak(
+      matches === 1
+        ? t.questionOne(animal?.word ?? '')
+        : t.questionMany(animal?.word ?? '', matches),
+      undefined,
+      lang,
+    );
+  }, [animalKey, animal?.word, t, lang, matches]);
 
   // Announce the correct answer, then advance to the next animal once the
   // speech finishes (so the "Great job" line is never cut off).
   useEffect(() => {
-    if (!success || answeredKeyRef.current !== animalKey) return;
+    if (!roundDone || answeredKeyRef.current !== animalKey) return;
     const keys = Object.keys(animalData);
     const currentIndex = keys.indexOf(animalKey);
     const nextKey = keys[(currentIndex + 1) % keys.length];
@@ -163,21 +245,35 @@ export default function AnimalGuessPage() {
     // Safety net in case the speech engine never fires onend.
     const fallback = window.setTimeout(advance, 6000);
     return () => window.clearTimeout(fallback);
-  }, [success, animalKey, animal?.word, t, lang, navigate]);
+  }, [roundDone, animalKey, animal?.word, t, lang, navigate]);
 
-  // The target animal plus 3 random other animals, shuffled into a 2x2 grid
+  // `matches` copies of the target animal plus distractors filling the rest of
+  // the level's grid, shuffled into the board. Slots (not animals) carry the
+  // colors, so each tile is unique even though the target appears more than once.
   const options = useMemo(() => {
     const keys = Object.keys(animalData);
     const others = keys.filter((k) => k !== animalKey);
-    const shuffledOthers = [...others].sort(() => Math.random() - 0.5).slice(0, 3);
-    const picked = [animalKey, ...shuffledOthers].sort(() => Math.random() - 0.5);
-    // Give each option a unique pastel that isn't the animal's own color
+    const shuffledOthers = [...others]
+      .sort(() => Math.random() - 0.5)
+      .slice(0, boardSize - matches);
+    // Spread the target copies over non-neighbouring slots, then fill the
+    // remaining slots with distinct distractors.
+    const copySlots = new Set(pickSpreadSlots(boardSize, cols, matches));
+    const picked: string[] = [];
+    let distractorIdx = 0;
+    for (let slot = 0; slot < boardSize; slot++) {
+      picked.push(copySlots.has(slot) ? animalKey : shuffledOthers[distractorIdx++]);
+    }
+    // Give each slot a unique vivid color that isn't the animal's own color
     const used = new Set<string>();
-    return picked.map((key) => {
+    return picked.map((key, slot) => {
       const avoid = ANIMAL_AVOID_COLORS[key];
-      const color = PASTEL_PALETTE.find((c) => !used.has(c) && c !== avoid) ?? '#fff';
+      const color =
+        TILE_PALETTE.find((c) => !used.has(c) && c !== avoid) ??
+        TILE_PALETTE[slot % TILE_PALETTE.length];
       used.add(color);
       return {
+        slot,
         key,
         word: t.animals[key] ?? animalData[key]?.word ?? key,
         icon: animalData[key]?.icon,
@@ -185,7 +281,7 @@ export default function AnimalGuessPage() {
         color,
       };
     });
-  }, [animalKey, t]);
+  }, [animalKey, t, boardSize, cols, matches]);
 
   const spawnConfetti = () => {
     const pieces: Confetti[] = Array.from({ length: 60 }, (_, i) => ({
@@ -199,13 +295,15 @@ export default function AnimalGuessPage() {
     setConfetti(pieces);
   };
 
-  const handleClick = (key: string, isCorrect: boolean) => {
-    if (success) return;
+  const handleClick = (slot: number, key: string, isCorrect: boolean) => {
+    if (roundDone) return;
     if (isCorrect) {
+      if (foundSlots.has(slot)) return;
       answeredKeyRef.current = animalKey;
-      setSuccess(true);
+      setFoundSlots((prev) => new Set(prev).add(slot));
+      setScore((s) => s + 1);
       playSuccessSound();
-      spawnConfetti();
+      if (foundSlots.size + 1 >= matches) spawnConfetti();
     } else {
       setWrongPick(key);
       playWrongSound();
@@ -215,7 +313,7 @@ export default function AnimalGuessPage() {
 
   return (
     <Container
-      maxWidth="sm"
+      maxWidth="md"
       sx={{
         minHeight: 'calc(100vh - 64px)',
         '@supports (height: 100dvh)': {
@@ -250,36 +348,75 @@ export default function AnimalGuessPage() {
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(-14px); }
         }
+        @keyframes badge-pop {
+          0% { transform: scale(0) rotate(-30deg); opacity: 0; }
+          60% { transform: scale(1.3) rotate(10deg); opacity: 1; }
+          100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.08); }
+        }
       `}</style>
 
-      <Typography
-        data-pw="question"
-        sx={{
-          fontFamily: "'Fredoka', 'Comic Sans MS', cursive",
-          fontSize: 'clamp(24px, 5vw, 36px)',
-          fontWeight: 700,
-          color: '#FF8C42',
-          mb: 2,
-        }}
-      >
-        {success ? `🎉 ${t.greatJob(animal?.word ?? '')}` : t.question(animal?.word ?? '')}
-      </Typography>
+      {roundDone ? (
+        <Typography
+          data-pw="question"
+          sx={{
+            fontFamily: "'Fredoka', 'Comic Sans MS', cursive",
+            fontSize: 'clamp(24px, 5vw, 36px)',
+            fontWeight: 700,
+            color: '#FF8C42',
+            mb: 2,
+          }}
+        >
+          {`🎉 ${t.greatJob(animal?.word ?? '')}`}
+        </Typography>
+      ) : animal.icon ? (
+        // Show the animal to find as a picture instead of the "Find all the
+        // Cats…" text — the kid matches this target against the option tiles.
+        <QuestionImage data-pw="question" src={animal.icon} alt={animal?.word ?? ''} />
+      ) : (
+        <Typography
+          data-pw="question"
+          sx={{
+            fontFamily: "'Fredoka', 'Comic Sans MS', cursive",
+            fontSize: 'clamp(24px, 5vw, 36px)',
+            fontWeight: 700,
+            color: '#FF8C42',
+            mb: 2,
+          }}
+        >
+          {matches === 1
+            ? t.questionOne(animal?.word ?? '')
+            : t.questionMany(animal?.word ?? '', matches)}
+        </Typography>
+      )}
 
       <Stage>
-        <StageGrid>
-          {options.map((opt) => (
-            <AnimalPhoto
-              key={opt.key}
-              data-pw="option"
-              $wrong={wrongPick === opt.key}
-              $correct={success && opt.isCorrect}
-              $disabled={success && !opt.isCorrect}
-              $color={opt.color}
-              onClick={() => handleClick(opt.key, opt.isCorrect)}
-            >
-              <img src={opt.icon} alt={opt.word} />
-            </AnimalPhoto>
-          ))}
+        <StageGrid data-pw="stage-grid" $cols={cols} $rows={rows}>
+          {options.map((opt) => {
+            const isFound = foundSlots.has(opt.slot);
+            return (
+              <AnimalPhoto
+                key={opt.slot}
+                data-pw="option"
+                data-found={isFound ? 'true' : 'false'}
+                $wrong={wrongPick === opt.key && !isFound}
+                $correct={isFound}
+                $disabled={roundDone && !isFound}
+                $color={opt.color}
+                onClick={() => handleClick(opt.slot, opt.key, opt.isCorrect)}
+              >
+                <img src={opt.icon} alt={opt.word} />
+                {isFound && (
+                  <CheckBadge data-pw="option-check">
+                    <CheckIcon sx={{ fontSize: 28 }} />
+                  </CheckBadge>
+                )}
+              </AnimalPhoto>
+            );
+          })}
         </StageGrid>
       </Stage>
 

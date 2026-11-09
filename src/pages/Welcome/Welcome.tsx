@@ -44,7 +44,9 @@ type MenuItem =
     };
 
 const menuItems: MenuItem[] = [
-  { images: [lionIcon, elephantIcon], to: '/AnimalGame', bg: '#FFD93D' },
+  // The animal game auto-advances through the animals, so the tile goes
+  // straight to the guess page instead of the 30-animal picker grid.
+  { images: [lionIcon, elephantIcon], to: '/AnimalGuessPage', bg: '#FFD93D' },
   { images: [fruitIcon], to: '/FruitGame', bg: '#A0E7E5', labelKey: 'fruitTitle' },
   { label: 'Flappy Bird', image: flappyBirdSprite, to: '/FlappyBird', bg: '#FFADAD' },
   { images: [airplaneIcon], to: '/Airplane1942', bg: '#CFE1FF', labelKey: 'airplane1942Title' },
