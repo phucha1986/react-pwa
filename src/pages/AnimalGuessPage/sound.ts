@@ -122,6 +122,56 @@ const pickLadyVoice = (lang: string): SpeechSynthesisVoice | null => {
 };
 
 /**
+ * Pre-generated Vietnamese speech clips produced by
+ * `scripts/gen-animal-voices.mjs` (voice-ai backend, VieNeu "Trúc Ly").
+ * `kind` is 'one', 'many-2', 'many-3' or 'great'.
+ */
+const clipUrl = (key: string, kind: string) => `/audio/animals/${key}-${kind}.mp3`;
+
+let currentClip: HTMLAudioElement | null = null;
+
+const stopClip = () => {
+  if (currentClip) {
+    currentClip.pause();
+    currentClip = null;
+  }
+};
+
+/** Stop any pre-generated clip currently playing. */
+export const stopAnimalAudio = stopClip;
+
+/**
+ * Speak an animal phrase. For Vietnamese, play the pre-generated voice-ai
+ * clip; if the clip is missing, blocked, or fails, fall back to the browser
+ * TTS voice. Calls `onEnd` when the audio/speech finishes.
+ */
+export const speakAnimal = (
+  key: string,
+  kind: 'one' | 'many-2' | 'many-3' | 'great',
+  text: string,
+  lang: string,
+  onEnd?: () => void,
+) => {
+  stopClip();
+  if (lang === 'vi') {
+    const el = new Audio(clipUrl(key, kind));
+    let fellBack = false;
+    const fallback = () => {
+      if (fellBack) return;
+      fellBack = true;
+      stopClip();
+      speak(text, onEnd, lang);
+    };
+    el.addEventListener('error', fallback);
+    el.addEventListener('ended', () => onEnd?.());
+    void el.play().catch(fallback);
+    currentClip = el;
+    return;
+  }
+  speak(text, onEnd, lang);
+};
+
+/**
  * Speak a phrase with a slow, friendly female voice.
  * `lang` (e.g. 'en' or 'vi') selects the matching voice when available.
  * Calls `onEnd` when the speech finishes (or immediately if speech is unavailable).

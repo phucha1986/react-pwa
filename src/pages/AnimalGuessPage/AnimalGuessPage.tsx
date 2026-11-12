@@ -36,7 +36,7 @@ import turtleIcon from '../AnimalGame/logos/turtle.png';
 import whaleIcon from '../AnimalGame/logos/whale.png';
 import yakIcon from '../AnimalGame/logos/yak.png';
 import zebraIcon from '../AnimalGame/logos/zebra.png';
-import { playSuccessSound, playWrongSound, speak } from './sound';
+import { playSuccessSound, playWrongSound, speakAnimal, stopAnimalAudio } from './sound';
 import { AnimalPhoto, CheckBadge, ConfettiPiece, QuestionImage, Stage, StageGrid } from './styled';
 
 // Animal data map
@@ -219,13 +219,15 @@ export default function AnimalGuessPage() {
     setWrongPick(null);
     setConfetti([]);
     answeredKeyRef.current = null;
-    speak(
+    speakAnimal(
+      animalKey,
+      matches === 1 ? 'one' : matches === 2 ? 'many-2' : 'many-3',
       matches === 1
         ? t.questionOne(animal?.word ?? '')
         : t.questionMany(animal?.word ?? '', matches),
-      undefined,
       lang,
     );
+    return stopAnimalAudio;
   }, [animalKey, animal?.word, t, lang, matches]);
 
   // Announce the correct answer, then advance to the next animal once the
@@ -241,8 +243,8 @@ export default function AnimalGuessPage() {
       done = true;
       navigate(`/AnimalGuessPage?animal=${nextKey}`);
     };
-    speak(t.greatJob(animal?.word ?? ''), advance, lang);
-    // Safety net in case the speech engine never fires onend.
+    speakAnimal(animalKey, 'great', t.greatJob(animal?.word ?? ''), lang, advance);
+    // Safety net in case the audio/speech engine never fires onend.
     const fallback = window.setTimeout(advance, 6000);
     return () => window.clearTimeout(fallback);
   }, [roundDone, animalKey, animal?.word, t, lang, navigate]);
