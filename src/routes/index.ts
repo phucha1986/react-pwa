@@ -12,6 +12,7 @@ import PetsIcon from '@mui/icons-material/Pets';
 import PianoIcon from '@mui/icons-material/Piano';
 import TerrainIcon from '@mui/icons-material/Terrain';
 
+import BambooIcon from '@/pages/Folktales/BambooIcon';
 import asyncComponentLoader from '@/utils/loader';
 
 import { Routes } from './types';
@@ -124,6 +125,12 @@ const routes: Routes = [
     path: '/ComicBook',
     title: 'Dế Mèn Comic Book',
     icon: MenuBookIcon,
+  },
+  {
+    component: asyncComponentLoader(() => import('@/pages/Folktales')),
+    path: '/Folktales',
+    title: 'Truyện Cổ Tích',
+    icon: BambooIcon,
   },
   {
     component: asyncComponentLoader(() => import('@/pages/Page3')),

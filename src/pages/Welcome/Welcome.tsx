@@ -12,6 +12,7 @@ import rabbitIcon from '../AnimalGame/logos/rabbit.png';
 import turtleIcon from '../AnimalGame/logos/turtle.png';
 import lampIcon from '../HouseholdGame/logos/lamp.png';
 import airplaneIcon from './logos/airplane.svg';
+import bambooIcon from './logos/bamboo.svg';
 import candyIcon from './logos/candy.svg';
 import coloringIcon from './logos/coloring.svg';
 import comicIcon from './logos/comic.svg';
@@ -38,6 +39,7 @@ type MenuItem =
         | 'householdTitle'
         | 'pianoTitle'
         | 'comicTitle'
+        | 'folktalesTitle'
         | 'airplane1942Title'
         | 'squadronTitle'
         | 'numberTitle';
@@ -60,6 +62,7 @@ const menuItems: MenuItem[] = [
   { images: [pondIcon], to: '/PondScene', bg: '#5ec8de', labelKey: 'pondTitle' },
   { images: [lampIcon], to: '/HouseholdGame', bg: '#FFE5CC', labelKey: 'householdTitle' },
   { images: [comicIcon], to: '/ComicBook', bg: '#F4D7A1', labelKey: 'comicTitle' },
+  { images: [bambooIcon], to: '/Folktales', bg: '#C8E6C9', labelKey: 'folktalesTitle' },
 ];
 
 export default function Welcome() {

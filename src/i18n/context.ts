@@ -157,6 +157,7 @@ export interface Dict {
   comicReadAloud: string;
   comicStopReading: string;
   comicPageLabel: (page: number, total: number) => string;
+  folktalesTitle: string;
   numberTitle: string;
   numberHint: string;
   numberScore: string;
@@ -399,6 +400,7 @@ export const translations: Record<Lang, Dict> = {
     comicReadAloud: 'Read aloud',
     comicStopReading: 'Stop reading',
     comicPageLabel: (page: number, total: number) => `Page ${page} of ${total}`,
+    folktalesTitle: 'Folktales',
     numberTitle: 'Find the Number',
     numberHint: 'Look at the big number, then tap every tile with that number!',
     numberScore: 'Found',
@@ -638,6 +640,7 @@ export const translations: Record<Lang, Dict> = {
     comicReadAloud: 'Đọc to',
     comicStopReading: 'Dừng đọc',
     comicPageLabel: (page: number, total: number) => `Trang ${page}/${total}`,
+    folktalesTitle: 'Truyện Cổ Tích',
     numberTitle: 'Tim Số',
     numberHint: 'Nhìn số lớn, rồi bấm tất cả các ô có số đó!',
     numberScore: 'Found',
