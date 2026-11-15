@@ -9,6 +9,8 @@ export type Folktale = {
   /** Tile background, same palette as the Animal game. */
   bg: string;
   alt: Record<Lang, string>;
+  /** Display title shown on the tile when a narration exists. */
+  title?: Record<Lang, string>;
   /** Text marker identifying this story's Mỹ Duyên narration job. */
   marker?: string;
 };
@@ -19,6 +21,7 @@ export const STORIES: Folktale[] = [
     emoji: '🎋',
     bg: '#6BCB77',
     alt: { vi: 'Cây tre trăm đốt', en: 'The bamboo with a hundred nodes' },
+    title: { vi: 'Cây Tre Trăm Đốt', en: 'The Bamboo With a Hundred Nodes' },
     marker: 'tre trăm đốt',
   },
   {
@@ -26,6 +29,7 @@ export const STORIES: Folktale[] = [
     emoji: '🐎',
     bg: '#FFD93D',
     alt: { vi: 'Thánh Gióng', en: 'Saint Gióng' },
+    title: { vi: 'Thánh Gióng', en: 'Saint Gióng' },
     marker: 'Thánh Gióng',
   },
   { id: 'tam-cam', emoji: '🧚', bg: '#FFADAD', alt: { vi: 'Tấm Cám', en: 'Tấm and Cám' } },
@@ -52,12 +56,16 @@ export const STORIES: Folktale[] = [
     id: 'ho-guom',
     emoji: '🐢',
     bg: '#A0E7E5',
-    alt: { vi: 'Sự tích hồ Gươm', en: 'The story of Sword Lake' },
+    alt: { vi: 'Sự tích hồ Hoàn Kiếm', en: 'The story of the Returned Sword Lake' },
+    title: { vi: 'Sự Tích Hồ Hoàn Kiếm', en: 'The Story of Hoan Kiem Lake' },
+    marker: 'Hoàn Kiếm',
   },
   {
     id: 'dua-hau',
     emoji: '🍉',
     bg: '#FF6B6B',
     alt: { vi: 'Sự tích dưa hấu', en: 'The story of the watermelon' },
+    title: { vi: 'Sự Tích Mai An Tiêm', en: 'The Story of Mai An Tiêm' },
+    marker: 'Mai An Tiêm',
   },
 ];

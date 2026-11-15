@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import PauseIcon from '@mui/icons-material/Pause';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import { Container, Grid, IconButton, Paper } from '@mui/material';
+import { Box, Container, Grid, IconButton, Paper, Typography } from '@mui/material';
 
 import { useLanguage } from '@/i18n/useLanguage';
 
@@ -41,6 +41,8 @@ export default function Folktales() {
   // Story id -> narration job (undefined = still loading, null = none).
   const [jobs, setJobs] = useState<Record<string, VoiceJob | null>>({});
   const [playingId, setPlayingId] = useState<string | null>(null);
+  // Story id -> play button revealed after the tile's first press.
+  const [revealed, setRevealed] = useState<Record<string, boolean>>({});
   const audioRefs = useRef<Record<string, HTMLAudioElement | null>>({});
 
   useEffect(() => {
@@ -55,6 +57,14 @@ export default function Folktales() {
       alive = false;
     };
   }, []);
+
+  const openStory = (id: string) => {
+    if (!revealed[id]) {
+      setRevealed((prev) => ({ ...prev, [id]: true }));
+      return;
+    }
+    togglePlay(id);
+  };
 
   const togglePlay = (id: string) => {
     const audio = audioRefs.current[id];
@@ -85,7 +95,7 @@ export default function Folktales() {
               <Paper
                 elevation={6}
                 aria-label={story.alt[lang]}
-                onClick={() => job && togglePlay(story.id)}
+                onClick={() => job && openStory(story.id)}
                 sx={{
                   bgcolor: story.bg,
                   borderRadius: '2rem',
@@ -99,20 +109,50 @@ export default function Folktales() {
                 }}
               >
                 {job ? (
-                  <IconButton
-                    data-pw={`folktales-play-${story.id}`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      togglePlay(story.id);
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: 1,
                     }}
-                    sx={{ width: 96, height: 96, bgcolor: 'rgba(255,255,255,0.85)' }}
                   >
-                    {playingId === story.id ? (
-                      <PauseIcon sx={{ fontSize: 56, color: '#2E7D32' }} />
-                    ) : (
-                      <PlayArrowIcon sx={{ fontSize: 56, color: '#2E7D32' }} />
+                    <span style={{ fontSize: '2.5rem', lineHeight: 1 }}>{story.emoji}</span>
+                    <Typography
+                      data-pw={`folktales-title-${story.id}`}
+                      sx={{
+                        fontSize: '1.05rem',
+                        fontWeight: 700,
+                        color: '#3E2723',
+                        textAlign: 'center',
+                        lineHeight: 1.2,
+                      }}
+                    >
+                      {story.title?.vi ?? story.alt.vi}
+                    </Typography>
+                    {revealed[story.id] && (
+                      <IconButton
+                        data-pw={`folktales-play-${story.id}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          togglePlay(story.id);
+                        }}
+                        sx={{
+                          width: 80,
+                          height: 80,
+                          bgcolor: 'rgba(255,255,255,0.85)',
+                          opacity: 0.5,
+                          '&:hover': { opacity: 0.75 },
+                        }}
+                      >
+                        {playingId === story.id ? (
+                          <PauseIcon sx={{ fontSize: 48, color: '#2E7D32' }} />
+                        ) : (
+                          <PlayArrowIcon sx={{ fontSize: 48, color: '#2E7D32' }} />
+                        )}
+                      </IconButton>
                     )}
-                  </IconButton>
+                  </Box>
                 ) : (
                   <span style={{ fontSize: '3.5rem', lineHeight: 1 }}>{story.emoji}</span>
                 )}
