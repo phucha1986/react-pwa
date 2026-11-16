@@ -8,7 +8,7 @@ test.describe('truyện cổ tích folktales', () => {
 
   test('the page is a grid of story icon tiles', async ({ page }) => {
     await expect(page.getByTestId('folktales-page')).toBeVisible();
-    expect(await page.locator('[data-pw^="folktales-story-"]').count()).toBe(9);
+    expect(await page.locator('[data-pw^="folktales-story-"]').count()).toBe(10);
   });
 
   test('stories with narration show their title, no Play button until pressed', async ({
@@ -18,14 +18,17 @@ test.describe('truyện cổ tích folktales', () => {
     await expect(page.getByTestId('folktales-title-thanh-giong')).toContainText('Thánh Gióng');
     await expect(page.getByTestId('folktales-title-dua-hau')).toContainText('Sự Tích Mai An Tiêm');
     await expect(page.getByTestId('folktales-title-ho-guom')).toContainText('Sự Tích Hồ Hoàn Kiếm');
+    await expect(page.getByTestId('folktales-title-de-men')).toContainText('Dế Mèn Phiêu Lưu Ký');
     await expect(page.getByTestId('folktales-play-bamboo')).toHaveCount(0);
     await expect(page.getByTestId('folktales-play-thanh-giong')).toHaveCount(0);
     await expect(page.getByTestId('folktales-play-dua-hau')).toHaveCount(0);
     await expect(page.getByTestId('folktales-play-ho-guom')).toHaveCount(0);
+    await expect(page.getByTestId('folktales-play-de-men')).toHaveCount(0);
     await expect(page.getByTestId('folktales-audio-bamboo')).toHaveCount(1);
     await expect(page.getByTestId('folktales-audio-thanh-giong')).toHaveCount(1);
     await expect(page.getByTestId('folktales-audio-dua-hau')).toHaveCount(1);
     await expect(page.getByTestId('folktales-audio-ho-guom')).toHaveCount(1);
+    await expect(page.getByTestId('folktales-audio-de-men')).toHaveCount(1);
   });
 
   test('the first press reveals a semi-transparent Play button', async ({ page }) => {

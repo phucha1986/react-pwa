@@ -68,4 +68,12 @@ export const STORIES: Folktale[] = [
     title: { vi: 'Sự Tích Mai An Tiêm', en: 'The Story of Mai An Tiêm' },
     marker: 'Mai An Tiêm',
   },
+  {
+    id: 'de-men',
+    emoji: '🦗',
+    bg: '#FFADAD',
+    alt: { vi: 'Dế Mèn phiêu lưu ký', en: 'Dế Mèn Adventures' },
+    title: { vi: 'Dế Mèn Phiêu Lưu Ký', en: 'Dế Mèn Adventures' },
+    marker: 'Dế Mèn',
+  },
 ];
