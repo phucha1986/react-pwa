@@ -133,6 +133,10 @@ const routes: Routes = [
     icon: BambooIcon,
   },
   {
+    component: asyncComponentLoader(() => import('@/pages/Folktales/DemenChapters')),
+    path: '/Folktales/DemenChapters',
+  },
+  {
     component: asyncComponentLoader(() => import('@/pages/Page3')),
     path: '/page-3',
     title: 'Page 3',

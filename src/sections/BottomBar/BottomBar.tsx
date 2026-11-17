@@ -14,6 +14,8 @@ const PARENT_ROUTES: Record<string, string> = {
   '/AnimalGame': '/',
   '/PianoGame': '/',
   '/ComicBook': '/',
+  '/Folktales': '/',
+  '/Folktales/DemenChapters': '/Folktales',
   '/page-3': '/',
   '/page-4': '/',
 };

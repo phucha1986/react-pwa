@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router';
 
 import PauseIcon from '@mui/icons-material/Pause';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -6,37 +7,16 @@ import { Box, Container, Grid, IconButton, Paper, Typography } from '@mui/materi
 
 import { useLanguage } from '@/i18n/useLanguage';
 
-import { NARRATOR_PRESET, STORIES } from './stories';
+import { API_BASE, type VoiceJob, loadNarration } from './narration';
+import { STORIES } from './stories';
 
-/** Voice AI backend. Override with VITE_VOICE_AI_API if it runs elsewhere. */
-const API_BASE = import.meta.env.VITE_VOICE_AI_API ?? 'http://localhost:8000';
-
-type VoiceJob = {
-  id: string;
-  text: string;
-  voice_id: string;
-  voice_preset: string | null;
-  status: string;
-  duration_seconds: number | null;
+/** Story tiles that open a chapter screen instead of playing inline. */
+const CHAPTER_ROUTES: Record<string, string> = {
+  'de-men': '/Folktales/DemenChapters',
 };
 
-/** Newest finished Mỹ Duyên narration whose text contains `marker`, or null. */
-async function loadNarration(marker: string): Promise<VoiceJob | null> {
-  try {
-    const res = await fetch(`${API_BASE}/jobs?limit=50`);
-    if (!res.ok) return null;
-    const jobs = (await res.json()) as VoiceJob[];
-    return (
-      jobs.find(
-        (j) => j.status === 'done' && j.voice_preset === NARRATOR_PRESET && j.text.includes(marker),
-      ) ?? null
-    );
-  } catch {
-    return null;
-  }
-}
-
 export default function Folktales() {
+  const navigate = useNavigate();
   const { lang } = useLanguage();
   // Story id -> narration job (undefined = still loading, null = none).
   const [jobs, setJobs] = useState<Record<string, VoiceJob | null>>({});
@@ -59,6 +39,11 @@ export default function Folktales() {
   }, []);
 
   const openStory = (id: string) => {
+    const route = CHAPTER_ROUTES[id];
+    if (route) {
+      navigate(route);
+      return;
+    }
     if (!revealed[id]) {
       setRevealed((prev) => ({ ...prev, [id]: true }));
       return;
