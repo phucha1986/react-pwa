@@ -21,6 +21,12 @@ export default defineConfig({
     }),
   ],
   resolve: { alias: { '@': path.resolve(__dirname, './src') } },
+  server: {
+    // Playwright writes its report/test-results into the repo while `npm run dev`
+    // is running (playwright.config reuses the dev server), and the watcher can
+    // hit EBUSY on those locked files.
+    watch: { ignored: ['**/playwright-report/**', '**/test-results/**', '**/tmp-*'] },
+  },
   test: {
     environment: 'jsdom',
     globals: false,

@@ -14,6 +14,7 @@ import { API_BASE, loadNarration } from './narration';
 /**
  * Chapter screen for "Dế Mèn Phiêu Lưu Ký". Each button plays/pauses that
  * chapter of the single Mỹ Duyên narration clip by seeking to its boundaries.
+ * Chapters the abridged narration does not cover are listed but not playable.
  */
 export default function DemenChapters() {
   const navigate = useNavigate();
@@ -47,7 +48,7 @@ export default function DemenChapters() {
       return;
     }
     const chapter = DE_MEN_CHAPTERS.find((c) => c.n === n);
-    if (!chapter) return;
+    if (!chapter || chapter.start === undefined) return;
     // Seeking needs the duration; if metadata isn't loaded yet, defer the seek.
     if (audio.duration > 0) {
       audio.currentTime = chapter.start;
@@ -65,9 +66,10 @@ export default function DemenChapters() {
     const audio = audioRef.current;
     if (!audio || playingChapter === null) return;
     const chapter = DE_MEN_CHAPTERS.find((c) => c.n === playingChapter);
-    if (!chapter) return;
+    if (!chapter || chapter.end === undefined) return;
+    const end = chapter.end;
     const onTime = () => {
-      if (audio.currentTime >= chapter.end) stop();
+      if (audio.currentTime >= end) stop();
     };
     audio.addEventListener('timeupdate', onTime);
     audio.addEventListener('ended', stop);
@@ -94,43 +96,56 @@ export default function DemenChapters() {
           <Typography sx={{ color: '#8D6E63' }}>Đang tải bài đọc… / Loading narration…</Typography>
         )}
         {job &&
-          DE_MEN_CHAPTERS.map((chapter) => (
-            <Button
-              key={chapter.n}
-              data-pw={`demen-chapter-${chapter.n}`}
-              onClick={() => toggleChapter(chapter.n)}
-              variant="contained"
-              sx={{
-                width: '100%',
-                maxWidth: 420,
-                bgcolor: playingChapter === chapter.n ? '#2E7D32' : '#FFADAD',
-                color: playingChapter === chapter.n ? '#fff' : '#3E2723',
-                borderRadius: '1.5rem',
-                textTransform: 'none',
-                justifyContent: 'flex-start',
-                gap: 1.5,
-                px: 2,
-                py: 1.5,
-              }}
-            >
-              {playingChapter === chapter.n ? (
-                <PauseIcon data-pw={`demen-chapter-playing-${chapter.n}`} sx={{ fontSize: 28 }} />
-              ) : (
-                <PlayArrowIcon sx={{ fontSize: 28, color: '#2E7D32' }} />
-              )}
-              <Box sx={{ textAlign: 'left' }}>
-                <Typography data-pw={`demen-chapter-label-${chapter.n}`} sx={{ fontWeight: 700 }}>
-                  Chương {chapter.n}
-                </Typography>
-                <Typography
-                  data-pw={`demen-chapter-title-${chapter.n}`}
-                  sx={{ fontSize: '0.9rem', opacity: 0.85 }}
-                >
-                  {chapter.title.vi}
-                </Typography>
-              </Box>
-            </Button>
-          ))}
+          DE_MEN_CHAPTERS.map((chapter) => {
+            const playable = chapter.start !== undefined;
+            const playing = playingChapter === chapter.n;
+            return (
+              <Button
+                key={chapter.n}
+                data-pw={`demen-chapter-${chapter.n}`}
+                onClick={() => toggleChapter(chapter.n)}
+                disabled={!playable}
+                variant="contained"
+                sx={{
+                  width: '100%',
+                  maxWidth: 420,
+                  bgcolor: playing ? '#2E7D32' : playable ? '#FFADAD' : '#E8E3D9',
+                  color: playing ? '#fff' : playable ? '#3E2723' : '#8D6E63',
+                  borderRadius: '1.5rem',
+                  textTransform: 'none',
+                  justifyContent: 'flex-start',
+                  gap: 1.5,
+                  px: 2,
+                  py: 1.5,
+                }}
+              >
+                {playing ? (
+                  <PauseIcon data-pw={`demen-chapter-playing-${chapter.n}`} sx={{ fontSize: 28 }} />
+                ) : playable ? (
+                  <PlayArrowIcon sx={{ fontSize: 28, color: '#2E7D32' }} />
+                ) : null}
+                <Box sx={{ textAlign: 'left' }}>
+                  <Typography data-pw={`demen-chapter-label-${chapter.n}`} sx={{ fontWeight: 700 }}>
+                    Chương {chapter.n}
+                  </Typography>
+                  <Typography
+                    data-pw={`demen-chapter-title-${chapter.n}`}
+                    sx={{ fontSize: '0.9rem', opacity: 0.85 }}
+                  >
+                    {chapter.title.vi}
+                  </Typography>
+                  {!playable && (
+                    <Typography
+                      data-pw={`demen-chapter-no-audio-${chapter.n}`}
+                      sx={{ fontSize: '0.8rem', opacity: 0.7 }}
+                    >
+                      {lang === 'vi' ? 'Chưa có bài đọc' : 'No narration yet'}
+                    </Typography>
+                  )}
+                </Box>
+              </Button>
+            );
+          })}
         <Button
           data-pw="demen-chapters-back"
           onClick={() => navigate('/Folktales')}
