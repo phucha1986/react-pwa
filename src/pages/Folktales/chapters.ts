@@ -5,13 +5,13 @@ import type { Lang } from '@/i18n/context';
  * chapter headings from the Kim Đồng edition (verified against the archive.org
  * scan, toploigiai.vn and the Kim Đồng JSON corpus in thanglamhuu/thaz.github.io).
  *
- * The narration is the single Mỹ Duyên voice job (21f866c73554, 289.96s) — an
- * abridged reading. Each paragraph break was located as a silence gap in the WAV
- * (scripts/demen-boundaries.mjs), so `start`/`end` are the spoken boundaries in
- * seconds. Chapters the abridged reading does not cover have no `start`/`end`
- * and render without audio. Chapter 4 and Chapter 6 share narration paragraph
- * 10, split at the silence gap before "Một buổi chiều bờ đầm, tôi gặp Dế Trũi…"
- * (scripts/demen-split.mjs).
+ * The narration is the single "Giong vo" clone voice job (5c8c54989504,
+ * 377.4s) — an abridged reading. Each paragraph start was located with ASR
+ * word timestamps (scripts/demen-asr-boundaries.py), so `start`/`end` are the
+ * spoken boundaries in seconds. Chapters the abridged reading does not cover
+ * have no `start`/`end` and render without audio. Chapter 4 and Chapter 6
+ * share narration paragraph 10, split before "Một buổi chiều bờ đầm, tôi gặp
+ * Dế Trũi…".
  *
  * Narration paragraph 11 ("Ngày cuối thu, tôi và Trũi lên đường. Ghép mấy lá
  * sen nhật thành chiếc bè… chờ đổi gió và rủi may") is the opening of Chapter 5,
@@ -32,8 +32,8 @@ export const DE_MEN_CHAPTERS: DemenChapter[] = [
       vi: 'Tôi sống độc lập từ thuở bé - Một sự ngỗ nghịch đáng ân hận suốt đời',
       en: 'I lived on my own from childhood - A mischievous act I regret for life',
     },
-    start: 3.2,
-    end: 134.25,
+    start: 4.52,
+    end: 177.36,
   },
   {
     n: 2,
@@ -41,8 +41,8 @@ export const DE_MEN_CHAPTERS: DemenChapter[] = [
       vi: 'Cuộc phiêu lưu bất ngờ - Làm đồ chơi cho trẻ con mà không biết - Lại anh Xiến Tóc cho tôi một bài học',
       en: 'An unexpected adventure - Making toys for children unknowingly - Another lesson from Mr. Xiến Tóc',
     },
-    start: 134.9,
-    end: 174.3,
+    start: 177.36,
+    end: 230.26,
   },
   {
     n: 3,
@@ -50,8 +50,8 @@ export const DE_MEN_CHAPTERS: DemenChapter[] = [
       vi: 'Thoát khỏi cái lồng tù - Giữa đường dẫu thấy bất bằng mà tha - Mẹ kính mến của con ơi!',
       en: 'Escaping the cage prison - Passing injustice on the road - Dear beloved mother!',
     },
-    start: 174.95,
-    end: 224.35,
+    start: 230.26,
+    end: 292.74,
   },
   {
     n: 4,
@@ -59,8 +59,8 @@ export const DE_MEN_CHAPTERS: DemenChapter[] = [
       vi: 'Ông anh cả và ông anh hai của Mèn - Tri âm không đợi mà gặp',
       en: "Mèn's elder and younger brothers - A soulmate met without waiting",
     },
-    start: 225.0,
-    end: 237.95,
+    start: 292.74,
+    end: 310.42,
   },
   {
     n: 5,
@@ -68,8 +68,8 @@ export const DE_MEN_CHAPTERS: DemenChapter[] = [
       vi: 'Một sự vô ý rất nguy hiểm - Địa thế và tình hình các xóm lầy lội - Vì lẽ gì mà Mèn và Trũi trốn đi được?',
       en: 'A careless act of great danger - The terrain of the muddy hamlets - Why could Mèn and Trũi escape?',
     },
-    start: 261.15,
-    end: 289.96,
+    start: 338.68,
+    end: 377.4,
   },
   {
     n: 6,
@@ -77,8 +77,8 @@ export const DE_MEN_CHAPTERS: DemenChapter[] = [
       vi: 'Tranh hùng với võ sĩ Bọ Ngựa - Chánh phó thủ lĩnh Châu Chấu - Thề rằng sinh tử có nhau',
       en: 'Fighting the warrior Bọ Ngựa - Grasshopper chief and deputy - Sworn to share life and death',
     },
-    start: 238.3,
-    end: 260.5,
+    start: 310.42,
+    end: 338.68,
   },
   {
     n: 7,

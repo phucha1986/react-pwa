@@ -1,7 +1,7 @@
 import type { Lang } from '@/i18n/context';
 
-/** Built-in VieNeu storyteller voice used for the narrated stories. */
-export const NARRATOR_PRESET = 'Mỹ Duyên';
+/** Voice AI clone voice used for the narrated stories ("Giong vo"). */
+export const NARRATOR_VOICE_ID = 'ab6c7e7b7693';
 
 export type Folktale = {
   id: string;
@@ -11,7 +11,7 @@ export type Folktale = {
   alt: Record<Lang, string>;
   /** Display title shown on the tile when a narration exists. */
   title?: Record<Lang, string>;
-  /** Text marker identifying this story's Mỹ Duyên narration job. */
+  /** Text marker identifying this story's narrator job. */
   marker?: string;
 };
 

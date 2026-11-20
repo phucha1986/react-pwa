@@ -1,5 +1,9 @@
 // Generates Vietnamese speech clips for the Animal guess game using the local
-// voice-ai backend (VieNeu-TTS v3 Turbo, FastAPI on http://localhost:8000).
+// voice-ai backend (OmniVoice, FastAPI on http://localhost:8000).
+//
+// Clips are cloned from a registered voice (default: "Giong vo", id
+// ab6c7e7b7693). Override with VOICE_ID, or use a voice-design preset instead
+// by setting VOICE_PRESET (then VOICE_ID is ignored).
 //
 // For every animal it produces 4 mp3 clips in public/audio/animals/:
 //   {key}-one.mp3      "Tìm con X — có 1 con"   (1 target on the small board)
@@ -18,7 +22,8 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const outDir = path.resolve(__dirname, '../public/audio/animals');
 const API_BASE = process.env.VOICE_API_BASE ?? 'http://localhost:8000';
-const VOICE_PRESET = process.env.VOICE_PRESET ?? 'Trúc Ly';
+const VOICE_ID = process.env.VOICE_ID ?? 'ab6c7e7b7693'; // "Giong vo"
+const VOICE_PRESET = process.env.VOICE_PRESET ?? '';
 const force = process.argv.includes('--force');
 
 // Extract the Vietnamese animal names from the i18n vi block.
@@ -31,7 +36,9 @@ if (!viBlock) {
 const animals = {};
 for (const m of viBlock[1].matchAll(/(\w+): '([^']+)'/g)) animals[m[1]] = m[2];
 const keys = Object.keys(animals);
-console.log(`Found ${keys.length} animals (vi), voice preset: ${VOICE_PRESET}`);
+console.log(
+  `Found ${keys.length} animals (vi), voice: ${VOICE_PRESET ? `preset ${VOICE_PRESET}` : `clone ${VOICE_ID}`}`,
+);
 
 const phrases = [];
 for (const key of keys) {
@@ -59,7 +66,7 @@ async function generateOne({ file, text }) {
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({
       text,
-      voice_id: '',
+      voice_id: VOICE_PRESET ? '' : VOICE_ID,
       voice_preset: VOICE_PRESET,
       language: 'vi',
       speed: 1,

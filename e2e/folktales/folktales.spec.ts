@@ -139,11 +139,11 @@ test.describe('truyện cổ tích folktales', () => {
         },
         { timeout: 10_000 },
       )
-      .toBeGreaterThanOrEqual(261);
+      .toBeGreaterThanOrEqual(338);
     const started = await page
       .getByTestId('demen-audio')
       .evaluate((el) => (el as HTMLAudioElement).currentTime);
-    expect(started).toBeLessThan(290);
+    expect(started).toBeLessThan(377);
     await page.getByTestId('demen-chapter-5').click();
     await expect(page.getByTestId('demen-chapter-playing-5')).toHaveCount(0);
   });

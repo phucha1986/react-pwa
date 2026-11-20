@@ -13,7 +13,7 @@ import { API_BASE, loadNarration } from './narration';
 
 /**
  * Chapter screen for "Dế Mèn Phiêu Lưu Ký". Each button plays/pauses that
- * chapter of the single Mỹ Duyên narration clip by seeking to its boundaries.
+ * chapter of the single narrator clip by seeking to its boundaries.
  * Chapters the abridged narration does not cover are listed but not playable.
  */
 export default function DemenChapters() {
